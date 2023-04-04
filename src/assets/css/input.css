@@ -1,0 +1,65 @@
+.input {
+    border: 1px solid #8799A5;
+    border-radius: 5px;
+    padding-left: 24px;
+    outline: none;
+    height: 50px;
+
+}
+
+.input::placeholder {
+    color: #B0B0B0;
+    font-size: 16px;
+}
+
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.select {
+    border: 1px solid #8799A5;
+    border-radius: 3px;
+    padding-left: 24px;
+    outline: none;
+}
+
+.select:disabled {
+    color: #8C8787;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+
+.select::placeholder {
+    color: #8C8787;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.triangle_down {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #8799A5;
+    font-size: 0;
+    line-height: 0;
+    float: left;
+}
+
+.triangle_up {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 6px solid #8799A5;
+    font-size: 0;
+    line-height: 0;
+    float: left;
+}

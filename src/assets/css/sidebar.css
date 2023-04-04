@@ -1,0 +1,77 @@
+.avatar-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-left: 27px;
+    margin-right: 20px;
+
+}
+
+.ant-menu {
+    background: transparent;
+    border-right: 0;
+}
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: transparent;
+}
+
+.ant-menu-item {
+    font-size: 18px;
+    color: #a4a4a4;
+    padding-left: 39px !important;
+}
+
+.ant-menu-light .ant-menu-item:hover {
+    color: white;
+}
+
+.ant-menu-light .ant-menu-item-active {
+    color: white;
+}
+
+.ant-menu-item-selected {
+    color: white;
+}
+
+.ant-menu-item .ant-menu-item-icon+span {
+    margin-left: 0;
+}
+
+.ant-menu-inline .ant-menu-item::after {
+    display: none;
+}
+
+.ant-menu-title-content {
+    position: relative;
+}
+
+.ant-menu-item-selected .ant-menu-title-content::before {
+    position: absolute;
+    background: white;
+    content: '';
+    width: 2px;
+    height: 80%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.ant-menu-title-content span {
+    position: relative;
+}
+
+.ant-menu-title-content span::before {
+    position: absolute;
+    background: #a4a4a4;
+    content: '';
+    width: 2px;
+    height: 80%;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+}
+
+.ant-menu-item-selected .ant-menu-title-content span::before {
+    display: none;
+}
