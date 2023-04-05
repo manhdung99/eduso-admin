@@ -2,14 +2,17 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "strict": true,
     "jsx": "preserve",
     "moduleResolution": "node",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": false,
     "useDefineForClassFields": true,
+    "strict": false,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [

@@ -4,7 +4,12 @@
       <h2 class="text-2xl text-charcoal-darker font-bold">{{ title }}</h2>
     </div>
     <div class="flex gap-x-6">
-      <button class="add-new-button">Thêm sách</button>
+      <button
+        @click="updateAddNewModalStatus(true)"
+        class="add-new-button hover:opacity-90"
+      >
+        Thêm sách
+      </button>
       <button class="help-button">
         <span class="mr-2">
           <svg
@@ -38,18 +43,24 @@
 </template>
 <script lang="ts">
 import AddNewModal from "../modal/addNewModal.vue";
-export default {
+import { useModalStore } from "../../stores/modalStore";
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "TopContent",
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
+    title: String,
+  },
+  setup() {
+    const modal = useModalStore();
+    const { updateAddNewModalStatus } = modal;
+    return {
+      updateAddNewModalStatus,
+    };
   },
   components: {
     AddNewModal,
   },
-};
+});
 </script>
 <style scoped>
 .help-button {
