@@ -46,109 +46,70 @@
           <span class="text-lg">{{ book.discountEduso }}</span>
         </td>
         <td>
-          <span class="text-lg">{{ book.discount }}</span>
+          <span class="text-lg">{{ book.discount }}%</span>
         </td>
         <td class="">
           <div class="flex gap-x-4">
-            <img :src="hideIcon" alt="icon" />
-            <img :src="editIcon" alt="icon" />
-            <img :src="removeIcon" alt="icon" />
+            <img class="cursor-pointer" :src="hideIcon" alt="icon" />
+            <img
+              class="cursor-pointer"
+              @click="updateBookModalStatus(true, book.bookId)"
+              :src="editIcon"
+              alt="icon"
+            />
+            <img
+              class="cursor-pointer"
+              @click="
+                updateRemoveModalStatus(true);
+                currentBookDelete = book.bookId;
+              "
+              :src="removeIcon"
+              alt="icon"
+            />
           </div>
         </td>
       </tr>
     </tbody>
   </table>
+  <updateBookModalVue />
+  <removeBookModalVue @delete="removeBook()" />
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import { storeToRefs } from "pinia";
+import { useModalStore } from "../../stores/modalStore";
+import { useKhoSachStore } from "../../stores/khoSachStore";
 import hideIcon from "../../assets/image/hide.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
-const columns = [
-  {
-    id: "1",
-    name: "Mã sách",
-    smallColumn: true,
-  },
-  {
-    id: "2",
-    name: "Thông tin sách",
-    largeColumn: true,
-  },
-  {
-    id: "3",
-    name: "Nhà xuất bản",
-  },
-  {
-    id: "4",
-    name: "Giá niêm yết",
-  },
-  {
-    id: "5",
-    name: "Mức chiết khấu cho Eduso",
-  },
-  {
-    id: "5",
-    name: "Mức giảm giá",
-  },
-  {
-    id: "6",
-    name: "",
-  },
-];
-
-const books = [
-  {
-    bookId: "1234567",
-    bookInformation: {
-      image: "https://live.staticflickr.com/65535/52792665938_e3a6cfef6f_o.jpg",
-      title: "SGK Ngữ Văn 12(Nâng cao)",
-      description: "Ngữ Văn",
-      subDescription: "Bộ giáo dục và đào tạo",
-    },
-    publisher: "NXB Giáo dục",
-    listedPrice: "100.000 đ",
-    discountEduso: "10%",
-    discount: "5% - 15%",
-  },
-  {
-    bookId: "1234567",
-    bookInformation: {
-      image: "https://live.staticflickr.com/65535/52792665938_e3a6cfef6f_o.jpg",
-      title: "SGK Ngữ Văn 12(Nâng cao)",
-      description: "Ngữ Văn",
-      subDescription: "Bộ giáo dục và đào tạo",
-    },
-    publisher: "NXB Giáo dục",
-    listedPrice: "100.000 đ",
-    discountEduso: "10%",
-    discount: "5% - 15%",
-  },
-  {
-    bookId: "1234567",
-    bookInformation: {
-      image: "https://live.staticflickr.com/65535/52792665938_e3a6cfef6f_o.jpg",
-      title: "SGK Ngữ Văn 12(Nâng cao)",
-      description: "Ngữ Văn",
-      subDescription: "Bộ giáo dục và đào tạo",
-    },
-    publisher: "NXB Giáo dục",
-    listedPrice: "100.000 đ",
-    discountEduso: "10%",
-    discount: "5% - 15%",
-  },
-];
+import updateBookModalVue from "../modal/updateBookModal.vue";
+import removeBookModalVue from "../modal/removeBookModal.vue";
 
 export default defineComponent({
   name: "BookTable",
+  // eslint-disable-next-line vue/no-setup-props-destructure
   setup() {
+    const modal = useModalStore();
+    const khoSach = useKhoSachStore();
+    const { currentBookDelete } = storeToRefs(modal);
+    const { updateBookModalStatus, updateRemoveModalStatus } = modal;
+    const { books, columns } = storeToRefs(khoSach);
+
     return {
-      books,
-      columns,
       hideIcon,
       removeIcon,
       editIcon,
+      currentBookDelete,
+      books,
+      columns,
+      updateBookModalStatus,
+      updateRemoveModalStatus,
+      // removeBook,
     };
+  },
+  components: {
+    updateBookModalVue,
+    removeBookModalVue,
   },
 });
 </script>

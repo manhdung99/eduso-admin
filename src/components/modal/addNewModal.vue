@@ -237,12 +237,63 @@ export default defineComponent({
     let studyProgram = ref(null);
     let listProgram = ["IELTS", "TOEIC"];
     let programAutocompletes = ref([]);
-    const fileList = ref([]);
     const bookInfo = reactive({
       title: "",
       description: "",
       subDescription: "",
     });
+
+    const previewFiles = (event) => {
+      const file = event.target.files[0];
+      const typeFile = file.name.split(".")[1];
+      const imageTypes = ["jpg", "svg", "png", "webp"];
+      if (imageTypes.includes(typeFile)) {
+        const theReader = new FileReader();
+        theReader.onloadend = async () => {
+          previewImage.value = await theReader.result;
+        };
+        theReader.readAsDataURL(file);
+      } else {
+        console.log("File  Không hợp lệ");
+      }
+    };
+
+    const uploadMetadata = (event) => {
+      const file = event.target.files[0];
+      const typeFile = file.name.split(".")[1];
+      const docTypes = ["csv", "docx", "doc", "xlsx"];
+      if (docTypes.includes(typeFile)) {
+        metaData.value = file.name;
+      } else {
+        console.log("File không hợp lệ");
+      }
+    };
+
+    const uploadBookContent = (event) => {
+      const file = event.target.files[0];
+      const typeFile = file.name.split(".")[1];
+      const docTypes = ["csv", "docx", "doc", "xlsx"];
+      if (docTypes.includes(typeFile)) {
+        bookContent.value = file.name;
+      } else {
+        console.log("File không hợp lệ");
+      }
+    };
+
+    const updateAutocompleteProgram = () => {
+      if (studyProgram.value.length > 0) {
+        programAutocompletes.value = listProgram.filter((data: string) =>
+          data.toUpperCase().includes(studyProgram.value.toUpperCase())
+        );
+      } else {
+        programAutocompletes.value = [];
+      }
+    };
+
+    const updateStudyProgram = (data) => {
+      studyProgram.value = data;
+      programAutocompletes.value = [];
+    };
 
     return {
       openAddNewModal,
@@ -252,7 +303,6 @@ export default defineComponent({
       downloadIcon,
       attachIcon,
       previewImage,
-      fileList,
       headers: {
         authorization: "authorization-text",
       },
@@ -260,61 +310,18 @@ export default defineComponent({
       metaData,
       bookContent,
       studyProgram,
-      listProgram,
       programAutocompletes,
+      previewFiles,
+      uploadMetadata,
+      uploadBookContent,
+      updateAutocompleteProgram,
+      updateStudyProgram,
     };
   },
   components: {},
-  methods: {
-    previewFiles(event) {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const imageTypes = ["jpg", "svg", "png", "webp"];
-      if (imageTypes.includes(typeFile)) {
-        const theReader = new FileReader();
-        theReader.onloadend = async () => {
-          this.previewImage = await theReader.result;
-        };
-        theReader.readAsDataURL(file);
-      } else {
-        console.log("File  Không hợp lệ");
-      }
-    },
-    uploadMetadata(event) {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const docTypes = ["csv", "docx", "xlsx"];
-      if (docTypes.includes(typeFile)) {
-        this.bookContent = file.name;
-      } else {
-        console.log("File không hợp lệ");
-      }
-    },
-    uploadBookContent(event) {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const docTypes = ["csv", "docx", "xlsx"];
-      if (docTypes.includes(typeFile)) {
-        this.bookContent = file.name;
-      } else {
-        console.log("File không hợp lệ");
-      }
-    },
-    updateAutocompleteProgram() {
-      if (this.studyProgram.length > 0) {
-        this.programAutocompletes = this.listProgram.filter((data: string) =>
-          data.toUpperCase().includes(this.studyProgram.toUpperCase())
-        );
-      } else {
-        this.programAutocompletes = [];
-      }
-    },
-    updateStudyProgram(data) {
-      this.studyProgram = data;
-      this.programAutocompletes = [];
-    },
-  },
+  methods: {},
   watch: {
+    //Fake data
     metaData: function () {
       let data = {
         title: "SGK Ngữ Văn 12(Tập 1)",
@@ -326,7 +333,7 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
+<style>
 .book-image-modal {
   min-width: 160px;
   max-width: 160px;

@@ -1,13 +1,32 @@
 <template>
   <div
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
-    v-if="openAddNewModal"
+    v-if="openUpdateBookModal"
   >
+    <input
+      id="book-image"
+      ref="fileInput"
+      type="file"
+      @input="previewFiles($event)"
+      class="hidden"
+    />
+    <input
+      id="book-metadata"
+      type="file"
+      @input="uploadMetadata($event)"
+      class="hidden"
+    />
+    <input
+      id="book-content"
+      type="file"
+      @input="uploadBookContent($event)"
+      class="hidden"
+    />
     <div class="add-book-modal">
       <div class="flex border-b border-gray-lighter pb-4 relative">
-        <h3 class="text-xl font-bold text-blue-lighter">Thêm sách</h3>
+        <h3 class="text-xl font-bold text-blue-lighter">Chỉnh sửa sách</h3>
         <span
-          @click="updateAddNewModalStatus(false)"
+          @click="updateBookModalStatus(false)"
           class="absolute right-0 cursor-pointer"
           ><img :src="closeIcon" alt="icon"
         /></span>
@@ -15,19 +34,21 @@
       <!-- Có sách -->
       <div class="flex justify-between mt-6">
         <div class="mr-10">
-          <img
-            class="book-image-modal"
-            src="../../assets/image/bookImage.jpg"
-            alt=""
-          />
+          <img class="book-image-modal" :src="previewImage" alt="" />
         </div>
-        <div class="relative">
+        <div class="book-info-wrapper">
           <p class="text-blue-lighter text-xl font-bold">
-            SGK Ngữ Văn 12(Tập 1)
+            {{ bookInfo.title }}
           </p>
-          <p class="italic text-base text-grey-darker">Bộ Giáo dục & Đào tạo</p>
-          <p class="italic text-base text-grey-darker">NXB Giáo dục</p>
-          <button class="change-image-btn">Đổi ảnh bìa</button>
+          <p class="italic text-base text-grey-darker">
+            {{ bookInfo.description }}
+          </p>
+          <p class="italic text-base text-grey-darker">
+            {{ bookInfo.subDescription }}
+          </p>
+          <label for="book-image" class="change-image-btn cursor-pointer"
+            >Đổi ảnh bìa</label
+          >
         </div>
       </div>
       <!-- Meta data of book  -->
@@ -37,12 +58,20 @@
           <div class="flex justify-between items-center mt-2">
             <div class="flex">
               <span><img :src="attachIcon" alt="icon" /></span>
-              <span class="text-grey-darker text-base italic ml-4"
-                >Chưa có file</span
+              <span
+                class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
+                >{{ metaData }}</span
               >
             </div>
-            <div>
-              <img :src="uploadIcon" alt="icon" />
+            <div class="flex gap-x-4">
+              <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
+              <label for="book-metadata">
+                <img
+                  class="cursor-pointer hover:opacity-80"
+                  :src="uploadIcon"
+                  alt="icon"
+                />
+              </label>
             </div>
           </div>
         </div>
@@ -54,12 +83,20 @@
           <div class="flex justify-between items-center mt-2">
             <div class="flex">
               <span><img :src="attachIcon" alt="icon" /></span>
-              <span class="text-grey-darker text-base italic ml-4"
-                >Chưa có file</span
+              <span
+                class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
+                >{{ bookContent }}</span
               >
             </div>
-            <div>
-              <img :src="uploadIcon" alt="icon" />
+            <div class="flex gap-x-4">
+              <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
+              <label for="book-content">
+                <img
+                  class="cursor-pointer hover:opacity-80"
+                  :src="uploadIcon"
+                  alt="icon"
+                />
+              </label>
             </div>
           </div>
         </div>
@@ -69,7 +106,12 @@
         <div class="w-1/3">
           <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
           <div class="relative mt-2">
-            <select class="select w-full py-1"></select>
+            <select v-model="bookInfo.level" class="select w-full py-1">
+              <option value="Cấp 1">Cấp 1</option>
+              <option value="Cấp 2">Cấp 2</option>
+              <option value="Cấp 3">Cấp 3</option>
+              <option value="Đại học">Đại học</option>
+            </select>
             <div
               class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
             >
@@ -79,9 +121,13 @@
           </div>
         </div>
         <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
+          <p class="text-lg text-blue-darker font-bold">Môn học:</p>
           <div class="relative mt-2">
-            <select class="select w-full py-1"></select>
+            <select v-model="bookInfo.subject" class="select w-full py-1">
+              <option value="Toán">Toán</option>
+              <option value="Ngữ văn">Ngữ văn</option>
+              <option value="Tiếng anh">Tiếng anh</option>
+            </select>
             <div
               class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
             >
@@ -91,13 +137,26 @@
           </div>
         </div>
         <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
+          <p class="text-lg text-blue-darker font-bold">Chương trình:</p>
           <div class="relative mt-2">
             <input
-              disabled
+              @input="updateAutocompleteProgram"
               class="select w-full py-1 text-2xs italic"
-              value="IELTS"
+              v-model="studyProgram"
             />
+            <div
+              v-if="programAutocompletes.length > 0"
+              class="autocomplete-wrapper"
+            >
+              <div
+                class="text-center border-b border-grey first:border-t-0 last:border-b-0 hover:bg-modal cursor-pointer"
+                v-for="(data, index) in programAutocompletes"
+                :key="index"
+                @click="updateStudyProgram(data)"
+              >
+                {{ data }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -107,9 +166,8 @@
           <p class="text-lg text-blue-darker font-bold">Giá niêm yết (VND):</p>
           <div class="relative mt-2">
             <input
-              disabled
               class="select w-full py-1 text-2xs italic"
-              value="50000"
+              v-model="bookInfo.price"
             />
           </div>
         </div>
@@ -117,9 +175,8 @@
           <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
           <div class="relative mt-2">
             <input
-              disabled
               class="select w-full py-1 text-2xs italic"
-              value="50"
+              v-model="bookInfo.discount"
             />
           </div>
         </div>
@@ -135,24 +192,128 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, watchEffect, reactive } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
+import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
+import axios from "axios";
 export default defineComponent({
   name: "UpdateBookModal",
   setup() {
     const modal = useModalStore();
-    const { openAddNewModal } = storeToRefs(modal);
-    const { updateAddNewModalStatus } = modal;
+    const { openUpdateBookModal, currentBookUpdate } = storeToRefs(modal);
+    const { updateBookModalStatus } = modal;
+    let previewImage = ref(null);
+    let metaData = ref(null);
+    let bookContent = ref(null);
+    let studyProgram = ref(null);
+    let listProgram = ["IELTS", "TOEIC"];
+    let programAutocompletes = ref([]);
+    const book = ref({});
+    let bookInfo = reactive({
+      title: "",
+      description: "",
+      subDescription: "",
+      level: "",
+      subject: "",
+      price: "",
+      discount: "",
+    });
+
+    const previewFiles = (event) => {
+      const file = event.target.files[0];
+      const typeFile = file.name.split(".")[1];
+      const imageTypes = ["jpg", "svg", "png", "webp"];
+      if (imageTypes.includes(typeFile)) {
+        const theReader = new FileReader();
+        theReader.onloadend = async () => {
+          previewImage.value = await theReader.result;
+        };
+        theReader.readAsDataURL(file);
+      } else {
+        console.log("File  Không hợp lệ");
+      }
+    };
+
+    const uploadMetadata = (event) => {
+      const file = event.target.files[0];
+      const typeFile = file.name.split(".")[1];
+      const docTypes = ["csv", "docx", "doc", "xlsx"];
+      if (docTypes.includes(typeFile)) {
+        metaData.value = file.name;
+      } else {
+        console.log("File không hợp lệ");
+      }
+    };
+
+    const uploadBookContent = (event) => {
+      const file = event.target.files[0];
+      const typeFile = file.name.split(".")[1];
+      const docTypes = ["csv", "docx", "doc", "xlsx"];
+      if (docTypes.includes(typeFile)) {
+        bookContent.value = file.name;
+      } else {
+        console.log("File không hợp lệ");
+      }
+    };
+
+    const updateAutocompleteProgram = () => {
+      if (studyProgram.value.length > 0) {
+        programAutocompletes.value = listProgram.filter((data: string) =>
+          data.toUpperCase().includes(studyProgram.value.toUpperCase())
+        );
+      } else {
+        programAutocompletes.value = [];
+      }
+    };
+
+    const updateStudyProgram = (data) => {
+      studyProgram.value = data;
+      programAutocompletes.value = [];
+    };
+
+    watchEffect(() => {
+      axios
+        .get(
+          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${currentBookUpdate.value}`
+        )
+        .then((response) => {
+          let data = response.data;
+          bookInfo.title = data.bookInformation.title;
+          bookInfo.description = data.bookInformation.description;
+          bookInfo.subDescription = data.bookInformation.subDescription;
+          bookInfo.level = data.level;
+          bookInfo.subject = data.subject;
+          bookInfo.price = data.listedPrice;
+          bookInfo.discount = data.discount;
+          previewImage.value = data.bookInformation.image;
+          metaData.value = data.metaData;
+          bookContent.value = data.content;
+          studyProgram.value = data.programme;
+        });
+    });
     return {
-      openAddNewModal,
-      updateAddNewModalStatus,
+      openUpdateBookModal,
+      updateBookModalStatus,
       closeIcon,
       uploadIcon,
+      downloadIcon,
       attachIcon,
+      programAutocompletes,
+      book,
+      bookInfo,
+      metaData,
+      bookContent,
+      previewFiles,
+      previewImage,
+      studyProgram,
+      uploadMetadata,
+      uploadBookContent,
+      updateAutocompleteProgram,
+      updateStudyProgram,
     };
   },
   components: {},

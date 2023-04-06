@@ -24,6 +24,10 @@ import TopContentVue from "@/components/quanlykhosach/TopContent.vue";
 import SearchBook from "@/components/quanlykhosach/SearchBook.vue";
 import BookTableVue from "@/components/quanlykhosach/BookTable.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";
+import { useKhoSachStore } from "../stores/khoSachStore";
+
+import axios from "axios";
+
 export default {
   name: "QuanLyKhoSach",
   components: {
@@ -33,7 +37,18 @@ export default {
   },
   setup() {
     const title = "Quản lý kho sách";
-
+    const khoSach = useKhoSachStore();
+    const { getBooks, getColumn } = khoSach;
+    axios
+      .get("https://5e942888c7393c0016de4e98.mockapi.io/columns")
+      .then((response) => {
+        getColumn(response.data);
+      });
+    axios
+      .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books")
+      .then((response) => {
+        getBooks(response.data);
+      });
     return {
       title,
       downArrow,
