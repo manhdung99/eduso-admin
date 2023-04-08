@@ -3,197 +3,203 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openUpdateBookModal"
   >
-    <input
-      id="book-image"
-      ref="fileInput"
-      type="file"
-      @input="previewFiles($event)"
-      class="hidden"
-    />
-    <input
-      id="book-metadata"
-      type="file"
-      @input="uploadMetadata($event)"
-      class="hidden"
-    />
-    <input
-      id="book-content"
-      type="file"
-      @input="uploadBookContent($event)"
-      class="hidden"
-    />
-    <div class="add-book-modal">
-      <div class="flex border-b border-gray-lighter pb-4 relative">
-        <h3 class="text-xl font-bold text-blue-lighter">Chỉnh sửa sách</h3>
-        <span
-          @click="updateBookModalStatus(false)"
-          class="absolute right-0 cursor-pointer"
-          ><img :src="closeIcon" alt="icon"
-        /></span>
-      </div>
-      <!-- Có sách -->
-      <div class="flex justify-between mt-6">
-        <div class="mr-10">
-          <img class="book-image-modal" :src="previewImage" alt="" />
+    <form @submit.prevent="onSubmit" @keydown.enter="onSubmit">
+      <input
+        id="book-image"
+        ref="fileInput"
+        type="file"
+        @input="previewFiles($event)"
+        class="hidden"
+      />
+      <input
+        id="book-metadata"
+        type="file"
+        @input="uploadMetadata($event)"
+        class="hidden"
+      />
+      <input
+        id="book-content"
+        type="file"
+        @input="uploadBookContent($event)"
+        class="hidden"
+      />
+      <div class="add-book-modal">
+        <div class="flex border-b border-gray-lighter pb-4 relative">
+          <h3 class="text-xl font-bold text-blue-lighter">Chỉnh sửa sách</h3>
+          <span
+            @click="updateBookModalStatus(false)"
+            class="absolute right-0 cursor-pointer"
+            ><img :src="closeIcon" alt="icon"
+          /></span>
         </div>
-        <div class="book-info-wrapper">
-          <p class="text-blue-lighter text-xl font-bold">
-            {{ bookInfo.title }}
-          </p>
-          <p class="italic text-base text-grey-darker">
-            {{ bookInfo.description }}
-          </p>
-          <p class="italic text-base text-grey-darker">
-            {{ bookInfo.subDescription }}
-          </p>
-          <label for="book-image" class="change-image-btn cursor-pointer"
-            >Đổi ảnh bìa</label
-          >
-        </div>
-      </div>
-      <!-- Meta data of book  -->
-      <div>
-        <div class="mt-2">
-          <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
-          <div class="flex justify-between items-center mt-2">
-            <div class="flex">
-              <span><img :src="attachIcon" alt="icon" /></span>
-              <span
-                class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                >{{ metaData }}</span
-              >
-            </div>
-            <div class="flex gap-x-4">
-              <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
-              <label for="book-metadata">
-                <img
-                  class="cursor-pointer hover:opacity-80"
-                  :src="uploadIcon"
-                  alt="icon"
-                />
-              </label>
-            </div>
+        <!-- Có sách -->
+        <div class="flex justify-between mt-6">
+          <div class="mr-10">
+            <img class="book-image-modal" :src="previewImage" alt="" />
           </div>
-        </div>
-      </div>
-      <!-- Nội dung sách  -->
-      <div>
-        <div class="mt-2">
-          <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
-          <div class="flex justify-between items-center mt-2">
-            <div class="flex">
-              <span><img :src="attachIcon" alt="icon" /></span>
-              <span
-                class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                >{{ bookContent }}</span
-              >
-            </div>
-            <div class="flex gap-x-4">
-              <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
-              <label for="book-content">
-                <img
-                  class="cursor-pointer hover:opacity-80"
-                  :src="uploadIcon"
-                  alt="icon"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- info -->
-      <div class="flex gap-x-4">
-        <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
-          <div class="relative mt-2">
-            <select v-model="bookInfo.level" class="select w-full py-1">
-              <option value="Cấp 1">Cấp 1</option>
-              <option value="Cấp 2">Cấp 2</option>
-              <option value="Cấp 3">Cấp 3</option>
-              <option value="Đại học">Đại học</option>
-            </select>
-            <div
-              class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
+          <div class="book-info-wrapper">
+            <p class="text-blue-lighter text-xl font-bold">
+              {{ bookInfo.title }}
+            </p>
+            <p class="italic text-base text-grey-darker">
+              {{ bookInfo.description }}
+            </p>
+            <p class="italic text-base text-grey-darker">
+              {{ bookInfo.subDescription }}
+            </p>
+            <label for="book-image" class="change-image-btn cursor-pointer"
+              >Đổi ảnh bìa</label
             >
-              <span class="triangle_up active:border-b-black"></span>
-              <span class="triangle_down active:border-t-black"></span>
-            </div>
           </div>
         </div>
-        <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Môn học:</p>
-          <div class="relative mt-2">
-            <select v-model="bookInfo.subject" class="select w-full py-1">
-              <option value="Toán">Toán</option>
-              <option value="Ngữ văn">Ngữ văn</option>
-              <option value="Tiếng anh">Tiếng anh</option>
-            </select>
-            <div
-              class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-            >
-              <span class="triangle_up active:border-b-black"></span>
-              <span class="triangle_down active:border-t-black"></span>
-            </div>
-          </div>
-        </div>
-        <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Chương trình:</p>
-          <div class="relative mt-2">
-            <input
-              @input="updateAutocompleteProgram"
-              class="select w-full py-1 text-2xs italic"
-              v-model="studyProgram"
-            />
-            <div
-              v-if="programAutocompletes.length > 0"
-              class="autocomplete-wrapper"
-            >
-              <div
-                class="text-center border-b border-grey first:border-t-0 last:border-b-0 hover:bg-modal cursor-pointer"
-                v-for="(data, index) in programAutocompletes"
-                :key="index"
-                @click="updateStudyProgram(data)"
-              >
-                {{ data }}
+        <!-- Meta data of book  -->
+        <div>
+          <div class="mt-2">
+            <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
+            <div class="flex justify-between items-center mt-2">
+              <div class="flex">
+                <span><img :src="attachIcon" alt="icon" /></span>
+                <span
+                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
+                  >{{ metaData }}</span
+                >
+              </div>
+              <div class="flex gap-x-4">
+                <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
+                <label for="book-metadata">
+                  <img
+                    class="cursor-pointer hover:opacity-80"
+                    :src="uploadIcon"
+                    alt="icon"
+                  />
+                </label>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- Price  -->
-      <div class="flex gap-x-4 mt-4">
-        <div class="w-1/2">
-          <p class="text-lg text-blue-darker font-bold">Giá niêm yết (VND):</p>
-          <div class="relative mt-2">
-            <input
-              class="select w-full py-1 text-2xs italic"
-              v-model="bookInfo.price"
-            />
+        <!-- Nội dung sách  -->
+        <div>
+          <div class="mt-2">
+            <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
+            <div class="flex justify-between items-center mt-2">
+              <div class="flex">
+                <span><img :src="attachIcon" alt="icon" /></span>
+                <span
+                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
+                  >{{ bookContent }}</span
+                >
+              </div>
+              <div class="flex gap-x-4">
+                <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
+                <label for="book-content">
+                  <img
+                    class="cursor-pointer hover:opacity-80"
+                    :src="uploadIcon"
+                    alt="icon"
+                  />
+                </label>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="w-1/2">
-          <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
-          <div class="relative mt-2">
-            <input
-              class="select w-full py-1 text-2xs italic"
-              v-model="bookInfo.discount"
-            />
+        <!-- info -->
+        <div class="flex gap-x-4">
+          <div class="w-1/3">
+            <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
+            <div class="relative mt-2">
+              <select v-model="bookInfo.level" class="select w-full py-1">
+                <option value="Cấp 1">Cấp 1</option>
+                <option value="Cấp 2">Cấp 2</option>
+                <option value="Cấp 3">Cấp 3</option>
+                <option value="Đại học">Đại học</option>
+              </select>
+              <div
+                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
+              >
+                <span class="triangle_up active:border-b-black"></span>
+                <span class="triangle_down active:border-t-black"></span>
+              </div>
+            </div>
+          </div>
+          <div class="w-1/3">
+            <p class="text-lg text-blue-darker font-bold">Môn học:</p>
+            <div class="relative mt-2">
+              <select v-model="bookInfo.subject" class="select w-full py-1">
+                <option value="Toán">Toán</option>
+                <option value="Ngữ văn">Ngữ văn</option>
+                <option value="Tiếng anh">Tiếng anh</option>
+              </select>
+              <div
+                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
+              >
+                <span class="triangle_up active:border-b-black"></span>
+                <span class="triangle_down active:border-t-black"></span>
+              </div>
+            </div>
+          </div>
+          <div class="w-1/3">
+            <p class="text-lg text-blue-darker font-bold">Chương trình:</p>
+            <div class="relative mt-2">
+              <input
+                @input="updateAutocompleteProgram"
+                class="select w-full py-1 text-2xs italic"
+                v-model="studyProgram"
+              />
+              <div
+                v-if="programAutocompletes.length > 0"
+                class="autocomplete-wrapper"
+              >
+                <div
+                  class="text-center border-b border-grey first:border-t-0 last:border-b-0 hover:bg-modal cursor-pointer"
+                  v-for="(data, index) in programAutocompletes"
+                  :key="index"
+                  @click="updateStudyProgram(data)"
+                >
+                  {{ data }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        <!-- Price  -->
+        <div class="flex gap-x-4 mt-4">
+          <div class="w-1/2">
+            <p class="text-lg text-blue-darker font-bold">
+              Giá niêm yết (VND):
+            </p>
+            <div class="relative mt-2">
+              <input
+                class="select w-full py-1 text-2xs italic"
+                v-model="bookInfo.price"
+              />
+            </div>
+          </div>
+          <div class="w-1/2">
+            <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
+            <div class="relative mt-2">
+              <input
+                class="select w-full py-1 text-2xs italic"
+                v-model="bookInfo.discount"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-center mt-6">
+          <button
+            type="submit"
+            class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90"
+          >
+            Lưu thay đổi
+          </button>
+        </div>
       </div>
-      <div class="flex items-center justify-center mt-6">
-        <button
-          class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90"
-        >
-          Lưu thay đổi
-        </button>
-      </div>
-    </div>
+    </form>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watchEffect, reactive } from "vue";
+import { defineComponent, ref, watchEffect, reactive, watch } from "vue";
 import { useModalStore } from "../../stores/modalStore";
+import { useKhoSachStore } from "../../stores/khoSachStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
@@ -206,6 +212,8 @@ export default defineComponent({
     const modal = useModalStore();
     const { openUpdateBookModal, currentBookUpdate } = storeToRefs(modal);
     const { updateBookModalStatus } = modal;
+    const khoSach = useKhoSachStore();
+    const { updateBook } = khoSach;
     let previewImage = ref(null);
     let metaData = ref(null);
     let bookContent = ref(null);
@@ -217,10 +225,12 @@ export default defineComponent({
       title: "",
       description: "",
       subDescription: "",
+      publisher: "",
       level: "",
       subject: "",
       price: "",
       discount: "",
+      discountEduso: "",
     });
 
     const previewFiles = (event) => {
@@ -237,7 +247,33 @@ export default defineComponent({
         console.log("File  Không hợp lệ");
       }
     };
+    const onSubmit = () => {
+      // Validate
 
+      // Call API
+
+      // Add book in FE
+      const book = {
+        bookInformation: {
+          image: previewImage.value,
+          title: bookInfo.title,
+          description: bookInfo.description,
+          subDescription: bookInfo.subDescription,
+        },
+        publisher: bookInfo.publisher,
+        listedPrice: bookInfo.price,
+        discountEduso: bookInfo.discountEduso,
+        discount: bookInfo.discount,
+        metaData: metaData.value,
+        content: bookContent.value,
+        level: bookInfo.level,
+        subject: bookInfo.subject,
+        programme: studyProgram.value,
+        bookId: currentBookUpdate.value,
+      };
+      updateBook(book);
+      updateBookModalStatus(false);
+    };
     const uploadMetadata = (event) => {
       const file = event.target.files[0];
       const typeFile = file.name.split(".")[1];
@@ -295,6 +331,19 @@ export default defineComponent({
           studyProgram.value = data.programme;
         });
     });
+
+    // Change metadata
+    watch(metaData, () => {
+      bookInfo.title = "SGK Ngữ Văn 12(Tập 1)";
+      bookInfo.description = "Bộ Giáo dục & Đào tạo";
+      bookInfo.publisher = "NXB Giáo dục";
+      bookInfo.level = "Cấp 1";
+      bookInfo.subject = "Ngữ văn";
+      bookInfo.price = "100000";
+      bookInfo.discount = "15";
+      bookInfo.discountEduso = "123456";
+      studyProgram.value = "IELTS";
+    });
     return {
       openUpdateBookModal,
       updateBookModalStatus,
@@ -314,6 +363,7 @@ export default defineComponent({
       uploadBookContent,
       updateAutocompleteProgram,
       updateStudyProgram,
+      onSubmit,
     };
   },
   components: {},

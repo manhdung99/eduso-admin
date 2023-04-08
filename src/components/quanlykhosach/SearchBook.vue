@@ -1,30 +1,20 @@
 <template>
-  <div class="flex justify-between py-6">
-    <div class="w-2/5 relative">
+  <div class="flex py-6">
+    <div class="w-9/20 relative">
       <input
+        @input="searchData"
         class="input search-input"
         placeholder="Tìm kiếm (tên sản phẩm, mã...)"
+        v-model="searchText"
       />
       <span class="absolute right-4 top-1/2 -translate-y-1/2">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M12.6021 13.8213C9.55574 16.2612 5.09649 16.0692 2.27252 13.2452C-0.757505 10.2152 -0.757505 5.30254 2.27252 2.27252C5.30254 -0.757505 10.2152 -0.757505 13.2452 2.27252C16.0692 5.09649 16.2612 9.55573 13.8213 12.6021L19.7475 18.5283C20.0842 18.865 20.0842 19.4108 19.7475 19.7475C19.4108 20.0842 18.865 20.0842 18.5283 19.7475L12.6021 13.8213ZM3.4917 12.026C1.13502 9.66932 1.13502 5.84839 3.4917 3.4917C5.84838 1.13502 9.66932 1.13502 12.026 3.4917C14.381 5.84666 14.3827 9.66371 12.0312 12.0208C12.0295 12.0225 12.0277 12.0242 12.026 12.026C12.0243 12.0277 12.0225 12.0294 12.0208 12.0312C9.66372 14.3827 5.84666 14.381 3.4917 12.026Z"
-            fill="#8799A5"
-          />
-        </svg>
+        <img :src="searchIcon" alt="" />
       </span>
+      <searchBookModalVue />
     </div>
-    <div class="w-3/5 flex items-center">
+    <div class="w-11/20 flex items-center">
       <div class="w-1/2 flex flex items-center">
-        <div class="text-xl text-charcoal font-medium mx-5">From:</div>
+        <div class="text-xl text-charcoal font-medium mx-3">From:</div>
         <div class="relative">
           <input class="input text-base" type="date" v-model="fromDate" />
           <div
@@ -42,7 +32,7 @@
         </div>
       </div>
       <div class="w-1/2 flex flex items-center">
-        <div class="text-xl text-charcoal font-medium mx-5">To:</div>
+        <div class="text-xl text-charcoal font-medium mx-3">To:</div>
         <div class="relative">
           <input class="input text-base" type="date" v-model="toDate" />
           <div
@@ -64,15 +54,76 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import searchBookModalVue from "../modal/searchBookModal.vue";
+import searchIcon from "../../assets/image/search.svg";
+import { useSearchStore } from "../../stores/searchStore";
+import axios from "axios";
+import debounce from "lodash/debounce";
 
 export default defineComponent({
   name: "SearchBook",
   setup() {
     const fromDate = ref("2023-01-01");
     const toDate = ref("2023-04-04");
+    const searchStore = useSearchStore();
+    const { getBooks, getAuthors } = searchStore;
+    const searchText = ref("");
+    const searchData = debounce(() => {
+      if (searchText.value.length > 0) {
+        const fetchBooks = async () => {
+          try {
+            const response = await axios.get(
+              "https://642e3a278ca0fe3352cb2e35.mockapi.io/books"
+            );
+            getBooks(response.data);
+          } catch (err) {
+            throw new Error("Some thing went wrong");
+          }
+        };
+        fetchBooks();
+        const authors = [
+          {
+            id: 1,
+            name: "Bộ Giáo dục & Đào tạo",
+          },
+          {
+            id: 2,
+            name: "Bộ Giáo dục & Đào tạo",
+          },
+          {
+            id: 3,
+            name: "Bộ Giáo dục & Đào tạo",
+          },
+          {
+            id: 4,
+            name: "Bộ Giáo dục & Đào tạo",
+          },
+          {
+            id: 5,
+            name: "Bộ Giáo dục & Đào tạo",
+          },
+          {
+            id: 5,
+            name: "Bộ Giáo dục & Đào tạo",
+          },
+          {
+            id: 5,
+            name: "Bộ Giáo dục & Đào tạo",
+          },
+        ];
+        getAuthors(authors);
+      } else {
+        getBooks([]);
+        getAuthors([]);
+      }
+    }, 1000);
+
     return {
       fromDate,
       toDate,
+      searchIcon,
+      searchData,
+      searchText,
     };
   },
   methods: {
@@ -96,6 +147,9 @@ export default defineComponent({
       let year: string | number = date.getFullYear();
       return year + "-" + month + "-" + day;
     },
+  },
+  components: {
+    searchBookModalVue,
   },
 });
 </script>

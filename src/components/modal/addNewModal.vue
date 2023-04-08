@@ -3,223 +3,242 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openAddNewModal"
   >
-    <input
-      id="book-image"
-      ref="fileInput"
-      type="file"
-      @input="previewFiles($event)"
-      class="hidden"
-    />
-    <input
-      id="book-metadata"
-      type="file"
-      @input="uploadMetadata($event)"
-      class="hidden"
-    />
-    <input
-      id="book-content"
-      type="file"
-      @input="uploadBookContent($event)"
-      class="hidden"
-    />
-    <div class="add-book-modal">
-      <div class="flex border-b border-gray-lighter pb-4 relative">
-        <h3 class="text-xl font-bold text-blue-lighter">Thêm sách</h3>
-        <span
-          @click="updateAddNewModalStatus(false)"
-          class="absolute right-0 cursor-pointer"
-          ><img :src="closeIcon" alt="icon"
-        /></span>
-      </div>
-      <!-- Không có sách -->
-      <div v-if="!previewImage">
-        <div class="italic text-base mt-2">
-          <span class="text-grey-darker mr-1"
-            >* Vui lòng xem qua hướng dẫn tải sách tại</span
-          >
-          <a class="text-charcoal underline font-semibold" href="">HDSD </a>
+    <form @submit.prevent="onSubmit">
+      <input
+        id="book-image"
+        ref="fileInput"
+        type="file"
+        @input="previewFiles($event)"
+        class="hidden"
+      />
+      <input
+        id="book-metadata"
+        type="file"
+        @input="uploadMetadata($event)"
+        class="hidden"
+      />
+      <input
+        id="book-content"
+        type="file"
+        @input="uploadBookContent($event)"
+        class="hidden"
+      />
+      <div class="add-book-modal">
+        <div class="flex border-b border-gray-lighter pb-4 relative">
+          <h3 class="text-xl font-bold text-blue-lighter">Thêm sách</h3>
+          <span
+            @click="updateAddNewModalStatus(false)"
+            class="absolute right-0 cursor-pointer"
+            ><img :src="closeIcon" alt="icon"
+          /></span>
         </div>
-        <div class="mt-2">
-          <p class="text-blue-darker text-lg font-bold">Bìa sách</p>
-          <div class="flex justify-between items-center mt-2">
-            <div class="flex">
-              <span><img :src="attachIcon" alt="icon" /></span>
-              <span class="text-grey-darker text-base italic ml-4"
-                >Chưa có file</span
-              >
-            </div>
-            <label class="cursor-pointer hover:opacity-80" for="book-image">
-              <img :src="uploadIcon" alt="icon" />
-            </label>
+        <!-- Không có sách -->
+        <div v-if="!previewImage">
+          <div class="italic text-base mt-2">
+            <span class="text-grey-darker mr-1"
+              >* Vui lòng xem qua hướng dẫn tải sách tại</span
+            >
+            <a class="text-charcoal underline font-semibold" href="">HDSD </a>
           </div>
-        </div>
-      </div>
-      <!-- Có sách -->
-      <div v-else class="flex justify-between mt-6">
-        <div class="mr-10">
-          <img class="book-image-modal" :src="previewImage" alt="" />
-        </div>
-        <div class="book-info-wrapper">
-          <p class="text-blue-lighter text-xl font-bold">
-            {{ bookInfo.title }}
-          </p>
-          <p class="italic text-base text-grey-darker">
-            {{ bookInfo.description }}
-          </p>
-          <p class="italic text-base text-grey-darker">
-            {{ bookInfo.subDescription }}
-          </p>
-          <label for="book-image" class="change-image-btn cursor-pointer"
-            >Đổi ảnh bìa</label
-          >
-        </div>
-      </div>
-      <!-- Meta data of book  -->
-      <div>
-        <div class="mt-2">
-          <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
-          <div class="flex justify-between items-center mt-2">
-            <div class="flex items-center">
-              <span><img :src="attachIcon" alt="icon" /></span>
-              <span
-                v-if="!metaData"
-                class="text-grey-darker text-base italic ml-4"
-                >Chưa có file</span
-              >
-              <span
-                v-else
-                class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                >{{ metaData }}</span
-              >
-            </div>
-            <div class="flex gap-x-4">
-              <img
-                v-if="metaData"
-                class="cursor-pointer"
-                :src="downloadIcon"
-                alt="icon"
-              />
-              <label for="book-metadata">
-                <img
-                  class="cursor-pointer hover:opacity-80"
-                  :src="uploadIcon"
-                  alt="icon"
-                />
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Nội dung sách  -->
-      <div>
-        <div class="mt-2">
-          <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
-          <div class="flex justify-between items-center mt-2">
-            <div class="flex items-center">
-              <span><img :src="attachIcon" alt="icon" /></span>
-              <span
-                v-if="!bookContent"
-                class="text-grey-darker text-base italic ml-4"
-                >Chưa có file</span
-              >
-              <span
-                v-else
-                class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                >{{ bookContent }}</span
-              >
-            </div>
-            <div class="flex gap-x-4">
-              <img v-if="bookContent" :src="downloadIcon" alt="icon" />
-              <label class="cursor-pointer hover:opacity-80" for="book-content">
+          <div class="mt-2">
+            <p class="text-blue-darker text-lg font-bold">Bìa sách</p>
+            <div class="flex justify-between items-center mt-2">
+              <div class="flex">
+                <span><img :src="attachIcon" alt="icon" /></span>
+                <span class="text-grey-darker text-base italic ml-4"
+                  >Chưa có file</span
+                >
+              </div>
+              <label class="cursor-pointer hover:opacity-80" for="book-image">
                 <img :src="uploadIcon" alt="icon" />
               </label>
             </div>
           </div>
         </div>
-      </div>
-      <!-- info -->
-      <div class="flex gap-x-4">
-        <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
-          <div class="relative mt-2">
-            <select class="select w-full py-1">
-              <option value="">Cấp 1</option>
-              <option value="">Cấp 2</option>
-              <option value="">Cấp 3</option>
-              <option value="">Đại học</option>
-            </select>
-            <div
-              class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
+        <!-- Có sách -->
+        <div v-else class="flex justify-between mt-6">
+          <div class="mr-10">
+            <img class="book-image-modal" :src="previewImage" alt="" />
+          </div>
+          <div class="book-info-wrapper">
+            <p class="text-blue-lighter text-xl font-bold">
+              {{ bookInfo.title }}
+            </p>
+            <p class="italic text-base text-grey-darker">
+              {{ bookInfo.description }}
+            </p>
+            <p class="italic text-base text-grey-darker">
+              {{ bookInfo.publisher }}
+            </p>
+            <label for="book-image" class="change-image-btn cursor-pointer"
+              >Đổi ảnh bìa</label
             >
-              <span class="triangle_up active:border-b-black"></span>
-              <span class="triangle_down active:border-t-black"></span>
-            </div>
           </div>
         </div>
-        <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Môn học:</p>
-          <div class="relative mt-2">
-            <select class="select w-full py-1"></select>
-            <div
-              class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-            >
-              <span class="triangle_up active:border-b-black"></span>
-              <span class="triangle_down active:border-t-black"></span>
-            </div>
-          </div>
-        </div>
-        <div class="w-1/3">
-          <p class="text-lg text-blue-darker font-bold">Chương trình:</p>
-          <div class="relative mt-2">
-            <input
-              @input="updateAutocompleteProgram"
-              class="select w-full py-1 text-2xs italic"
-              v-model="studyProgram"
-            />
-            <div
-              v-if="programAutocompletes.length > 0"
-              class="autocomplete-wrapper"
-            >
-              <div
-                class="text-center border-b border-grey first:border-t-0 last:border-b-0 hover:bg-modal cursor-pointer"
-                v-for="(data, index) in programAutocompletes"
-                :key="index"
-                @click="updateStudyProgram(data)"
-              >
-                {{ data }}
+        <!-- Meta data of book  -->
+        <div>
+          <div class="mt-2">
+            <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
+            <div class="flex justify-between items-center mt-2">
+              <div class="flex items-center">
+                <span><img :src="attachIcon" alt="icon" /></span>
+                <span
+                  v-if="!metaData"
+                  class="text-grey-darker text-base italic ml-4"
+                  >Chưa có file</span
+                >
+                <span
+                  v-else
+                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
+                  >{{ metaData }}</span
+                >
+              </div>
+              <div class="flex gap-x-4">
+                <img
+                  v-if="metaData"
+                  class="cursor-pointer"
+                  :src="downloadIcon"
+                  alt="icon"
+                />
+                <label for="book-metadata">
+                  <img
+                    class="cursor-pointer hover:opacity-80"
+                    :src="uploadIcon"
+                    alt="icon"
+                  />
+                </label>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- Price  -->
-      <div class="flex gap-x-4 mt-4">
-        <div class="w-1/2">
-          <p class="text-lg text-blue-darker font-bold">Giá niêm yết (VND):</p>
-          <div class="relative mt-2">
-            <input class="select w-full py-1 text-2xs italic" value="50000" />
+        <!-- Nội dung sách  -->
+        <div>
+          <div class="mt-2">
+            <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
+            <div class="flex justify-between items-center mt-2">
+              <div class="flex items-center">
+                <span><img :src="attachIcon" alt="icon" /></span>
+                <span
+                  v-if="!bookContent"
+                  class="text-grey-darker text-base italic ml-4"
+                  >Chưa có file</span
+                >
+                <span
+                  v-else
+                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
+                  >{{ bookContent }}</span
+                >
+              </div>
+              <div class="flex gap-x-4">
+                <img v-if="bookContent" :src="downloadIcon" alt="icon" />
+                <label
+                  class="cursor-pointer hover:opacity-80"
+                  for="book-content"
+                >
+                  <img :src="uploadIcon" alt="icon" />
+                </label>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="w-1/2">
-          <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
-          <div class="relative mt-2">
-            <input class="select w-full py-1 text-2xs italic" value="50" />
+        <!-- info -->
+        <div class="flex gap-x-4">
+          <div class="w-1/3">
+            <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
+            <div class="relative mt-2">
+              <select v-model="bookInfo.level" class="select w-full py-1">
+                <option value="Cấp 1">Cấp 1</option>
+                <option value="Cấp 2">Cấp 2</option>
+                <option value="Cấp 3">Cấp 3</option>
+                <option value="Đại học">Đại học</option>
+              </select>
+              <div
+                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
+              >
+                <span class="triangle_up active:border-b-black"></span>
+                <span class="triangle_down active:border-t-black"></span>
+              </div>
+            </div>
+          </div>
+          <div class="w-1/3">
+            <p class="text-lg text-blue-darker font-bold">Môn học:</p>
+            <div class="relative mt-2">
+              <select v-model="bookInfo.subject" class="select w-full py-1">
+                <option value="Toán">Toán</option>
+                <option value="Ngữ văn">Ngữ văn</option>
+                <option value="Tiếng anh">Tiếng anh</option>
+              </select>
+              <div
+                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
+              >
+                <span class="triangle_up active:border-b-black"></span>
+                <span class="triangle_down active:border-t-black"></span>
+              </div>
+            </div>
+          </div>
+          <div class="w-1/3">
+            <p class="text-lg text-blue-darker font-bold">Chương trình:</p>
+            <div class="relative mt-2">
+              <input
+                @input="updateAutocompleteProgram"
+                class="select w-full py-1 text-2xs italic"
+                v-model="studyProgram"
+              />
+              <div
+                v-if="programAutocompletes.length > 0"
+                class="autocomplete-wrapper"
+              >
+                <div
+                  class="text-center border-b border-grey first:border-t-0 last:border-b-0 hover:bg-modal cursor-pointer"
+                  v-for="(data, index) in programAutocompletes"
+                  :key="index"
+                  @click="updateStudyProgram(data)"
+                >
+                  {{ data }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        <!-- Price  -->
+        <div class="flex gap-x-4 mt-4">
+          <div class="w-1/2">
+            <p class="text-lg text-blue-darker font-bold">
+              Giá niêm yết (VND):
+            </p>
+            <div class="relative mt-2">
+              <input
+                class="select w-full py-1 text-2xs italic"
+                v-model="bookInfo.price"
+              />
+            </div>
+          </div>
+          <div class="w-1/2">
+            <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
+            <div class="relative mt-2">
+              <input
+                class="select w-full py-1 text-2xs italic"
+                v-model="bookInfo.discount"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-center mt-6">
+          <button
+            type="submit"
+            class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90"
+          >
+            Lưu thay đổi
+          </button>
+        </div>
       </div>
-      <div class="flex items-center justify-center mt-6">
-        <button
-          class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90"
-        >
-          Lưu thay đổi
-        </button>
-      </div>
-    </div>
+    </form>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, watch } from "vue";
 import { useModalStore } from "../../stores/modalStore";
+import { useKhoSachStore } from "../../stores/khoSachStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
@@ -229,18 +248,26 @@ export default defineComponent({
   name: "AddNewModal",
   setup() {
     const modal = useModalStore();
+    const khoSach = useKhoSachStore();
     const { openAddNewModal } = storeToRefs(modal);
     const { updateAddNewModalStatus } = modal;
+    const { addBook } = khoSach;
     let previewImage = ref(null);
     let metaData = ref(null);
     let bookContent = ref(null);
     let studyProgram = ref(null);
     let listProgram = ["IELTS", "TOEIC"];
     let programAutocompletes = ref([]);
-    const bookInfo = reactive({
+    let bookInfo = reactive({
       title: "",
       description: "",
       subDescription: "",
+      publisher: "",
+      level: "",
+      subject: "",
+      price: "",
+      discount: "",
+      discountEduso: "",
     });
 
     const previewFiles = (event) => {
@@ -294,6 +321,46 @@ export default defineComponent({
       studyProgram.value = data;
       programAutocompletes.value = [];
     };
+    // Add metadata
+    watch(metaData, () => {
+      bookInfo.title = "SGK Ngữ Văn 12(Tập 1)";
+      bookInfo.description = "Bộ Giáo dục & Đào tạo";
+      bookInfo.publisher = "NXB Giáo dục";
+      bookInfo.level = "Cấp 1";
+      bookInfo.subject = "Ngữ văn";
+      bookInfo.price = "100000";
+      bookInfo.discount = "15";
+      bookInfo.discountEduso = "123456";
+      studyProgram.value = "IELTS";
+    });
+
+    const onSubmit = () => {
+      // Validate
+
+      // Call API
+
+      // Add book in FE
+      const book = {
+        bookInformation: {
+          image: previewImage.value,
+          title: bookInfo.title,
+          description: bookInfo.description,
+          subDescription: bookInfo.subDescription,
+        },
+        publisher: bookInfo.publisher,
+        listedPrice: bookInfo.price,
+        discountEduso: bookInfo.discountEduso,
+        discount: bookInfo.discount,
+        metaData: metaData.value,
+        content: bookContent.value,
+        level: bookInfo.level,
+        subject: bookInfo.subject,
+        programme: studyProgram.value,
+        bookId: Math.floor(Math.random() * 1000),
+      };
+      addBook(book);
+      updateAddNewModalStatus(false);
+    };
 
     return {
       openAddNewModal,
@@ -303,9 +370,6 @@ export default defineComponent({
       downloadIcon,
       attachIcon,
       previewImage,
-      headers: {
-        authorization: "authorization-text",
-      },
       bookInfo,
       metaData,
       bookContent,
@@ -316,21 +380,11 @@ export default defineComponent({
       uploadBookContent,
       updateAutocompleteProgram,
       updateStudyProgram,
+      onSubmit,
     };
   },
   components: {},
   methods: {},
-  watch: {
-    //Fake data
-    metaData: function () {
-      let data = {
-        title: "SGK Ngữ Văn 12(Tập 1)",
-        description: "Bộ Giáo dục & Đào tạo",
-        subDescription: "NXB Giáo dục",
-      };
-      this.bookInfo = data;
-    },
-  },
 });
 </script>
 <style>

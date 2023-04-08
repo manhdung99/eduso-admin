@@ -4,7 +4,11 @@
       <h2 class="text-2xl text-charcoal-darker font-bold">{{ title }}</h2>
     </div>
     <div class="flex gap-x-6">
+      <button v-if="action == 'Export'" class="add-new-button hover:opacity-90">
+        Xuất Excel
+      </button>
       <button
+        v-else
         @click="updateAddNewModalStatus(true)"
         class="add-new-button hover:opacity-90"
       >
@@ -49,6 +53,7 @@ export default defineComponent({
   name: "TopContent",
   props: {
     title: String,
+    action: String,
   },
   setup() {
     const modal = useModalStore();

@@ -12,7 +12,7 @@
     <a-menu
       v-model:openKeys="openKeys"
       v-model:selectedKeys="selectedKeys"
-      style="width: 314px"
+      style="width: 290px"
       :mode="mode"
       :theme="theme"
     >
