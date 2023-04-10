@@ -4,7 +4,7 @@
       <tr class="w-full">
         <th
           class="text-lg text-charcoal font-medium w-1/8"
-          v-for="column in columns"
+          v-for="column in doanhThuSachColumns"
           :key="column.id"
           :class="{
             '!w-1/5': column.largeColumn,
@@ -17,7 +17,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="text-charcoal" v-for="book in books" :key="book.bookId">
+      <tr
+        class="text-charcoal border-b border-grey-lighter"
+        v-for="book in books"
+        :key="book.bookId"
+      >
         <td>{{ book.bookId }}</td>
         <td>
           <div class="flex">
@@ -38,85 +42,90 @@
           </div>
         </td>
         <td>
-          <span class="text-lg">{{ book.publisher }}</span>
+          <span class="text-lg">{{
+            convertTimestampToDate(book.startDate)
+          }}</span>
         </td>
         <td>
-          <span class="text-lg">{{ book.listedPrice }}</span>
+          <span class="text-lg">{{
+            convertTimestampToDate(book.endDate)
+          }}</span>
         </td>
         <td>
-          <span class="text-lg">{{ book.discountEduso }}</span>
+          <span class="text-lg">{{ convertPrice(book.revenue) }}</span>
         </td>
         <td>
-          <span class="text-lg">{{ book.discount }}%</span>
+          <span class="text-lg">{{ book.numberDownload }}</span>
         </td>
-        <td class="">
-          <div class="flex gap-x-4">
-            <img class="cursor-pointer" :src="hideIcon" alt="icon" />
-            <img
-              class="cursor-pointer"
-              @click="updateBookModalStatus(true, book.bookId)"
-              :src="editIcon"
-              alt="icon"
-            />
-            <img
-              class="cursor-pointer"
-              @click="
-                updateRemoveModalStatus(true);
-                currentBookDelete = book.bookId;
-              "
-              :src="removeIcon"
-              alt="icon"
-            />
-          </div>
+        <td class="overflow-hidden">
+          <button
+            @click="updateBookManagementStatus(true, book.bookId)"
+            class="show-detail-button"
+          >
+            Chi tiết
+          </button>
         </td>
       </tr>
     </tbody>
   </table>
   <updateBookModalVue />
-  <removeBookModalVue @delete="removeBook()" />
+  <removeBookModalVue />
+  <bookManagementModalVue />
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
 import { storeToRefs } from "pinia";
 import { useModalStore } from "../../stores/modalStore";
-import { useKhoSachStore } from "../../stores/khoSachStore";
+import { useBookStore } from "../../stores/booksStore";
 import hideIcon from "../../assets/image/hide.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
 import updateBookModalVue from "../modal/updateBookModal.vue";
 import removeBookModalVue from "../modal/removeBookModal.vue";
-
+import bookManagementModalVue from "../modal/bookManagementModal.vue";
+import convertData from "@/uses/convertData";
 export default defineComponent({
-  name: "BookTable",
+  name: "RevenueTable",
   // eslint-disable-next-line vue/no-setup-props-destructure
   setup() {
     const modal = useModalStore();
-    const khoSach = useKhoSachStore();
+    const bookStore = useBookStore();
     const { currentBookDelete } = storeToRefs(modal);
-    const { updateBookModalStatus, updateRemoveModalStatus } = modal;
-    const { books, columns } = storeToRefs(khoSach);
+    const {
+      updateBookModalStatus,
+      updateRemoveModalStatus,
+      updateBookManagementStatus,
+    } = modal;
+    const { books, doanhThuSachColumns } = storeToRefs(bookStore);
+
+    const { convertTimestampToDate, convertPrice } = convertData();
 
     const sortBooks = (data: string) => {
-      books.value.sort((a, b) => {
-        return a[data] - b[data];
-      });
+      if (data) {
+        books.value.sort((a, b) => {
+          return a[data] - b[data] || a[data].localeCompare(b[data]);
+        });
+      }
     };
-
     return {
       hideIcon,
       removeIcon,
       editIcon,
       currentBookDelete,
       books,
-      columns,
+      doanhThuSachColumns,
       sortBooks,
       updateBookModalStatus,
       updateRemoveModalStatus,
+      updateBookManagementStatus,
+      convertTimestampToDate,
+      convertPrice,
     };
   },
   components: {
     updateBookModalVue,
     removeBookModalVue,
+    bookManagementModalVue,
   },
 });
 </script>
@@ -149,5 +158,15 @@ td {
 .book-image {
   max-width: 68px;
   min-width: 68px;
+}
+.show-detail-button {
+  background: #3c9dd2;
+  color: white;
+  border-radius: 5px;
+  padding: 10px 30px;
+  font-size: 18px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 </style>

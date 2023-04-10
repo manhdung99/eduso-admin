@@ -17,7 +17,7 @@
       :theme="theme"
     >
       <router-link to="/">
-        <a-menu-item key="1">
+        <a-menu-item key="quanlykhosach">
           <template #icon>
             <svg
               class="mr-5"
@@ -41,7 +41,7 @@
         </a-menu-item>
       </router-link>
       <router-link to="/quanlydoanhthu">
-        <a-menu-item key="2">
+        <a-menu-item key="quanlydoanhthu">
           <template #icon>
             <svg
               class="mr-5"
@@ -66,7 +66,7 @@
         </a-menu-item>
       </router-link>
       <router-link to="/quanlytheodonvi">
-        <a-menu-item key="3">
+        <a-menu-item key="quanlytheodonvi">
           <template #icon>
             <svg
               class="mr-5"
@@ -93,7 +93,7 @@
         </a-menu-item>
       </router-link>
       <router-link to="/quanlytaikhoan">
-        <a-menu-item key="4">
+        <a-menu-item key="quanlytaikhoan">
           <template #icon>
             <svg
               class="mr-5"
@@ -116,7 +116,7 @@
           <span class="pl-5"> Quản lý tài khoản </span>
         </a-menu-item>
       </router-link>
-      <a-menu-item key="5">
+      <a-menu-item>
         <template #icon>
           <svg
             class="mr-5"
@@ -134,35 +134,46 @@
             />
           </svg>
         </template>
-        <span class="pl-5"> Đăng xuất </span>
+        <span @click="updateLogoutModalStatus(true)" class="pl-5">
+          Đăng xuất
+        </span>
       </a-menu-item>
     </a-menu>
   </div>
+  <logoutModalVue />
 </template>
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from "vue";
 import type { MenuMode, MenuTheme } from "ant-design-vue";
+import logoutModalVue from "../modal/logoutModal.vue";
+import { useModalStore } from "../../stores/modalStore";
+
 export default defineComponent({
   name: "SideBar",
-  components: {},
   setup() {
     const state = reactive({
       mode: "inline" as MenuMode,
       theme: "light" as MenuTheme,
-      selectedKeys: ["1"],
+      selectedKeys: ["quanlykhosach"],
       openKeys: ["sub1"],
     });
-    const changeMode = (checked: boolean) => {
-      state.mode = checked ? "vertical" : "inline";
+    const modal = useModalStore();
+    const { updateLogoutModalStatus } = modal;
+    const handlePageReload = () => {
+      let urlArray = window.location.href.split("/");
+      let newArray = [urlArray[urlArray.length - 1]];
+      state.selectedKeys = newArray;
     };
-    const changeTheme = (checked: boolean) => {
-      state.theme = checked ? "dark" : "light";
-    };
+    // Handle even load page
+    window.addEventListener("load", handlePageReload);
+
     return {
       ...toRefs(state),
-      changeMode,
-      changeTheme,
+      updateLogoutModalStatus,
     };
+  },
+  components: {
+    logoutModalVue,
   },
 });
 </script>

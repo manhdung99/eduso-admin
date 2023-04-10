@@ -59,6 +59,7 @@ import searchIcon from "../../assets/image/search.svg";
 import { useSearchStore } from "../../stores/searchStore";
 import axios from "axios";
 import debounce from "lodash/debounce";
+import convertData from "@/uses/convertData";
 
 export default defineComponent({
   name: "SearchBook",
@@ -68,6 +69,7 @@ export default defineComponent({
     const searchStore = useSearchStore();
     const { getBooks, getAuthors } = searchStore;
     const searchText = ref("");
+    const { dateFormater } = convertData();
     const searchData = debounce(() => {
       if (searchText.value.length > 0) {
         const fetchBooks = async () => {
@@ -124,6 +126,7 @@ export default defineComponent({
       searchIcon,
       searchData,
       searchText,
+      dateFormater,
     };
   },
   methods: {
@@ -136,16 +139,6 @@ export default defineComponent({
       let newDate = new Date(this.toDate);
       newDate.setDate(newDate.getDate() + activeDays);
       this.toDate = this.dateFormater(newDate);
-    },
-    dateFormater(date: Date) {
-      let day: string | number =
-        date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-      let month: string | number =
-        date.getMonth() < 10
-          ? "0" + (date.getMonth() + 1)
-          : date.getMonth() + 1;
-      let year: string | number = date.getFullYear();
-      return year + "-" + month + "-" + day;
     },
   },
   components: {

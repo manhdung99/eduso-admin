@@ -35,7 +35,7 @@
 <script>
 import { defineComponent } from "vue";
 import { useModalStore } from "../../stores/modalStore";
-import { useKhoSachStore } from "../../stores/khoSachStore";
+import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 export default defineComponent({
@@ -44,8 +44,8 @@ export default defineComponent({
     const modal = useModalStore();
     const { openRemoveBookModal, currentBookDelete } = storeToRefs(modal);
     const { updateRemoveModalStatus } = modal;
-    const khoSach = useKhoSachStore();
-    const { deleteBook } = khoSach;
+    const bookStore = useBookStore();
+    const { deleteBook } = bookStore;
     const deleteCurrentBook = () => {
       //Call API and delete in DB ở đây
       deleteBook(currentBookDelete.value);

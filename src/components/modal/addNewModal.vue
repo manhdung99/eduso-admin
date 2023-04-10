@@ -238,7 +238,7 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, watch } from "vue";
 import { useModalStore } from "../../stores/modalStore";
-import { useKhoSachStore } from "../../stores/khoSachStore";
+import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
@@ -248,10 +248,10 @@ export default defineComponent({
   name: "AddNewModal",
   setup() {
     const modal = useModalStore();
-    const khoSach = useKhoSachStore();
+    const bookStore = useBookStore();
     const { openAddNewModal } = storeToRefs(modal);
     const { updateAddNewModalStatus } = modal;
-    const { addBook } = khoSach;
+    const { addBook } = bookStore;
     let previewImage = ref(null);
     let metaData = ref(null);
     let bookContent = ref(null);

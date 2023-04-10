@@ -4,7 +4,7 @@
       <tr class="w-full">
         <th
           class="text-lg text-charcoal font-medium w-1/8"
-          v-for="column in columns"
+          v-for="column in khoSachColumns"
           :key="column.id"
           :class="{
             '!w-1/5': column.largeColumn,
@@ -17,7 +17,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="text-charcoal" v-for="book in books" :key="book.bookId">
+      <tr
+        class="text-charcoal border-b border-grey-lighter"
+        v-for="book in books"
+        :key="book.bookId"
+      >
         <td>{{ book.bookId }}</td>
         <td>
           <div class="flex">
@@ -41,7 +45,7 @@
           <span class="text-lg">{{ book.publisher }}</span>
         </td>
         <td>
-          <span class="text-lg">{{ book.listedPrice }}</span>
+          <span class="text-lg">{{ convertPrice(book.listedPrice) }}</span>
         </td>
         <td>
           <span class="text-lg">{{ book.discountEduso }}</span>
@@ -79,27 +83,30 @@
 import { defineComponent } from "vue";
 import { storeToRefs } from "pinia";
 import { useModalStore } from "../../stores/modalStore";
-import { useKhoSachStore } from "../../stores/khoSachStore";
+import { useBookStore } from "../../stores/booksStore";
 import hideIcon from "../../assets/image/hide.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
 import updateBookModalVue from "../modal/updateBookModal.vue";
 import removeBookModalVue from "../modal/removeBookModal.vue";
+import convertData from "@/uses/convertData";
 
 export default defineComponent({
   name: "BookTable",
   // eslint-disable-next-line vue/no-setup-props-destructure
   setup() {
     const modal = useModalStore();
-    const khoSach = useKhoSachStore();
+    const bookStore = useBookStore();
     const { currentBookDelete } = storeToRefs(modal);
     const { updateBookModalStatus, updateRemoveModalStatus } = modal;
-    const { books, columns } = storeToRefs(khoSach);
-
+    const { books, khoSachColumns } = storeToRefs(bookStore);
+    const { convertPrice } = convertData();
     const sortBooks = (data: string) => {
-      books.value.sort((a, b) => {
-        return a[data] - b[data];
-      });
+      if (data) {
+        books.value.sort((a, b) => {
+          return a[data] - b[data] || a[data].localeCompare(b[data]);
+        });
+      }
     };
 
     return {
@@ -108,10 +115,11 @@ export default defineComponent({
       editIcon,
       currentBookDelete,
       books,
-      columns,
+      khoSachColumns,
       sortBooks,
       updateBookModalStatus,
       updateRemoveModalStatus,
+      convertPrice,
     };
   },
   components: {
@@ -128,6 +136,7 @@ export default defineComponent({
 th {
   height: 100px;
   text-align: left;
+  padding: 0 4px;
 }
 thead th:first-child {
   padding-left: 16px;
