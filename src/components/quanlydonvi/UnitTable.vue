@@ -6,7 +6,6 @@
           class="text-lg text-charcoal font-medium w-1/5"
           v-for="column in doanhThuDonViColumns"
           :key="column.id"
-          @click="sortBooks(column.key)"
         >
           {{ column.name }}
         </th>
@@ -68,13 +67,13 @@ export default defineComponent({
     } = modal;
     const { units, doanhThuDonViColumns } = storeToRefs(bookStore);
 
-    const sortBooks = (data: string) => {
-      if (data) {
-        units.value.sort((a, b) => {
-          return a[data] - b[data] || a[data].localeCompare(b[data]);
-        });
-      }
-    };
+    // const sortBooks = (data: string) => {
+    //   if (data) {
+    //     units.value.sort((a, b) => {
+    //       return a[data] - b[data] || a[data].localeCompare(b[data]);
+    //     });
+    //   }
+    // };
     const { convertTimestampToDate, convertPrice } = convertData();
     return {
       hideIcon,
@@ -83,7 +82,7 @@ export default defineComponent({
       currentBookDelete,
       units,
       doanhThuDonViColumns,
-      sortBooks,
+      // sortBooks,
       updateBookModalStatus,
       updateRemoveModalStatus,
       convertTimestampToDate,
@@ -135,5 +134,8 @@ td {
   margin-left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
+}
+.show-detail-button:hover {
+  opacity: 0.9;
 }
 </style>

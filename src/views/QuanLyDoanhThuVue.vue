@@ -27,14 +27,16 @@
     <div>
       <RevenueTableVue />
     </div>
+    <TablePagination />
   </div>
 </template>
 <script lang="ts">
 import TopContentVue from "@/components/quanlykhosach/TopContent.vue";
 import SearchBook from "@/components/quanlykhosach/SearchBook.vue";
-import downArrow from "../../src/assets/image/down-arrow.svg";
-import { useBookStore } from "../stores/booksStore";
 import RevenueTableVue from "@/components/quanlydoanhthu/RevenueTable.vue";
+import TablePagination from "@/components/common/TablePagination.vue";
+import { useBookStore } from "../stores/booksStore";
+import downArrow from "../../src/assets/image/down-arrow.svg";
 import axios from "axios";
 
 export default {
@@ -43,6 +45,7 @@ export default {
     TopContentVue,
     SearchBook,
     RevenueTableVue,
+    TablePagination,
   },
   setup() {
     const title = "Quản lý doanh thu theo đầu sách";

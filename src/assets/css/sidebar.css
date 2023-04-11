@@ -75,3 +75,7 @@
 .ant-menu-item-selected .ant-menu-title-content span::before {
     display: none;
 }
+
+.ant-menu-item-active .ant-menu-title-content span::before {
+    background: white;
+}

@@ -169,4 +169,7 @@ td {
   transform: translateX(-50%);
   white-space: nowrap;
 }
+.show-detail-button:hover {
+  opacity: 0.9;
+}
 </style>

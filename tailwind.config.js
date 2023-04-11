@@ -41,6 +41,9 @@ export default {
           DEFAULT: "#3C9DD2",
           darker: "#002235",
         },
+        red: {
+          DEFAULT: "#ff0000",
+        },
         modal: {
           DEFAULT: "#8c8c8c33",
         },
