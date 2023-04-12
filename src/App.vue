@@ -4,7 +4,7 @@ import SideBarVue from "./components/sidebar/SideBarVue.vue";
 
 <template>
   <div class="flex">
-    <div class="bg-charcoal h-screen">
+    <div class="bg-charcoal">
       <SideBarVue />
     </div>
     <div class="flex-1">

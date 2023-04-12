@@ -54,7 +54,7 @@
         </div>
         <!-- Meta data of book  -->
         <div>
-          <div class="mt-2">
+          <div class="mt-2 relative">
             <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
             <div class="flex justify-between items-center mt-2">
               <div class="flex">
@@ -74,12 +74,18 @@
                   />
                 </label>
               </div>
+              <span
+                class="absolute text-red -bottom-3 text-xs"
+                v-if="error.metadata"
+              >
+                {{ error.metadata }}
+              </span>
             </div>
           </div>
         </div>
         <!-- Nội dung sách  -->
         <div>
-          <div class="mt-2">
+          <div class="mt-2 relative">
             <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
             <div class="flex justify-between items-center mt-2">
               <div class="flex">
@@ -99,15 +105,25 @@
                   />
                 </label>
               </div>
+              <span
+                class="absolute text-red -bottom-3 text-xs"
+                v-if="error.bookcontent"
+              >
+                {{ error.bookcontent }}
+              </span>
             </div>
           </div>
         </div>
         <!-- info -->
-        <div class="flex gap-x-4">
+        <div class="flex gap-x-4 mt-2">
           <div class="w-1/3">
             <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
             <div class="relative mt-2">
-              <select v-model="bookInfo.level" class="select w-full py-1">
+              <select
+                @change="error.level = ''"
+                v-model="bookInfo.level"
+                class="select w-full py-1"
+              >
                 <option value="Cấp 1">Cấp 1</option>
                 <option value="Cấp 2">Cấp 2</option>
                 <option value="Cấp 3">Cấp 3</option>
@@ -119,12 +135,22 @@
                 <span class="triangle_up active:border-b-black"></span>
                 <span class="triangle_down active:border-t-black"></span>
               </div>
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.level"
+              >
+                {{ error.level }}
+              </span>
             </div>
           </div>
           <div class="w-1/3">
             <p class="text-lg text-blue-darker font-bold">Môn học:</p>
             <div class="relative mt-2">
-              <select v-model="bookInfo.subject" class="select w-full py-1">
+              <select
+                @change="error.subject = ''"
+                v-model="bookInfo.subject"
+                class="select w-full py-1"
+              >
                 <option value="Toán">Toán</option>
                 <option value="Ngữ văn">Ngữ văn</option>
                 <option value="Tiếng anh">Tiếng anh</option>
@@ -135,6 +161,12 @@
                 <span class="triangle_up active:border-b-black"></span>
                 <span class="triangle_down active:border-t-black"></span>
               </div>
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.subject"
+              >
+                {{ error.subject }}
+              </span>
             </div>
           </div>
           <div class="w-1/3">
@@ -158,6 +190,12 @@
                   {{ data }}
                 </div>
               </div>
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.program"
+              >
+                {{ error.program }}
+              </span>
             </div>
           </div>
         </div>
@@ -169,18 +207,34 @@
             </p>
             <div class="relative mt-2">
               <input
+                @change="checkPriceValidation(bookInfo, error)"
                 class="select w-full py-1 text-2xs italic"
                 v-model="bookInfo.price"
+                type="number"
               />
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.price"
+              >
+                {{ error.price }}
+              </span>
             </div>
           </div>
           <div class="w-1/2">
             <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
             <div class="relative mt-2">
               <input
+                type="number"
+                @change="checkDiscountValidation(bookInfo, error)"
                 class="select w-full py-1 text-2xs italic"
                 v-model="bookInfo.discount"
               />
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.discount"
+              >
+                {{ error.discount }}
+              </span>
             </div>
           </div>
         </div>
@@ -206,6 +260,11 @@ import uploadIcon from "../../assets/image/upload.svg";
 import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
 import axios from "axios";
+import {
+  checkPriceValidation,
+  checkDiscountValidation,
+  checkValidationBeforeSubmit,
+} from "../../uses/validation";
 export default defineComponent({
   name: "UpdateBookModal",
   setup() {
@@ -232,6 +291,16 @@ export default defineComponent({
       discount: "",
       discountEduso: "",
     });
+    const error = reactive({
+      image: "",
+      metadata: "",
+      bookcontent: "",
+      level: "",
+      subject: "",
+      program: "",
+      price: "",
+      discount: "",
+    });
 
     const previewFiles = (event) => {
       const file = event.target.files[0];
@@ -243,8 +312,9 @@ export default defineComponent({
           previewImage.value = await theReader.result;
         };
         theReader.readAsDataURL(file);
+        error.image = "";
       } else {
-        console.log("File  Không hợp lệ");
+        error.image = "Chỉ hỗ trợ file ảnh";
       }
     };
     const onSubmit = () => {
@@ -252,27 +322,37 @@ export default defineComponent({
 
       // Call API
 
-      // Add book in FE
-      const book = {
-        bookInformation: {
-          image: previewImage.value,
-          title: bookInfo.title,
-          description: bookInfo.description,
-          subDescription: bookInfo.subDescription,
-        },
-        publisher: bookInfo.publisher,
-        listedPrice: bookInfo.price,
-        discountEduso: bookInfo.discountEduso,
-        discount: bookInfo.discount,
-        metaData: metaData.value,
-        content: bookContent.value,
-        level: bookInfo.level,
-        subject: bookInfo.subject,
-        programme: studyProgram.value,
-        bookId: currentBookUpdate.value,
-      };
-      updateBook(book);
-      updateBookModalStatus(false);
+      if (
+        checkValidationBeforeSubmit(
+          metaData,
+          previewImage,
+          bookInfo,
+          studyProgram,
+          bookContent,
+          error
+        )
+      ) {
+        const book = {
+          bookInformation: {
+            image: previewImage.value,
+            title: bookInfo.title,
+            description: bookInfo.description,
+            subDescription: bookInfo.subDescription,
+          },
+          publisher: bookInfo.publisher,
+          listedPrice: bookInfo.price,
+          discountEduso: bookInfo.discountEduso,
+          discount: bookInfo.discount,
+          metaData: metaData.value,
+          content: bookContent.value,
+          level: bookInfo.level,
+          subject: bookInfo.subject,
+          programme: studyProgram.value,
+          bookId: currentBookUpdate.value,
+        };
+        updateBook(book);
+        updateBookModalStatus(false);
+      }
     };
     const uploadMetadata = (event) => {
       const file = event.target.files[0];
@@ -280,8 +360,9 @@ export default defineComponent({
       const docTypes = ["csv", "docx", "doc", "xlsx"];
       if (docTypes.includes(typeFile)) {
         metaData.value = file.name;
+        error.metadata = "";
       } else {
-        console.log("File không hợp lệ");
+        error.metadata = "Chỉ hỗ trợ file tài liệu";
       }
     };
 
@@ -291,8 +372,9 @@ export default defineComponent({
       const docTypes = ["csv", "docx", "doc", "xlsx"];
       if (docTypes.includes(typeFile)) {
         bookContent.value = file.name;
+        error.bookcontent = "";
       } else {
-        console.log("File không hợp lệ");
+        error.bookcontent = "Chỉ hỗ trợ file tài liệu";
       }
     };
 
@@ -364,6 +446,9 @@ export default defineComponent({
       updateAutocompleteProgram,
       updateStudyProgram,
       onSubmit,
+      error,
+      checkPriceValidation,
+      checkDiscountValidation,
     };
   },
   components: {},

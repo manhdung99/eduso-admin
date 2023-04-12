@@ -10,7 +10,7 @@
     <li
       v-for="pagination in paginations"
       :key="pagination"
-      :class="pagination === pageIndex ? 'border-blue text-blue' : ''"
+      :class="pagination === pageIndex ? '!border-blue !text-blue' : ''"
       class="px-4 py-2 border border-grey-lighter hover:text-blue hover:border-blue cursor-pointer"
       @click="updatePageIndex(pagination)"
     >

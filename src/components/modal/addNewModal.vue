@@ -3,7 +3,7 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openAddNewModal"
   >
-    <form @submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit" @keydown.enter="onSubmit">
       <input
         id="book-image"
         ref="fileInput"
@@ -42,7 +42,7 @@
           </div>
           <div class="mt-2">
             <p class="text-blue-darker text-lg font-bold">Bìa sách</p>
-            <div class="flex justify-between items-center mt-2">
+            <div class="flex justify-between items-center mt-2 relative">
               <div class="flex">
                 <span><img :src="attachIcon" alt="icon" /></span>
                 <span class="text-grey-darker text-base italic ml-4"
@@ -79,7 +79,7 @@
         <div>
           <div class="mt-2">
             <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
-            <div class="flex justify-between items-center mt-2">
+            <div class="flex justify-between items-center mt-2 relative">
               <div class="flex items-center">
                 <span><img :src="attachIcon" alt="icon" /></span>
                 <span
@@ -108,6 +108,12 @@
                   />
                 </label>
               </div>
+              <span
+                class="absolute text-red -bottom-2 text-xs"
+                v-if="error.metadata"
+              >
+                {{ error.metadata }}
+              </span>
             </div>
           </div>
         </div>
@@ -115,7 +121,7 @@
         <div>
           <div class="mt-2">
             <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
-            <div class="flex justify-between items-center mt-2">
+            <div class="flex justify-between items-center mt-2 relative">
               <div class="flex items-center">
                 <span><img :src="attachIcon" alt="icon" /></span>
                 <span
@@ -138,15 +144,25 @@
                   <img :src="uploadIcon" alt="icon" />
                 </label>
               </div>
+              <span
+                class="absolute text-red -bottom-2 text-xs"
+                v-if="error.bookcontent"
+              >
+                {{ error.bookcontent }}
+              </span>
             </div>
           </div>
         </div>
         <!-- info -->
-        <div class="flex gap-x-4">
+        <div class="flex gap-x-4 mt-4">
           <div class="w-1/3">
             <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
             <div class="relative mt-2">
-              <select v-model="bookInfo.level" class="select w-full py-1">
+              <select
+                @change="error.level = ''"
+                v-model="bookInfo.level"
+                class="select w-full py-1"
+              >
                 <option value="Cấp 1">Cấp 1</option>
                 <option value="Cấp 2">Cấp 2</option>
                 <option value="Cấp 3">Cấp 3</option>
@@ -158,12 +174,22 @@
                 <span class="triangle_up active:border-b-black"></span>
                 <span class="triangle_down active:border-t-black"></span>
               </div>
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.level"
+              >
+                {{ error.level }}
+              </span>
             </div>
           </div>
           <div class="w-1/3">
             <p class="text-lg text-blue-darker font-bold">Môn học:</p>
             <div class="relative mt-2">
-              <select v-model="bookInfo.subject" class="select w-full py-1">
+              <select
+                @change="error.subject = ''"
+                v-model="bookInfo.subject"
+                class="select w-full py-1"
+              >
                 <option value="Toán">Toán</option>
                 <option value="Ngữ văn">Ngữ văn</option>
                 <option value="Tiếng anh">Tiếng anh</option>
@@ -174,6 +200,12 @@
                 <span class="triangle_up active:border-b-black"></span>
                 <span class="triangle_down active:border-t-black"></span>
               </div>
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.subject"
+              >
+                {{ error.subject }}
+              </span>
             </div>
           </div>
           <div class="w-1/3">
@@ -197,6 +229,12 @@
                   {{ data }}
                 </div>
               </div>
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.program"
+              >
+                {{ error.program }}
+              </span>
             </div>
           </div>
         </div>
@@ -208,18 +246,34 @@
             </p>
             <div class="relative mt-2">
               <input
-                class="select w-full py-1 text-2xs italic"
+                @change="checkPriceValidation(bookInfo, error)"
+                class="select w-full py-1 text-2xs italic no-arrows"
                 v-model="bookInfo.price"
+                type="number"
               />
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.price"
+              >
+                {{ error.price }}
+              </span>
             </div>
           </div>
           <div class="w-1/2">
             <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
             <div class="relative mt-2">
               <input
+                type="number"
+                @change="checkDiscountValidation(bookInfo, error)"
                 class="select w-full py-1 text-2xs italic"
                 v-model="bookInfo.discount"
               />
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.discount"
+              >
+                {{ error.discount }}
+              </span>
             </div>
           </div>
         </div>
@@ -244,6 +298,11 @@ import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
 import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
+import {
+  checkPriceValidation,
+  checkDiscountValidation,
+  checkValidationBeforeSubmit,
+} from "../../uses/validation";
 export default defineComponent({
   name: "AddNewModal",
   setup() {
@@ -265,11 +324,20 @@ export default defineComponent({
       publisher: "",
       level: "",
       subject: "",
-      price: "",
-      discount: "",
+      price: 0,
+      discount: 0,
       discountEduso: "",
     });
-
+    const error = reactive({
+      image: "",
+      metadata: "",
+      bookcontent: "",
+      level: "",
+      subject: "",
+      program: "",
+      price: "",
+      discount: "",
+    });
     const previewFiles = (event) => {
       const file = event.target.files[0];
       const typeFile = file.name.split(".")[1];
@@ -280,8 +348,9 @@ export default defineComponent({
           previewImage.value = await theReader.result;
         };
         theReader.readAsDataURL(file);
+        error.image = "";
       } else {
-        console.log("File  Không hợp lệ");
+        error.image = "Chỉ hỗ trợ file ảnh";
       }
     };
 
@@ -291,8 +360,9 @@ export default defineComponent({
       const docTypes = ["csv", "docx", "doc", "xlsx"];
       if (docTypes.includes(typeFile)) {
         metaData.value = file.name;
+        error.metadata = "";
       } else {
-        console.log("File không hợp lệ");
+        error.metadata = "Chỉ hỗ trợ file tài liệu";
       }
     };
 
@@ -302,12 +372,14 @@ export default defineComponent({
       const docTypes = ["csv", "docx", "doc", "xlsx"];
       if (docTypes.includes(typeFile)) {
         bookContent.value = file.name;
+        error.bookcontent = "";
       } else {
-        console.log("File không hợp lệ");
+        error.bookcontent = "Chỉ hỗ trợ file tài liệu";
       }
     };
 
     const updateAutocompleteProgram = () => {
+      error.program = "";
       if (studyProgram.value.length > 0) {
         programAutocompletes.value = listProgram.filter((data: string) =>
           data.toUpperCase().includes(studyProgram.value.toUpperCase())
@@ -328,38 +400,45 @@ export default defineComponent({
       bookInfo.publisher = "NXB Giáo dục";
       bookInfo.level = "Cấp 1";
       bookInfo.subject = "Ngữ văn";
-      bookInfo.price = "100000";
-      bookInfo.discount = "15";
+      bookInfo.price = 100000;
+      bookInfo.discount = 15;
       bookInfo.discountEduso = "123456";
       studyProgram.value = "IELTS";
     });
 
     const onSubmit = () => {
-      // Validate
-
-      // Call API
-
-      // Add book in FE
-      const book = {
-        bookInformation: {
-          image: previewImage.value,
-          title: bookInfo.title,
-          description: bookInfo.description,
-          subDescription: bookInfo.subDescription,
-        },
-        publisher: bookInfo.publisher,
-        listedPrice: bookInfo.price,
-        discountEduso: bookInfo.discountEduso,
-        discount: bookInfo.discount,
-        metaData: metaData.value,
-        content: bookContent.value,
-        level: bookInfo.level,
-        subject: bookInfo.subject,
-        programme: studyProgram.value,
-        bookId: Math.floor(Math.random() * 1000),
-      };
-      addBook(book);
-      updateAddNewModalStatus(false);
+      // If all input values are present, add book
+      if (
+        checkValidationBeforeSubmit(
+          metaData,
+          previewImage,
+          bookInfo,
+          studyProgram,
+          bookContent,
+          error
+        )
+      ) {
+        const book = {
+          bookInformation: {
+            image: previewImage.value,
+            title: bookInfo.title,
+            description: bookInfo.description,
+            subDescription: bookInfo.subDescription,
+          },
+          publisher: bookInfo.publisher,
+          listedPrice: bookInfo.price,
+          discountEduso: bookInfo.discountEduso,
+          discount: bookInfo.discount,
+          metaData: metaData.value,
+          content: bookContent.value,
+          level: bookInfo.level,
+          subject: bookInfo.subject,
+          programme: studyProgram.value,
+          bookId: Math.floor(Math.random() * 1000),
+        };
+        addBook(book);
+        updateAddNewModalStatus(false);
+      }
     };
 
     return {
@@ -381,6 +460,9 @@ export default defineComponent({
       updateAutocompleteProgram,
       updateStudyProgram,
       onSubmit,
+      error,
+      checkPriceValidation,
+      checkDiscountValidation,
     };
   },
   components: {},
