@@ -20,7 +20,12 @@
           <div class="flex flex items-center">
             <div class="text-xl text-charcoal font-medium mr-3">From:</div>
             <div class="relative">
-              <input class="input text-base" type="date" v-model="fromDate" />
+              <input
+                class="input text-base"
+                type="date"
+                v-model="fromDate"
+                lang="en-US"
+              />
               <div
                 class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
               >
@@ -38,7 +43,12 @@
           <div class="flex flex items-center">
             <div class="text-xl text-charcoal font-medium mx-3">To:</div>
             <div class="relative">
-              <input class="input text-base" type="date" v-model="toDate" />
+              <input
+                class="input text-base"
+                type="date"
+                v-model="toDate"
+                lang="en-US"
+              />
               <div
                 class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
               >
