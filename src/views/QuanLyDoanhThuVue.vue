@@ -1,21 +1,21 @@
 <template>
-  <div class="px-4">
+  <div class="px-2 2xl:px-4">
     <TopContentVue :title="title" :action="action" />
-    <div class="px-4 flex items-center">
-      <div class="w-2/3">
+    <div class="px-0 lg:px-4 flex items-center flex-wrap lg:flex-nowrap">
+      <div class="w-full lg:w-2/3">
         <SearchBook />
       </div>
-      <div class="w-1/3 text-grey pl-12 flex justify-between gap-x-4">
-        <div class="relative w-1/2">
-          <select class="input w-full">
+      <div class="w-1/3 text-grey pl-8 2xl:pl-12 flex gap-x-4">
+        <div class="relative">
+          <select class="input w-full pr-7">
             <option>Lọc theo môn</option>
           </select>
           <span class="absolute right-2 top-1/2 -translate-y-1/2">
             <img :src="downArrow" alt="icon" />
           </span>
         </div>
-        <div class="relative w-1/2">
-          <select class="input w-full">
+        <div class="relative">
+          <select class="input w-full pr-7">
             <option>Lọc theo đơn vị</option>
           </select>
           <span class="absolute right-2 top-1/2 -translate-y-1/2">

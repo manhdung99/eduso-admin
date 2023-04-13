@@ -1,6 +1,8 @@
 <template>
-  <div class="flex justify-between border-b border-grey py-6 px-3">
-    <div class="flex items-center">
+  <div
+    class="flex justify-between border-b border-grey py-6 pr-3 pl-12 xl:pl-3 flex-wrap md:flex-nowrap gap-y-4"
+  >
+    <div class="flex items-center w-full md:w-auto">
       <h2 class="text-2xl text-charcoal-darker font-bold">{{ title }}</h2>
     </div>
     <div class="flex gap-x-6">
@@ -76,6 +78,7 @@ export default defineComponent({
   border-radius: 5px;
   align-items: center;
   font-size: 18px;
+  white-space: nowrap;
 }
 .add-new-button {
   color: white;
@@ -84,5 +87,14 @@ export default defineComponent({
   font-size: 18px;
   font-weight: 500;
   padding: 10px 32px;
+  white-space: nowrap;
+}
+@media screen and (max-width: 785px) {
+  .help-button {
+    padding: 0 16px;
+  }
+  .add-new-button {
+    padding: 10px 18px;
+  }
 }
 </style>

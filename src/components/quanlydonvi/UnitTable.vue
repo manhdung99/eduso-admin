@@ -96,23 +96,6 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.table-head-wrapper {
-  background: #f9f9f9;
-  padding: 22px 30px;
-}
-th {
-  height: 100px;
-  text-align: left;
-}
-thead th:first-child {
-  padding-left: 16px;
-}
-tbody tr td:first-child {
-  padding-left: 16px;
-}
-td {
-  height: 105px;
-}
 .book-title {
   white-space: nowrap;
   width: 150px;

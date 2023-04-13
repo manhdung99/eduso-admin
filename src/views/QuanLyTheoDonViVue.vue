@@ -1,11 +1,11 @@
 <template>
   <div class="px-4">
     <TopContentVue :title="title" :action="action" />
-    <div class="px-4 flex items-center">
-      <div class="w-2/3">
+    <div class="px-0 lg:px-4 flex items-center flex-wrap lg:flex-nowrap">
+      <div class="w-full lg:w-2/3">
         <SearchBook />
       </div>
-      <div class="w-1/3 text-grey relative pl-12">
+      <div class="w-1/3 text-grey relative pl-8 2xl:pl-12">
         <select class="input w-full">
           <option>Lọc theo tỉnh / trường / lớp</option>
         </select>

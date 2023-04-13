@@ -1,6 +1,6 @@
 <template>
-  <div class="flex py-6">
-    <div class="w-9/20 relative">
+  <div class="flex py-6 justify-between flex-wrap">
+    <div class="w-4/5 md:w-9/20 relative mb-6 md:mb-0">
       <input
         @input="searchData"
         class="input search-input"
@@ -12,9 +12,13 @@
       </span>
       <searchBookModalVue />
     </div>
-    <div class="w-11/20 flex items-center">
-      <div class="w-1/2 flex flex items-center">
-        <div class="text-xl text-charcoal font-medium mx-3">From:</div>
+    <div class="w-full md:w-11/20 flex items-center">
+      <div class="flex items-center">
+        <div
+          class="text-base 2xl:text-lg text-charcoal font-medium mx-2 2xl:px-3"
+        >
+          From:
+        </div>
         <div class="relative">
           <input class="input text-base" type="date" v-model="fromDate" />
           <div
@@ -31,8 +35,12 @@
           </div>
         </div>
       </div>
-      <div class="w-1/2 flex flex items-center">
-        <div class="text-xl text-charcoal font-medium mx-3">To:</div>
+      <div class="flex items-center">
+        <div
+          class="text-base 2xl:text-lg text-charcoal font-medium mx-2 2xl:px-3"
+        >
+          To:
+        </div>
         <div class="relative">
           <input class="input text-base" type="date" v-model="toDate" />
           <div
@@ -147,23 +155,6 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.help-button {
-  color: #355d73;
-  border: 2px solid #355d73;
-  display: flex;
-  padding: 0 28px;
-  border-radius: 5px;
-  align-items: center;
-  font-size: 18px;
-}
-.add-new-button {
-  color: white;
-  background: #26a433;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: 500;
-  padding: 10px 32px;
-}
 .search-input {
   width: 100%;
   max-width: 393px;

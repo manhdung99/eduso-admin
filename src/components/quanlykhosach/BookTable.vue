@@ -3,7 +3,7 @@
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th
-          class="text-lg text-charcoal font-medium w-1/8"
+          class="text-lg text-charcoal font-medium md:w-1/8 pl-1"
           v-for="column in khoSachColumns"
           :key="column.id"
           :class="{
@@ -50,11 +50,11 @@
         <td>
           <span class="text-lg">{{ book.discountEduso }}</span>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{ book.discount }}%</span>
         </td>
         <td class="">
-          <div class="flex gap-x-4">
+          <div class="flex gap-x-2 lg:gap-x-4">
             <img class="cursor-pointer" :src="hideIcon" alt="icon" />
             <img
               class="cursor-pointer"
@@ -129,24 +129,6 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.table-head-wrapper {
-  background: #f9f9f9;
-  padding: 22px 30px;
-}
-th {
-  height: 100px;
-  text-align: left;
-  padding: 0 4px;
-}
-thead th:first-child {
-  padding-left: 16px;
-}
-tbody tr td:first-child {
-  padding-left: 16px;
-}
-td {
-  height: 120px;
-}
 .book-title {
   white-space: nowrap;
   width: 150px;

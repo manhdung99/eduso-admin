@@ -210,19 +210,9 @@ export default defineComponent({
   font-weight: 500;
   padding: 10px 32px;
 }
-.table-head-wrapper {
-  background: #f9f9f9;
-  padding: 22px 30px;
-}
 th {
   height: 60px;
   text-align: left;
-}
-thead th:first-child {
-  padding-left: 16px;
-}
-tbody tr td:first-child {
-  padding-left: 16px;
 }
 td {
   height: 80px;

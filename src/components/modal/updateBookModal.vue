@@ -23,7 +23,7 @@
         @input="uploadBookContent($event)"
         class="hidden"
       />
-      <div class="add-book-modal">
+      <div class="update-book-modal">
         <div class="flex border-b border-gray-lighter pb-4 relative">
           <h3 class="text-xl font-bold text-blue-lighter">Chỉnh sửa sách</h3>
           <span
@@ -117,7 +117,9 @@
         <!-- info -->
         <div class="flex gap-x-4 mt-2">
           <div class="w-1/3">
-            <p class="text-lg text-blue-darker font-bold">Cấp học:</p>
+            <p class="text-base md:text-lg text-blue-darker font-bold">
+              Cấp học:
+            </p>
             <div class="relative mt-2">
               <select
                 @change="error.level = ''"
@@ -144,7 +146,9 @@
             </div>
           </div>
           <div class="w-1/3">
-            <p class="text-lg text-blue-darker font-bold">Môn học:</p>
+            <p class="text-base md:text-lg text-blue-darker font-bold">
+              Môn học:
+            </p>
             <div class="relative mt-2">
               <select
                 @change="error.subject = ''"
@@ -170,7 +174,9 @@
             </div>
           </div>
           <div class="w-1/3">
-            <p class="text-lg text-blue-darker font-bold">Chương trình:</p>
+            <p class="text-base md:text-lg text-blue-darker font-bold">
+              Chương trình:
+            </p>
             <div class="relative mt-2">
               <input
                 @input="updateAutocompleteProgram"
@@ -202,7 +208,7 @@
         <!-- Price  -->
         <div class="flex gap-x-4 mt-4">
           <div class="w-1/2">
-            <p class="text-lg text-blue-darker font-bold">
+            <p class="text-base md:text-lg text-blue-darker font-bold">
               Giá niêm yết (VND):
             </p>
             <div class="relative mt-2">
@@ -221,7 +227,9 @@
             </div>
           </div>
           <div class="w-1/2">
-            <p class="text-lg text-blue-darker font-bold">Mức giảm giá (%):</p>
+            <p class="text-base md:text-lg text-blue-darker font-bold">
+              Mức giảm giá (%):
+            </p>
             <div class="relative mt-2">
               <input
                 type="number"
@@ -472,7 +480,7 @@ export default defineComponent({
 .change-image-btn:hover {
   background: #3b4145;
 }
-.add-book-modal {
+.update-book-modal {
   background: white;
   position: absolute;
   top: 50%;

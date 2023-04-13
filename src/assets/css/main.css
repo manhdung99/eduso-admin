@@ -3,4 +3,5 @@
 @tailwind utilities;
 
 @import "sidebar.css";
-@import "input.css"
+@import "input.css";
+@import "table.css";
