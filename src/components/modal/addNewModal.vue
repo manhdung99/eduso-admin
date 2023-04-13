@@ -159,7 +159,9 @@
         <!-- info -->
         <div class="flex gap-x-2 md:gap-x-4 mt-4">
           <div class="w-1/3">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Cấp học:
             </p>
             <div class="relative mt-2">
@@ -188,7 +190,9 @@
             </div>
           </div>
           <div class="w-1/3">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Môn học:
             </p>
             <div class="relative mt-2">
@@ -216,7 +220,9 @@
             </div>
           </div>
           <div class="w-1/3">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Chương trình:
             </p>
             <div class="relative mt-2">
@@ -250,7 +256,9 @@
         <!-- Price  -->
         <div class="flex gap-x-4 mt-4">
           <div class="w-1/2">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Giá niêm yết (VND):
             </p>
             <div class="relative mt-2">
@@ -269,7 +277,9 @@
             </div>
           </div>
           <div class="w-1/2">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Mức giảm giá (%):
             </p>
             <div class="relative mt-2">
@@ -525,9 +535,15 @@ export default defineComponent({
   position: absolute;
   background: white;
 }
-@media screen and (max-width: 875px) {
+@media screen and (max-width: 785px) {
   .add-book-modal {
-    min-width: 385px;
+    min-width: 300px;
+  }
+}
+@media screen and (max-width: 424px) {
+  .add-book-modal {
+    width: 350px;
+    padding: 16px 16px;
   }
 }
 </style>

@@ -21,11 +21,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Firefox for Android */
 input[type="date"]::-moz-calendar-picker-indicator {
     display: none;
+    appearance: none;
 }
 
 /* Microsoft Edge for Android */
 input[type="date"]::-ms-clear {
     display: none;
+    appearance: none;
 }
 
 .select {

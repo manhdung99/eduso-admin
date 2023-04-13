@@ -26,7 +26,7 @@
         class="hidden"
         accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
       />
-      <div class="update-book-modal">
+      <div class="update-book-modal max-h-screen">
         <div class="flex border-b border-gray-lighter pb-4 relative">
           <h3 class="text-xl font-bold text-blue-lighter">Chỉnh sửa sách</h3>
           <span
@@ -120,7 +120,9 @@
         <!-- info -->
         <div class="flex gap-x-4 mt-2">
           <div class="w-1/3">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Cấp học:
             </p>
             <div class="relative mt-2">
@@ -149,7 +151,9 @@
             </div>
           </div>
           <div class="w-1/3">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Môn học:
             </p>
             <div class="relative mt-2">
@@ -177,7 +181,9 @@
             </div>
           </div>
           <div class="w-1/3">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Chương trình:
             </p>
             <div class="relative mt-2">
@@ -211,7 +217,9 @@
         <!-- Price  -->
         <div class="flex gap-x-4 mt-4">
           <div class="w-1/2">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Giá niêm yết (VND):
             </p>
             <div class="relative mt-2">
@@ -230,7 +238,9 @@
             </div>
           </div>
           <div class="w-1/2">
-            <p class="text-base md:text-lg text-blue-darker font-bold">
+            <p
+              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+            >
               Mức giảm giá (%):
             </p>
             <div class="relative mt-2">
@@ -492,5 +502,12 @@ export default defineComponent({
   padding: 16px 24px;
   border-radius: 10px;
   min-width: 470px;
+}
+@media screen and (max-width: 424px) {
+  .update-book-modal {
+    padding: 16px 16px;
+    min-width: 300px;
+    width: 350px !important;
+  }
 }
 </style>
