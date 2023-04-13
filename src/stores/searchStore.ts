@@ -4,6 +4,7 @@ export const useSearchStore = defineStore("searchStore", {
   state: () => ({
     books: [],
     authors: [],
+    openSearchArea: false,
   }),
   getters: {},
   actions: {
@@ -12,6 +13,9 @@ export const useSearchStore = defineStore("searchStore", {
     },
     getAuthors(data) {
       this.authors = data;
+    },
+    updateSearchAreaStatus(status) {
+      this.openSearchArea = status;
     },
   },
 });

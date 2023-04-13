@@ -1,6 +1,9 @@
 <template>
-  <div class="flex py-6 justify-between flex-wrap">
-    <div class="w-4/5 md:w-9/20 relative mb-6 md:mb-0">
+  <div
+    @click.self="updateSearchAreaStatus(false)"
+    class="flex py-6 justify-between flex-wrap"
+  >
+    <div class="w-auto md:w-9/20 relative mb-6 md:mb-0">
       <input
         @input="searchData"
         class="input search-input"
@@ -75,11 +78,12 @@ export default defineComponent({
     const fromDate = ref("2023-01-01");
     const toDate = ref("2023-04-04");
     const searchStore = useSearchStore();
-    const { getBooks, getAuthors } = searchStore;
+    const { getBooks, getAuthors, updateSearchAreaStatus } = searchStore;
     const searchText = ref("");
     const { dateFormater } = convertData();
     const searchData = debounce(() => {
       if (searchText.value.length > 0) {
+        updateSearchAreaStatus(true);
         const fetchBooks = async () => {
           try {
             const response = await axios.get(
@@ -135,6 +139,7 @@ export default defineComponent({
       searchData,
       searchText,
       dateFormater,
+      updateSearchAreaStatus,
     };
   },
   methods: {
@@ -160,5 +165,10 @@ export default defineComponent({
   max-width: 393px;
   padding-bottom: 14px;
   padding-top: 14px;
+}
+@media screen and (max-width: 785px) {
+  .search-input {
+    width: 300px;
+  }
 }
 </style>

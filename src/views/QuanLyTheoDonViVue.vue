@@ -21,8 +21,8 @@
   </div>
 </template>
 <script lang="ts">
-import TopContentVue from "@/components/quanlykhosach/TopContent.vue";
-import SearchBook from "@/components/quanlykhosach/SearchBook.vue";
+import TopContentVue from "@/components/common/TopContent.vue";
+import SearchBook from "@/components/common/SearchBook.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import UnitTable from "@/components/quanlydonvi/UnitTable.vue";
 import { useBookStore } from "../stores/booksStore";

@@ -23,8 +23,8 @@
   </div>
 </template>
 <script lang="ts">
-import TopContentVue from "@/components/quanlykhosach/TopContent.vue";
-import SearchBook from "@/components/quanlykhosach/SearchBook.vue";
+import TopContentVue from "@/components/common/TopContent.vue";
+import SearchBook from "@/components/common/SearchBook.vue";
 import BookTableVue from "@/components/quanlykhosach/BookTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";

@@ -18,6 +18,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     -webkit-appearance: none;
 }
 
+/* Firefox for Android */
+input[type="date"]::-moz-calendar-picker-indicator {
+    display: none;
+}
+
+/* Microsoft Edge for Android */
+input[type="date"]::-ms-clear {
+    display: none;
+}
+
 .select {
     border: 1px solid #8799A5;
     border-radius: 3px;
@@ -82,6 +92,12 @@ input[type="number"]::-webkit-outer-spin-button {
     .input {
         height: 40px;
         padding-left: 12px;
+    }
+}
+
+@media screen and (max-width: 785px) {
+    .input[type="date"] {
+        font-size: 12px;
     }
 }
 

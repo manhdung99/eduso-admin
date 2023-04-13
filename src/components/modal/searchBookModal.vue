@@ -6,7 +6,12 @@
         <span><img :src="rightArrowIcon" alt="icon" /></span>
       </div>
       <div class="list-book-wrapper">
-        <div v-for="book in books" :key="book.bookId" class="flex mb-5">
+        <div
+          v-for="book in books"
+          :key="book.bookId"
+          class="flex mb-5 cursor-pointer"
+          @click="updateBookModalStatus(true, book.bookId)"
+        >
           <div class="mr-4">
             <img class="book-image" :src="book.bookInformation.image" alt="" />
           </div>
@@ -48,17 +53,21 @@ import { defineComponent } from "vue";
 import rightArrowIcon from "../../assets/image/right-arrow.svg";
 import searchIcon from "../../assets/image/search.svg";
 import { useSearchStore } from "../../stores/searchStore";
+import { useModalStore } from "../../stores/modalStore";
 import { storeToRefs } from "pinia";
 export default defineComponent({
   name: "SearchBookModal",
   setup() {
     const searchStore = useSearchStore();
     const { authors, books } = storeToRefs(searchStore);
+    const modal = useModalStore();
+    const { updateBookModalStatus } = modal;
     return {
       rightArrowIcon,
       searchIcon,
       authors,
       books,
+      updateBookModalStatus,
     };
   },
 });
