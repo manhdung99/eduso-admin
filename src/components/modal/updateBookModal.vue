@@ -10,18 +10,21 @@
         type="file"
         @input="previewFiles($event)"
         class="hidden"
+        accept="image/*"
       />
       <input
         id="book-metadata"
         type="file"
         @input="uploadMetadata($event)"
         class="hidden"
+        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
       />
       <input
         id="book-content"
         type="file"
         @input="uploadBookContent($event)"
         class="hidden"
+        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
       />
       <div class="update-book-modal">
         <div class="flex border-b border-gray-lighter pb-4 relative">
