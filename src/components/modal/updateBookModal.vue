@@ -507,7 +507,8 @@ export default defineComponent({
   .update-book-modal {
     padding: 16px 16px;
     min-width: 300px;
-    width: 350px !important;
+    width: 350px;
+    overflow-y: auto;
   }
 }
 </style>

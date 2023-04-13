@@ -544,6 +544,7 @@ export default defineComponent({
   .add-book-modal {
     width: 350px;
     padding: 16px 16px;
+    overflow-y: auto;
   }
 }
 </style>

@@ -18,17 +18,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     -webkit-appearance: none;
 }
 
-/* Firefox for Android */
-input[type="date"]::-moz-calendar-picker-indicator {
-    display: none;
-    appearance: none;
-}
-
-/* Microsoft Edge for Android */
-input[type="date"]::-ms-clear {
-    display: none;
-    appearance: none;
-}
 
 .select {
     border: 1px solid #8799A5;
