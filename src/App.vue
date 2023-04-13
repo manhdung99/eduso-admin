@@ -3,7 +3,7 @@
     <div
       @click.self="openSidebar = false"
       :class="openSidebar ? 'show' : ''"
-      class="side-bar-wrapper"
+      class="side-bar-wrapper min-h-screen"
     >
       <div
         @click="openSidebar = false"
