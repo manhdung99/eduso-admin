@@ -20,7 +20,7 @@ td {
     height: 105px;
 }
 
-@media screen and (max-width:785px) {
+@media screen and (max-width:767px) {
     th {
         min-width: 100px;
     }

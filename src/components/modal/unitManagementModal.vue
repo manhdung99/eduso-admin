@@ -3,7 +3,7 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openUnitManagementModal"
   >
-    <div class="management-book-modal">
+    <div class="management-modal">
       <div class="flex border-b border-gray-lighter pb-4 relative">
         <h3 class="text-xl font-bold text-blue-lighter">
           Thống kê doanh thu theo đầu sách của
@@ -15,7 +15,7 @@
         /></span>
       </div>
       <!-- Date and export excel file  -->
-      <div class="flex mt-6 justify-between">
+      <div class="flex mt-6 justify-between flex-wrap md:flex-nowrap">
         <div class="flex">
           <div class="flex flex items-center">
             <div class="text-xl text-charcoal font-medium mr-3">From:</div>
@@ -64,7 +64,7 @@
             </div>
           </div>
         </div>
-        <div>
+        <div class="flex justify-center w-full mt-4 md:mt-0 md:justify-end">
           <button class="export-excel-btn hover:opacity-90">Xuất Excel</button>
         </div>
       </div>
@@ -86,7 +86,7 @@
           >
             <td>{{ unit.id }}</td>
             <td>{{ unit.name }}</td>
-            <td>{{ unit.number }}</td>
+            <td class="text-center">{{ unit.number }}</td>
             <td>{{ convertPrice(unit.totalPrice) }}</td>
           </tr>
         </tbody>
@@ -202,41 +202,6 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.management-book-modal {
-  background: white;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  min-width: 1000px;
-  max-width: 1000px;
-}
-.export-excel-btn {
-  color: white;
-  background: #26a433;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: 500;
-  padding: 10px 32px;
-}
-th {
-  height: 60px;
-  text-align: left;
-}
-td {
-  height: 80px;
-}
-.back-button {
-  background: #c1272c;
-  color: white;
-  font-size: 16px;
-  padding: 8px 20px;
-  border-radius: 5px;
-}
-.back-button:hover {
-  opacity: 0.8;
-}
 .input {
   height: 44px;
 }

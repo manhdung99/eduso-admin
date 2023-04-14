@@ -1,9 +1,9 @@
 <template>
-  <table class="w-full">
+  <table class="w-full unit-management-table">
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th
-          class="text-lg text-charcoal font-medium w-1/5"
+          class="text-lg text-charcoal font-medium"
           v-for="column in doanhThuDonViColumns"
           :key="column.id"
         >
@@ -21,10 +21,10 @@
         <td class="text-lg">
           {{ convertPrice(unit.revenue) }}
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{ unit.numberDownload }}</span>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{
             convertTimestampToDate(unit.startDate)
           }}</span>

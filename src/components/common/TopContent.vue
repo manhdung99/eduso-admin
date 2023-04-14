@@ -93,7 +93,7 @@ export default defineComponent({
   padding: 10px 32px;
   white-space: nowrap;
 }
-@media screen and (max-width: 785px) {
+@media screen and (max-width: 1023px) {
   .help-button {
     padding: 0 16px;
   }

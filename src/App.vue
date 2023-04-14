@@ -67,7 +67,7 @@ export default defineComponent({
     left: 20px;
   }
 }
-@media screen and (max-width: 785px) {
+@media screen and (max-width: 767px) {
   .side-bar-icon {
     top: 28px;
   }

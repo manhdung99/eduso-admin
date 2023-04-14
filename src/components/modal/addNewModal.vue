@@ -535,7 +535,7 @@ export default defineComponent({
   position: absolute;
   background: white;
 }
-@media screen and (max-width: 785px) {
+@media screen and (max-width: 767px) {
   .add-book-modal {
     min-width: 300px;
   }

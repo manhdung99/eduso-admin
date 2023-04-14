@@ -1,0 +1,88 @@
+.management-modal {
+    background: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+}
+
+.export-excel-btn {
+    color: white;
+    background: #26a433;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 32px;
+}
+
+.table-head-wrapper {
+    background: #f9f9f9;
+    padding: 22px 30px;
+}
+
+th {
+    height: 60px;
+    text-align: left;
+}
+
+thead th:first-child {
+    padding-left: 16px;
+}
+
+tbody tr td:first-child {
+    padding-left: 16px;
+}
+
+td {
+    height: 80px;
+}
+
+.back-button {
+    background: #c1272c;
+    color: white;
+    font-size: 16px;
+    padding: 8px 20px;
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    opacity: 0.8;
+}
+
+@media screen and (min-width:1024px) {
+    .management-modal {
+        min-width: 1000px;
+    }
+}
+
+@media screen and (min-width:768px) {
+    .management-modal {
+        min-width: 700px;
+    }
+}
+
+@media screen and (max-width:767px) {
+    .unit-management-table th {
+        min-width: 150px;
+    }
+
+}
+
+@media screen and (max-width:426px) {
+    .management-modal {
+        position: fixed;
+        top: 4px;
+        bottom: 4px;
+        transform: translate(0, 0);
+        left: 2px;
+        right: 2px;
+        overflow-y: auto;
+        min-width: 300px;
+        padding: 16px 12px;
+    }
+
+    .export-excel-btn {
+        padding: 8px 16px;
+    }
+}

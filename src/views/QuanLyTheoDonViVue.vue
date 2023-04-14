@@ -5,8 +5,10 @@
       <div class="w-full lg:w-2/3">
         <SearchBook />
       </div>
-      <div class="w-1/3 text-grey relative pl-8 2xl:pl-12">
-        <select class="input w-full">
+      <div
+        class="lg:w-1/3 text-grey relative md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0"
+      >
+        <select class="input w-full pr-8 lg:pr-0">
           <option>Lọc theo tỉnh / trường / lớp</option>
         </select>
         <span class="absolute right-2 top-1/2 -translate-y-1/2">
@@ -14,7 +16,7 @@
         </span>
       </div>
     </div>
-    <div>
+    <div class="overflow-y-auto">
       <UnitTable />
     </div>
     <TablePagination />

@@ -5,7 +5,9 @@
       <div class="w-full lg:w-2/3">
         <SearchBook />
       </div>
-      <div class="w-1/3 text-grey pl-8 2xl:pl-12 flex gap-x-4">
+      <div
+        class="lg:w-1/3 text-grey pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0"
+      >
         <div class="relative">
           <select class="input w-full pr-7">
             <option>Lọc theo môn</option>
@@ -24,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="overflow-y-auto">
       <RevenueTableVue />
     </div>
     <TablePagination />

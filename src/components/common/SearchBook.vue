@@ -176,7 +176,7 @@ export default defineComponent({
   padding-bottom: 14px;
   padding-top: 14px;
 }
-@media screen and (max-width: 785px) {
+@media screen and (max-width: 767px) {
   .search-input {
     width: 300px;
   }
