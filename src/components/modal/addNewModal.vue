@@ -543,11 +543,11 @@ export default defineComponent({
 @media screen and (max-width: 424px) {
   .add-book-modal {
     position: fixed;
-    top: 0;
-    bottom: 0;
+    top: 4px;
+    bottom: 4px;
     transform: translate(0, 0);
-    left: 0;
-    right: 0;
+    left: 2px;
+    right: 2px;
     overflow-y: auto;
     padding: 16px 12px;
     min-width: 300px;
