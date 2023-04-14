@@ -513,6 +513,7 @@ export default defineComponent({
     right: 0;
     overflow-y: auto;
     min-width: 300px;
+    padding: 16px 12px;
   }
 }
 </style>

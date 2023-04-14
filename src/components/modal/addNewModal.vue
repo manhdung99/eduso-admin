@@ -549,6 +549,7 @@ export default defineComponent({
     left: 0;
     right: 0;
     overflow-y: auto;
+    padding: 16px 12px;
     min-width: 300px;
   }
   .book-info-wrapper {
