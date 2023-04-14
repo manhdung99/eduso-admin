@@ -21,20 +21,20 @@
     padding: 22px 30px;
 }
 
-th {
+.management-modal th {
     height: 60px;
     text-align: left;
 }
 
-thead th:first-child {
+.management-modal thead th:first-child {
     padding-left: 16px;
 }
 
-tbody tr td:first-child {
+.management-modal tbody tr td:first-child {
     padding-left: 16px;
 }
 
-td {
+.management-modal td {
     height: 80px;
 }
 
