@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <div class="overflow-y-auto">
+    <div class="overflow-y-auto mb-4">
       <RevenueTableVue />
     </div>
     <TablePagination />

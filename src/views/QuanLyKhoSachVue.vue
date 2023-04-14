@@ -16,7 +16,7 @@
         </span>
       </div>
     </div>
-    <div class="overflow-auto">
+    <div class="overflow-auto mb-4">
       <BookTableVue />
     </div>
     <TablePagination />

@@ -1,5 +1,5 @@
 <template>
-  <ul v-if="paginations.length > 0" class="flex justify-center my-4">
+  <ul v-if="paginations.length > 1" class="flex justify-center mb-4">
     <li
       v-if="pageIndex !== 1"
       @click="updatePagination(pageIndex - 1)"

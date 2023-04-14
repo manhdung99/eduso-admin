@@ -16,7 +16,7 @@
         </span>
       </div>
     </div>
-    <div class="overflow-y-auto">
+    <div class="overflow-y-auto mb-4">
       <UnitTable />
     </div>
     <TablePagination />
@@ -30,6 +30,7 @@ import UnitTable from "@/components/quanlydonvi/UnitTable.vue";
 import { useBookStore } from "../stores/booksStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import axios from "axios";
+import { usePaginationStore } from "@/stores/paginationStore";
 export default {
   name: "QuanLyKhoSach",
   components: {
@@ -42,7 +43,9 @@ export default {
     const title = "Quản lý doanh thu theo đơn vị";
     const action = "Export";
     const bookStore = useBookStore();
+    const pagination = usePaginationStore();
     const { getUnits, getDoanhThuDonViColumn } = bookStore;
+    const { getPagination } = pagination;
     axios
       .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/3")
       .then((response) => {
@@ -85,6 +88,7 @@ export default {
       },
     ];
     getUnits(listUnit);
+    getPagination(1);
     return {
       title,
       downArrow,
