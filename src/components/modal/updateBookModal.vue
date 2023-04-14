@@ -505,9 +505,12 @@ export default defineComponent({
 }
 @media screen and (max-width: 424px) {
   .update-book-modal {
-    padding: 16px 16px;
-    min-width: 300px;
-    width: 350px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    transform: translate(0, 0);
+    left: 0;
+    right: 0;
     overflow-y: auto;
   }
 }
