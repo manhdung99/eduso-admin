@@ -28,7 +28,9 @@
       />
       <div class="update-book-modal max-h-screen">
         <div class="flex border-b border-gray-lighter pb-4 relative">
-          <h3 class="text-xl font-bold text-blue-lighter">Chỉnh sửa sách</h3>
+          <h3 class="text-xl font-bold text-blue-lighter w-4/5">
+            Chỉnh sửa sách
+          </h3>
           <span
             @click="updateBookModalStatus(false)"
             class="absolute right-0 cursor-pointer"

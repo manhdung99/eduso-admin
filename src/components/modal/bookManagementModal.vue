@@ -5,7 +5,7 @@
   >
     <div class="management-modal">
       <div class="flex border-b border-gray-lighter pb-4 relative">
-        <h3 class="text-base md:text-xl font-bold text-blue-lighter">
+        <h3 class="text-base md:text-xl font-bold text-blue-lighter w-4/5">
           Thống kê doanh thu theo từng đơn hàng
         </h3>
         <span

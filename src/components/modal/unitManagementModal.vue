@@ -5,7 +5,7 @@
   >
     <div class="management-modal">
       <div class="flex border-b border-gray-lighter pb-4 relative">
-        <h3 class="text-xl font-bold text-blue-lighter">
+        <h3 class="text-xl font-bold text-blue-lighter w-4/5">
           Thống kê doanh thu theo đầu sách của
         </h3>
         <span
@@ -69,28 +69,30 @@
         </div>
       </div>
       <!-- Table  -->
-      <table class="w-full mt-8">
-        <thead class="table-head-wrapper">
-          <tr class="w-full text-lg text-charcoal font-medium">
-            <th class="w-1/6">Mã sách</th>
-            <th class="w-1/3">Tên sách</th>
-            <th class="w-1/3">Số lượng</th>
-            <th class="w-1/6">Tổng tiền</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="unit in units"
-            :key="unit.id"
-            class="border-b border-grey-lighter text-lg text-charcoal"
-          >
-            <td>{{ unit.id }}</td>
-            <td>{{ unit.name }}</td>
-            <td class="text-center">{{ unit.number }}</td>
-            <td>{{ convertPrice(unit.totalPrice) }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="overflow-x-auto">
+        <table class="w-full mt-8">
+          <thead class="table-head-wrapper">
+            <tr class="w-full text-lg text-charcoal font-medium">
+              <th class="w-1/6">Mã sách</th>
+              <th class="w-1/3">Tên sách</th>
+              <th class="w-1/3">Số lượng</th>
+              <th class="w-1/6">Tổng tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="unit in units"
+              :key="unit.id"
+              class="border-b border-grey-lighter text-lg text-charcoal"
+            >
+              <td>{{ unit.id }}</td>
+              <td>{{ unit.name }}</td>
+              <td class="text-center">{{ unit.number }}</td>
+              <td>{{ convertPrice(unit.totalPrice) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <div class="flex justify-end mt-6">
         <button @click="updateUnitManagementStatus(false)" class="back-button">
           Quay lại
