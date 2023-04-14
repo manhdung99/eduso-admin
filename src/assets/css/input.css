@@ -16,6 +16,7 @@ input[type="date"]::-webkit-inner-spin-button,
 input[type="date"]::-webkit-calendar-picker-indicator {
     display: none;
     -webkit-appearance: none;
+    background: white;
 }
 
 
@@ -24,6 +25,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border-radius: 3px;
     padding-left: 24px;
     outline: none;
+    background: white;
 }
 
 .select:disabled {
@@ -89,6 +91,10 @@ input[type="number"]::-webkit-outer-spin-button {
 @media screen and (max-width: 785px) {
     .input[type="date"] {
         font-size: 12px;
+    }
+
+    .select {
+        padding-left: 12px;
     }
 }
 

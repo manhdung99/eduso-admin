@@ -37,7 +37,7 @@
         </div>
         <!-- Có sách -->
         <div class="flex justify-between mt-6">
-          <div class="mr-10">
+          <div class="mr-6 md:mr-10">
             <img class="book-image-modal" :src="previewImage" alt="" />
           </div>
           <div class="book-info-wrapper">
