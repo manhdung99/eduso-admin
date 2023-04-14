@@ -275,6 +275,7 @@
 import { defineComponent, ref, watchEffect, reactive, watch } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
+import { usePaginationStore } from "../../stores/paginationStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
@@ -290,7 +291,9 @@ export default defineComponent({
   name: "UpdateBookModal",
   setup() {
     const modal = useModalStore();
+    const pagination = usePaginationStore();
     const { openUpdateBookModal, currentBookUpdate } = storeToRefs(modal);
+    const { pageIndex } = storeToRefs(pagination);
     const { updateBookModalStatus } = modal;
     const bookStore = useBookStore();
     const { updateBook } = bookStore;
@@ -417,7 +420,7 @@ export default defineComponent({
     watchEffect(() => {
       axios
         .get(
-          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${currentBookUpdate.value}`
+          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${pageIndex.value}/book/${currentBookUpdate.value}`
         )
         .then((response) => {
           let data = response.data;

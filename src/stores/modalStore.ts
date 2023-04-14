@@ -18,23 +18,27 @@ export const useModalStore = defineStore("modalStore", {
     updateAddNewModalStatus(status: boolean) {
       this.openAddNewModal = status;
     },
-    updateBookModalStatus(status: boolean, id = 1) {
+    updateBookModalStatus(status: boolean, id = -1) {
       this.openUpdateBookModal = status;
-      this.currentBookUpdate = id;
+      if (id > 0) this.currentBookUpdate = id;
     },
     updateRemoveModalStatus(status: boolean) {
       this.openRemoveBookModal = status;
     },
-    updateBookManagementStatus(status: boolean, id = 1) {
+    updateBookManagementStatus(status: boolean, id = -1) {
       this.openBookManagementModal = status;
-      this.currentBookDetail = id;
+      if (id > 0) this.currentBookDetail = id;
     },
-    updateUnitManagementStatus(status: boolean, id = 1) {
+    updateUnitManagementStatus(status: boolean, id = -1) {
       this.openUnitManagementModal = status;
-      this.currentUnitDetail = id;
+      if (id > 0) this.currentUnitDetail = id;
     },
     updateLogoutModalStatus(status: boolean) {
       this.openLogoutModal = status;
+    },
+    updateCurrentBook(id) {
+      this.currentBookUpdate = id;
+      this.currentBookDetail = id;
     },
   },
 });

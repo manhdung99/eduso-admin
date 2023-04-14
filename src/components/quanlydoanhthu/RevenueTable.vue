@@ -103,7 +103,7 @@ export default defineComponent({
     const sortBooks = (data: string) => {
       if (data) {
         books.value.sort((a, b) => {
-          return a[data] - b[data] || a[data].localeCompare(b[data]);
+          return a[data] - b[data];
         });
       }
     };

@@ -36,6 +36,8 @@ import SearchBook from "@/components/common/SearchBook.vue";
 import RevenueTableVue from "@/components/quanlydoanhthu/RevenueTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import { useBookStore } from "../stores/booksStore";
+import { useModalStore } from "../stores/modalStore";
+import { usePaginationStore } from "../stores/paginationStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import axios from "axios";
 
@@ -51,16 +53,25 @@ export default {
     const title = "Quản lý doanh thu theo đầu sách";
     const action = "Export";
     const bookStore = useBookStore();
+    const pagination = usePaginationStore();
+    const modal = useModalStore();
+    const { updateCurrentBook } = modal;
     const { getBooks, getDoanhThuSachColumn } = bookStore;
+    const { getPagination, updatePageIndex } = pagination;
+
     axios
       .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/2")
       .then((response) => {
         getDoanhThuSachColumn(response.data.columns);
       });
     axios
-      .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books")
+      .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1")
       .then((response) => {
-        getBooks(response.data);
+        let currentBookId = response.data.listBook[0].bookId;
+        getBooks(response.data.listBook);
+        updatePageIndex(response.data.pages.pageIndex);
+        getPagination(response.data.pages.pageNumber);
+        updateCurrentBook(currentBookId);
       });
     return {
       title,

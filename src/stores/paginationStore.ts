@@ -2,13 +2,14 @@ import { defineStore } from "pinia";
 
 export const usePaginationStore = defineStore("paginationStore", {
   state: () => ({
-    paginations: [1, 2, 3, 4, 5],
+    paginations: [],
     pageIndex: 1,
   }),
   getters: {},
   actions: {
-    getPagination(data) {
-      this.paginations = data;
+    getPagination(pageNumber: number) {
+      const myArray = Array.from({ length: pageNumber }, (_, i) => i + 1);
+      this.paginations = myArray;
     },
     updatePageIndex(data) {
       this.pageIndex = data;
