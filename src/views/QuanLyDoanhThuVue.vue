@@ -1,12 +1,12 @@
 <template>
-  <div class="px-2 2xl:px-4">
+  <div class="px-4">
     <TopContentVue :title="title" :action="action" />
     <div class="px-0 lg:px-4 flex items-center flex-wrap lg:flex-nowrap">
       <div class="w-full lg:w-2/3">
         <SearchBook />
       </div>
       <div
-        class="lg:w-1/3 text-grey pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0"
+        class="w-full md:w-1/2 lg:w-1/3 text-grey pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0 justify-between md:justify-start"
       >
         <div class="relative">
           <select class="input w-full pr-7">

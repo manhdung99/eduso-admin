@@ -3,7 +3,7 @@
     @click.self="updateSearchAreaStatus(false)"
     class="flex py-6 justify-between flex-wrap"
   >
-    <div class="w-auto md:w-9/20 relative mb-6 md:mb-0">
+    <div class="w-full md:w-9/20 relative mb-6 md:mb-0">
       <input
         @input="searchData"
         class="input search-input"
@@ -15,7 +15,9 @@
       </span>
       <searchBookModalVue />
     </div>
-    <div class="w-full md:w-11/20 flex items-center">
+    <div
+      class="w-full md:w-11/20 flex items-center justify-between md:justify-start"
+    >
       <div class="flex items-center">
         <div
           class="text-base 2xl:text-lg text-charcoal font-medium mx-2 2xl:px-3"
@@ -177,8 +179,5 @@ export default defineComponent({
   padding-top: 14px;
 }
 @media screen and (max-width: 767px) {
-  .search-input {
-    width: 300px;
-  }
 }
 </style>
