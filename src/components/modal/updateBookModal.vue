@@ -6,12 +6,29 @@
     <form @submit.prevent="onSubmit" @keydown.enter="onSubmit">
       <input
         id="book-image"
-        ref="fileInput"
+        ref="fileImageInput"
         type="file"
+        @click="handleClearImage"
         @input="previewFiles($event)"
         class="hidden"
         accept="image/*"
       />
+      <div v-if="imageSrc" class="crop-image-wrapper">
+        <vue-cropper
+          ref="imageRef"
+          :src="imageSrc"
+          :aspect-ratio="176 / 215"
+          :view-mode="1"
+          :drag-mode="cropDragMode"
+          :toggle-drag-mode-on-dblclick="false"
+          :crop-box-movable="true"
+          :crop-box-resizable="false"
+        />
+        <div class="crop-image-btn-wrapper">
+          <button class="crop" @click="cropImage">Crop Image</button>
+          <button class="cancel" @click="imageSrc = null">Cancel</button>
+        </div>
+      </div>
       <input
         id="book-metadata"
         type="file"
@@ -289,6 +306,8 @@ import {
   checkDiscountValidation,
   checkValidationBeforeSubmit,
 } from "../../uses/validation";
+import VueCropper from "vue-cropperjs";
+import "cropperjs/dist/cropper.css";
 export default defineComponent({
   name: "UpdateBookModal",
   setup() {
@@ -303,6 +322,10 @@ export default defineComponent({
     let metaData = ref(null);
     let bookContent = ref(null);
     let studyProgram = ref(null);
+    const imageSrc = ref(null);
+    const imageRef = ref(null);
+    const fileImageInput = ref(null);
+    const cropDragMode = ref("move");
     let listProgram = ["IELTS", "TOEIC"];
     let programAutocompletes = ref([]);
     const book = ref({});
@@ -327,15 +350,26 @@ export default defineComponent({
       price: "",
       discount: "",
     });
+    const handleClearImage = () => {
+      if (fileImageInput.value && fileImageInput.value.files.length > 0) {
+        fileImageInput.value.value = null;
+      }
+    };
 
+    const cropImage = () => {
+      const croppedCanvas = imageRef.value.cropper.getCroppedCanvas();
+      const croppedImage = croppedCanvas.toDataURL();
+      previewImage.value = croppedImage;
+      imageSrc.value = null;
+    };
     const previewFiles = (event) => {
       const file = event.target.files[0];
       const typeFile = file.name.split(".")[1];
-      const imageTypes = ["jpg", "svg", "png", "webp"];
+      const imageTypes = ["jpg", "svg", "png", "webp", "jfif"];
       if (imageTypes.includes(typeFile)) {
         const theReader = new FileReader();
         theReader.onloadend = async () => {
-          previewImage.value = await theReader.result;
+          imageSrc.value = await theReader.result;
         };
         theReader.readAsDataURL(file);
         error.image = "";
@@ -475,9 +509,17 @@ export default defineComponent({
       error,
       checkPriceValidation,
       checkDiscountValidation,
+      imageSrc,
+      imageRef,
+      cropImage,
+      cropDragMode,
+      fileImageInput,
+      handleClearImage,
     };
   },
-  components: {},
+  components: {
+    VueCropper,
+  },
 });
 </script>
 <style scoped>

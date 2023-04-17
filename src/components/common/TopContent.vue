@@ -7,7 +7,7 @@
     </div>
     <div class="flex gap-x-6">
       <button
-        @click="exportToExcel((type = 'book'))"
+        @click="exportToExcel('book')"
         v-if="action == 'Export'"
         class="add-new-button hover:opacity-90"
       >
@@ -31,9 +31,11 @@
 <script lang="ts">
 import AddNewModal from "../modal/addNewModal.vue";
 import { useModalStore } from "../../stores/modalStore";
+import { useBookStore } from "../../stores/booksStore";
 import { defineComponent } from "vue";
 import helpIcon from "../../assets/image/help.svg";
 import * as XLSX from "xlsx";
+import { storeToRefs } from "pinia";
 export default defineComponent({
   name: "TopContent",
   props: {
@@ -42,24 +44,28 @@ export default defineComponent({
   },
   setup() {
     const modal = useModalStore();
+    const bookStore = useBookStore();
     const { updateAddNewModalStatus } = modal;
-
+    const { khoSachColumns, books } = storeToRefs(bookStore);
     const exportToExcel = (type) => {
       if (type == "book") {
-        console.log(1212);
+        const columns = [...khoSachColumns.value];
+        let rows = books.value.map((book) => {
+          return [
+            book.bookId,
+            book.bookInformation.title,
+            book.startDate,
+            book.endDate,
+            book.revenue,
+            book.numberDownload,
+          ];
+        });
+        const data = [...columns, ...rows];
+        const worksheet = XLSX.utils.aoa_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "data.xlsx");
       }
-      const data = [
-        ["Name", "Age", "Gender"],
-        ["John", 25, "Male"],
-        ["Mary", 30, "Female"],
-        ["Bob", 40, "Male"],
-        ["Alice", 35, "Female"],
-      ];
-
-      const worksheet = XLSX.utils.aoa_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-      XLSX.writeFile(workbook, "data.xlsx");
     };
 
     return {
