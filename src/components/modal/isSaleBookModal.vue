@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
-    v-if="openRemoveBookModal"
+    v-if="openIsSaleBookModal"
   >
     <div class="remove-book-modal">
       <div class="flex items-center justify-center">
@@ -10,28 +10,23 @@
       <div
         class="font-bold text-xl text-blue-lighter flex items-center justify-center mt-3"
       >
-        Xoá sách ?
+        {{ status ? "Tắt" : "Mở" }} bán sách ?
       </div>
       <div
         class="font-bold text-tiny text-red flex items-center justify-center mt-3"
       >
         {{ title }}
       </div>
-      <div class="text-tiny italic text-charcoal-lighter mt-3 text-center">
-        Lưu ý : Sách đã xoá không thể khôi phục lại.
-      </div>
+
       <div class="flex gap-x-6 justify-center mt-6">
+        <button @click="updateIsSaleID" class="button remove hover:opacity-80">
+          {{ status ? "Tắt" : "Mở" }}
+        </button>
         <button
-          @click="updateRemoveModalStatus(false)"
+          @click="updateIsSaleBookModal(false)"
           class="button cancel hover:!bg-grey-darker hover:!text-white"
         >
           Huỷ
-        </button>
-        <button
-          @click="deleteCurrentBook"
-          class="button remove hover:opacity-80"
-        >
-          Xoá
         </button>
       </div>
     </div>
@@ -46,40 +41,43 @@ import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";
 export default defineComponent({
-  name: "RemoveBookModal",
+  name: "isSaleBookModal",
   setup() {
     const modal = useModalStore();
     const pagination = usePaginationStore();
-    const { openRemoveBookModal, currentBookDelete } = storeToRefs(modal);
-    const { updateRemoveModalStatus } = modal;
+    const { openIsSaleBookModal, currentBookSale } = storeToRefs(modal);
+    const { updateIsSaleBookModal } = modal;
     const bookStore = useBookStore();
-    const { deleteBook } = bookStore;
+    const { updateIsSaleBook } = bookStore;
     const { pageIndex } = storeToRefs(pagination);
     const title = ref(null);
+    const status = ref(null);
 
     watchEffect(() => {
       axios
         .get(
-          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${pageIndex.value}/book/${currentBookDelete.value}`
+          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${pageIndex.value}/book/${currentBookSale.value}`
         )
         .then((response) => {
           let data = response.data;
           title.value = data.bookInformation.title;
+          status.value = data.isSale;
         });
     });
 
-    const deleteCurrentBook = () => {
-      //Call API and delete in DB ở đây
-      deleteBook(currentBookDelete.value);
-      updateRemoveModalStatus(false);
+    const updateIsSaleID = () => {
+      //Call API and update here in DB ở đây
+      updateIsSaleBook(currentBookSale.value, !status.value);
+      updateIsSaleBookModal(false);
     };
     return {
-      openRemoveBookModal,
       warningIcon,
-      currentBookDelete,
-      updateRemoveModalStatus,
-      deleteCurrentBook,
+      openIsSaleBookModal,
+      updateIsSaleBookModal,
+      updateIsSaleID,
       title,
+      updateIsSaleBook,
+      status,
     };
   },
 });

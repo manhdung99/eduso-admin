@@ -35,5 +35,9 @@ export const useBookStore = defineStore("booksStore", {
     getUnits(data) {
       this.units = data;
     },
+    updateIsSaleBook(id, status) {
+      const index = this.books.findIndex((data) => data.bookId == id);
+      this.books[index].isSale = status;
+    },
   },
 });

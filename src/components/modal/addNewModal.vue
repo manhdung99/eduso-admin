@@ -492,6 +492,7 @@ export default defineComponent({
           level: bookInfo.level,
           subject: bookInfo.subject,
           programme: studyProgram.value,
+          isSale: false,
           bookId: Math.floor(Math.random() * 1000),
         };
         addBook(book);

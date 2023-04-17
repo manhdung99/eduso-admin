@@ -55,7 +55,15 @@
         </td>
         <td class="">
           <div class="flex gap-x-2 lg:gap-x-4">
-            <img class="cursor-pointer" :src="hideIcon" alt="icon" />
+            <img
+              @click="
+                updateIsSaleBookModal(true);
+                currentBookSale = book.bookId;
+              "
+              class="cursor-pointer"
+              :src="book.isSale ? eyeIcon : hideIcon"
+              alt="icon"
+            />
             <img
               class="cursor-pointer"
               @click="updateBookModalStatus(true, book.bookId)"
@@ -77,7 +85,8 @@
     </tbody>
   </table>
   <updateBookModalVue />
-  <removeBookModalVue @delete="removeBook()" />
+  <removeBookModalVue />
+  <isSaleBookModalVue />
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -85,10 +94,12 @@ import { storeToRefs } from "pinia";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import hideIcon from "../../assets/image/hide.svg";
+import eyeIcon from "../../assets/image/eye.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
 import updateBookModalVue from "../modal/updateBookModal.vue";
 import removeBookModalVue from "../modal/removeBookModal.vue";
+import isSaleBookModalVue from "../modal/isSaleBookModal.vue";
 import convertData from "@/uses/convertData";
 
 export default defineComponent({
@@ -97,8 +108,12 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const bookStore = useBookStore();
-    const { currentBookDelete } = storeToRefs(modal);
-    const { updateBookModalStatus, updateRemoveModalStatus } = modal;
+    const { currentBookDelete, currentBookSale } = storeToRefs(modal);
+    const {
+      updateBookModalStatus,
+      updateRemoveModalStatus,
+      updateIsSaleBookModal,
+    } = modal;
     const { books, khoSachColumns } = storeToRefs(bookStore);
     const { convertPrice } = convertData();
     const sortBooks = (data: string) => {
@@ -111,6 +126,7 @@ export default defineComponent({
 
     return {
       hideIcon,
+      eyeIcon,
       removeIcon,
       editIcon,
       currentBookDelete,
@@ -120,11 +136,14 @@ export default defineComponent({
       updateBookModalStatus,
       updateRemoveModalStatus,
       convertPrice,
+      updateIsSaleBookModal,
+      currentBookSale,
     };
   },
   components: {
     updateBookModalVue,
     removeBookModalVue,
+    isSaleBookModalVue,
   },
 });
 </script>
