@@ -31,18 +31,6 @@
             v-model="fromDate"
             lang="en-US"
           />
-          <div
-            class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-          >
-            <span
-              @click="changeFromDate(1)"
-              class="triangle_up active:border-b-black"
-            ></span>
-            <span
-              @click="changeFromDate(-1)"
-              class="triangle_down active:border-t-black"
-            ></span>
-          </div>
         </div>
       </div>
       <div class="flex items-center">
@@ -58,18 +46,6 @@
             v-model="toDate"
             lang="en-US"
           />
-          <div
-            class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-          >
-            <span
-              @click="changeToDate(1)"
-              class="triangle_up active:border-b-black"
-            ></span>
-            <span
-              @click="changeToDate(-1)"
-              class="triangle_down active:border-t-black"
-            ></span>
-          </div>
         </div>
       </div>
     </div>
@@ -153,18 +129,6 @@ export default defineComponent({
       dateFormater,
       updateSearchAreaStatus,
     };
-  },
-  methods: {
-    changeFromDate(activeDays: number) {
-      let newDate = new Date(this.fromDate);
-      newDate.setDate(newDate.getDate() + activeDays);
-      this.fromDate = this.dateFormater(newDate);
-    },
-    changeToDate(activeDays: number) {
-      let newDate = new Date(this.toDate);
-      newDate.setDate(newDate.getDate() + activeDays);
-      this.toDate = this.dateFormater(newDate);
-    },
   },
   components: {
     searchBookModalVue,
