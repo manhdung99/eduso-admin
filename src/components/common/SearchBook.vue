@@ -174,7 +174,6 @@ export default defineComponent({
 <style scoped>
 .search-input {
   width: 100%;
-  max-width: 393px;
   padding-bottom: 14px;
   padding-top: 14px;
 }
