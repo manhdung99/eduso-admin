@@ -75,9 +75,9 @@ export default defineComponent({
         const fetchBooks = async () => {
           try {
             const response = await axios.get(
-              "https://642e3a278ca0fe3352cb2e35.mockapi.io/books"
+              "https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1"
             );
-            getBooks(response.data);
+            getBooks(response.data.listBook);
           } catch (err) {
             throw new Error("Some thing went wrong");
           }

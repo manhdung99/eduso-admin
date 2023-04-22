@@ -114,12 +114,6 @@
                 >
               </div>
               <div class="flex gap-x-4">
-                <img
-                  v-if="metaData"
-                  class="cursor-pointer"
-                  :src="downloadIcon"
-                  alt="icon"
-                />
                 <label for="book-metadata">
                   <img
                     class="cursor-pointer hover:opacity-80"
@@ -156,7 +150,6 @@
                 >
               </div>
               <div class="flex gap-x-4">
-                <img v-if="bookContent" :src="downloadIcon" alt="icon" />
                 <label
                   class="cursor-pointer hover:opacity-80"
                   for="book-content"

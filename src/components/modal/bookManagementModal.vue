@@ -17,7 +17,7 @@
       <!-- Date and export excel file  -->
       <div class="flex mt-6 justify-between flex-wrap md:flex-nowrap">
         <div class="flex">
-          <div class="flex flex items-center">
+          <div class="flex items-center">
             <div class="text-xl text-charcoal font-medium mr-3">From:</div>
             <div class="relative">
               <input
@@ -26,21 +26,9 @@
                 v-model="fromDate"
                 lang="en-US"
               />
-              <div
-                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-              >
-                <span
-                  @click="changeFromDate(1)"
-                  class="triangle_up active:border-b-black"
-                ></span>
-                <span
-                  @click="changeFromDate(-1)"
-                  class="triangle_down active:border-t-black"
-                ></span>
-              </div>
             </div>
           </div>
-          <div class="flex flex items-center">
+          <div class="flex items-center">
             <div class="text-xl text-charcoal font-medium mx-3">To:</div>
             <div class="relative">
               <input
@@ -49,18 +37,6 @@
                 v-model="toDate"
                 lang="en-US"
               />
-              <div
-                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-              >
-                <span
-                  @click="changeToDate(1)"
-                  class="triangle_up active:border-b-black"
-                ></span>
-                <span
-                  @click="changeToDate(-1)"
-                  class="triangle_down active:border-t-black"
-                ></span>
-              </div>
             </div>
           </div>
         </div>
