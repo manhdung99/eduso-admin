@@ -8,7 +8,7 @@
       <div
         class="w-full md:w-1/2 lg:w-1/3 text-grey pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0 justify-between md:justify-start"
       >
-        <div class="relative">
+        <div class="relative 3xl:flex-1">
           <select class="input w-full pr-7">
             <option>Lọc theo môn</option>
           </select>
@@ -16,7 +16,7 @@
             <img :src="downArrow" alt="icon" />
           </span>
         </div>
-        <div class="relative">
+        <div class="relative 3xl:flex-1">
           <select class="input w-full pr-7">
             <option>Lọc theo đơn vị</option>
           </select>

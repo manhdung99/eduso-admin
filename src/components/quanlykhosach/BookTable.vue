@@ -1,14 +1,14 @@
 <template>
-  <table class="w-full">
-    <thead class="table-head-wrapper">
+  <table class="w-full table" border="1">
+    <thead v-columns-resizable class="table-head-wrapper">
       <tr class="w-full">
         <th
-          class="text-lg text-charcoal font-medium md:w-1/8 pl-1"
+          class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center"
           v-for="column in khoSachColumns"
           :key="column.id"
           :class="{
             '!w-1/5': column.largeColumn,
-            '!w-1/10': column.smallColumn,
+            '!w-1/20': column.smallColumn,
           }"
           @click="sortBooks(column.key)"
         >
@@ -22,9 +22,9 @@
         v-for="book in books"
         :key="book.bookId"
       >
-        <td>{{ book.bookId }}</td>
+        <td class="ml-4 text-center">{{ book.bookId }}</td>
         <td>
-          <div class="flex">
+          <div class="flex justify-center">
             <div>
               <img class="book-image" :src="book.bookInformation.image" />
             </div>
@@ -41,20 +41,20 @@
             </div>
           </div>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{ book.publisher }}</span>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{ convertPrice(book.listedPrice) }}</span>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{ book.discountEduso }}</span>
         </td>
         <td class="text-center">
           <span class="text-lg">{{ book.discount }}%</span>
         </td>
         <td class="">
-          <div class="flex gap-x-2 lg:gap-x-4">
+          <div class="flex gap-x-2 lg:gap-x-4 justify-center">
             <img
               @click="
                 updateIsSaleBookModal(true);
@@ -147,17 +147,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.book-title {
-  white-space: nowrap;
-  width: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 18px;
-  font-weight: 500;
-}
-.book-image {
-  max-width: 68px;
-  min-width: 68px;
-}
-</style>

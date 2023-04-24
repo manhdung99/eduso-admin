@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex justify-between border-b border-grey py-6 pr-3 pl-12 xl:pl-3 flex-wrap md:flex-nowrap gap-y-4"
+    class="flex justify-between border-b border-grey py-6 pr-3 pl-12 flex-wrap md:flex-nowrap gap-y-4"
   >
     <div class="flex items-center w-full md:w-auto">
       <h2 class="text-2xl text-charcoal-darker font-bold">{{ title }}</h2>
@@ -19,10 +19,6 @@
         class="add-new-button hover:opacity-90"
       >
         Thêm sách
-      </button>
-      <button class="help-button">
-        <span class="mr-2"> <img :src="helpIcon" alt="" /> </span>
-        <span> Trợ giúp </span>
       </button>
     </div>
   </div>

@@ -8,14 +8,6 @@ th {
     text-align: left;
 }
 
-thead th:first-child {
-    padding-left: 16px;
-}
-
-tbody tr td:first-child {
-    padding-left: 16px;
-}
-
 td {
     height: 105px;
 }

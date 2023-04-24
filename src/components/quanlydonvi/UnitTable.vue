@@ -3,7 +3,7 @@
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th
-          class="text-lg text-charcoal font-medium"
+          class="text-lg text-charcoal font-medium text-center"
           v-for="column in doanhThuDonViColumns"
           :key="column.id"
         >
@@ -17,8 +17,8 @@
         v-for="unit in units"
         :key="unit.id"
       >
-        <td class="text-lg">{{ unit.name }}</td>
-        <td class="text-lg">
+        <td class="text-lg text-center">{{ unit.name }}</td>
+        <td class="text-lg text-center">
           {{ convertPrice(unit.revenue) }}
         </td>
         <td class="text-center">
@@ -95,10 +95,9 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
+<style>
 .book-title {
-  white-space: nowrap;
-  width: 150px;
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 18px;

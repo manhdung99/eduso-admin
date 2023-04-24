@@ -5,16 +5,13 @@
       :class="openSidebar ? 'show' : ''"
       class="side-bar-wrapper min-h-screen"
     >
-      <div
-        @click="openSidebar = false"
-        class="w-8 h-8 absolute right-0 xl:hidden"
-      >
+      <div @click="openSidebar = false" class="w-8 h-8 absolute right-0">
         <img :src="closeIcon" alt="" />
       </div>
       <SideBarVue />
     </div>
     <div class="flex-1 w-full md:w-auto">
-      <div @click="openSidebar = true" class="side-bar-icon xl:hidden">
+      <div @click="openSidebar = true" class="side-bar-icon">
         <img :src="sideBarIcon" alt="" />
       </div>
       <router-view />
@@ -47,25 +44,23 @@ export default defineComponent({
   background: #354859;
   transition: all 500ms ease;
 }
-@media screen and (max-width: 1279px) {
-  .side-bar-wrapper {
-    position: fixed;
-    z-index: 1;
-    display: block;
-    left: -300px;
-    top: 0;
-    bottom: 0;
-  }
-  .side-bar-wrapper.show {
-    left: 0;
-  }
-  .side-bar-icon {
-    width: 24px;
-    height: 24px;
-    top: 36px;
-    position: absolute;
-    left: 20px;
-  }
+.side-bar-wrapper {
+  position: fixed;
+  z-index: 1;
+  display: block;
+  left: -300px;
+  top: 0;
+  bottom: 0;
+}
+.side-bar-wrapper.show {
+  left: 0;
+}
+.side-bar-icon {
+  width: 24px;
+  height: 24px;
+  top: 36px;
+  position: absolute;
+  left: 20px;
 }
 @media screen and (max-width: 767px) {
   .side-bar-icon {

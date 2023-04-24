@@ -6,14 +6,24 @@
         <SearchBook />
       </div>
       <div
-        class="w-full lg:w-1/3 text-grey relative md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0"
+        class="w-full lg:w-1/3 text-grey md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0 flex gap-x-2 3xl:gap-x-4"
       >
-        <select class="input w-full pr-8">
-          <option>Lọc theo môn học / chương trình học</option>
-        </select>
-        <span class="absolute right-2 top-1/2 -translate-y-1/2">
-          <img :src="downArrow" alt="icon" />
-        </span>
+        <div class="relative 3xl:flex-1">
+          <select class="input w-full pr-8">
+            <option>Lọc theo môn học</option>
+          </select>
+          <span class="absolute right-2 top-1/2 -translate-y-1/2">
+            <img :src="downArrow" alt="icon" />
+          </span>
+        </div>
+        <div class="relative 3xl:flex-1">
+          <select class="input w-full pr-8">
+            <option>Lọc theo chương trình học</option>
+          </select>
+          <span class="absolute right-2 top-1/2 -translate-y-1/2">
+            <img :src="downArrow" alt="icon" />
+          </span>
+        </div>
       </div>
     </div>
     <div class="overflow-auto mb-4">

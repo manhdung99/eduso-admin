@@ -3,12 +3,12 @@
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th
-          class="text-lg text-charcoal font-medium w-1/8"
+          class="text-lg text-charcoal font-medium w-1/8 text-center"
           v-for="column in doanhThuSachColumns"
           :key="column.id"
           :class="{
             '!w-1/5': column.largeColumn,
-            '!w-1/10': column.smallColumn,
+            '!w-1/20': column.smallColumn,
           }"
           @click="sortBooks(column.key)"
         >
@@ -22,9 +22,9 @@
         v-for="book in books"
         :key="book.bookId"
       >
-        <td>{{ book.bookId }}</td>
+        <td class="text-center">{{ book.bookId }}</td>
         <td>
-          <div class="flex">
+          <div class="flex justify-center">
             <div>
               <img class="book-image" :src="book.bookInformation.image" />
             </div>
@@ -41,17 +41,17 @@
             </div>
           </div>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{
             convertTimestampToDate(book.startDate)
           }}</span>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{
             convertTimestampToDate(book.endDate)
           }}</span>
         </td>
-        <td>
+        <td class="text-center">
           <span class="text-lg">{{ convertPrice(book.revenue) }}</span>
         </td>
         <td class="text-center">
@@ -129,30 +129,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.book-title {
-  white-space: nowrap;
-  width: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 18px;
-  font-weight: 500;
-}
-.book-image {
-  max-width: 68px;
-  min-width: 68px;
-}
-.show-detail-button {
-  background: #3c9dd2;
-  color: white;
-  border-radius: 5px;
-  padding: 10px 30px;
-  font-size: 18px;
-  margin-left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-.show-detail-button:hover {
-  opacity: 0.9;
-}
-</style>

@@ -17,6 +17,8 @@ export default {
 
       "2xl": "1440px",
       // => @media (min-width: 1440px) { ... }
+      "3xl": "1560px",
+      // => @media (min-width: 1440px) { ... }
     },
     extend: {
       colors: {
@@ -50,6 +52,7 @@ export default {
       },
       spacing: {
         12.5: "3.125rem",
+        "1/20": "5%",
         "1/10": "10%",
         "1/8": "12.5%",
         "9/20": "45%",
