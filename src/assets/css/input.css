@@ -21,10 +21,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .select {
     border: 1px solid #8799A5;
-    border-radius: 3px;
-    padding-left: 24px;
+    border-radius: 5px;
+    padding-left: 16px;
     outline: none;
     background: white;
+
+}
+
+select.select {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 16px;
+
 }
 
 .select:disabled {
@@ -43,6 +51,7 @@ select {
     font-size: 13px;
     font-style: italic;
 }
+
 
 .triangle_down {
     width: 0;

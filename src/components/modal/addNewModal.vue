@@ -3,7 +3,7 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openAddNewModal"
   >
-    <form @submit.prevent="onSubmit" @keydown.enter="onSubmit">
+    <form ref="addNewForm" @submit.prevent="onSubmit" @keydown.enter="onSubmit">
       <input
         id="book-image"
         ref="fileImageInput"
@@ -30,18 +30,19 @@
         </div>
       </div>
       <input
-        id="book-metadata"
+        id="files"
+        name="files"
         type="file"
         @input="uploadMetadata($event)"
         class="hidden"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
+        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf,.csv"
       />
       <input
         id="book-content"
         type="file"
         @input="uploadBookContent($event)"
         class="hidden"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
+        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf,.csv"
       />
       <div class="add-book-modal">
         <div class="flex border-b border-gray-lighter pb-4 relative">
@@ -81,15 +82,6 @@
             <img class="book-image-modal" :src="previewImage" alt="" />
           </div>
           <div class="book-info-wrapper">
-            <p class="text-blue-lighter text-xl font-bold">
-              {{ bookInfo.title }}
-            </p>
-            <p class="italic text-base text-grey-darker">
-              {{ bookInfo.description }}
-            </p>
-            <p class="italic text-base text-grey-darker">
-              {{ bookInfo.publisher }}
-            </p>
             <label for="book-image" class="change-image-btn cursor-pointer"
               >Đổi ảnh bìa</label
             >
@@ -110,11 +102,11 @@
                 <span
                   v-else
                   class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                  >{{ metaData }}</span
+                  >{{ metaData.name }}</span
                 >
               </div>
               <div class="flex gap-x-4">
-                <label for="book-metadata">
+                <label for="files">
                   <img
                     class="cursor-pointer hover:opacity-80"
                     :src="uploadIcon"
@@ -211,9 +203,13 @@
                 v-model="bookInfo.subject"
                 class="select w-full py-1"
               >
-                <option value="Toán">Toán</option>
-                <option value="Ngữ văn">Ngữ văn</option>
-                <option value="Tiếng anh">Tiếng anh</option>
+                <option
+                  v-for="subject in subjects"
+                  :key="subject.id"
+                  :value="subject.id"
+                >
+                  {{ subject.name }}
+                </option>
               </select>
               <div
                 class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
@@ -277,6 +273,7 @@
                 class="select w-full py-1 text-2xs italic no-arrows"
                 v-model="bookInfo.price"
                 type="number"
+                name="BookPrice"
               />
               <span
                 class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
@@ -298,6 +295,7 @@
                 @change="checkDiscountValidation(bookInfo, error)"
                 class="select w-full py-1 text-2xs italic"
                 v-model="bookInfo.discount"
+                name="Discount"
               />
               <span
                 class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
@@ -313,7 +311,7 @@
             type="submit"
             class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90"
           >
-            Lưu thay đổi
+            Thêm sách
           </button>
         </div>
       </div>
@@ -321,7 +319,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from "vue";
+import { defineComponent, ref, reactive } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
@@ -329,6 +327,7 @@ import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
 import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
+import { useCommonStore } from "../../stores/commonStore";
 import {
   checkPriceValidation,
   checkDiscountValidation,
@@ -336,6 +335,7 @@ import {
 } from "../../uses/validation";
 import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
+import axios from "axios";
 
 export default defineComponent({
   name: "AddNewModal",
@@ -343,8 +343,10 @@ export default defineComponent({
     const modal = useModalStore();
     const bookStore = useBookStore();
     const { openAddNewModal } = storeToRefs(modal);
+    const { subjects } = storeToRefs(useCommonStore());
     const { updateAddNewModalStatus } = modal;
     const { addBook } = bookStore;
+    const addNewForm = ref(null);
     let previewImage = ref(null);
     let metaData = ref(null);
     let bookContent = ref(null);
@@ -410,7 +412,9 @@ export default defineComponent({
       const typeFile = file.name.split(".")[1];
       const docTypes = ["csv", "docx", "doc", "xlsx"];
       if (docTypes.includes(typeFile)) {
-        metaData.value = file.name;
+        metaData.value = file;
+        console.log(metaData.value);
+
         error.metadata = "";
       } else {
         error.metadata = "Chỉ hỗ trợ file tài liệu";
@@ -444,18 +448,6 @@ export default defineComponent({
       studyProgram.value = data;
       programAutocompletes.value = [];
     };
-    // Add metadata
-    watch(metaData, () => {
-      bookInfo.title = "SGK Ngữ Văn 12(Tập 1)";
-      bookInfo.description = "Bộ Giáo dục & Đào tạo";
-      bookInfo.publisher = "NXB Giáo dục";
-      bookInfo.level = "Cấp 1";
-      bookInfo.subject = "Ngữ văn";
-      bookInfo.price = 100000;
-      bookInfo.discount = 15;
-      bookInfo.discountEduso = "123456";
-      studyProgram.value = "IELTS";
-    });
 
     const onSubmit = () => {
       // If all input values are present, add book
@@ -469,26 +461,37 @@ export default defineComponent({
           error
         )
       ) {
-        const book = {
-          bookInformation: {
-            image: previewImage.value,
-            title: bookInfo.title,
-            description: bookInfo.description,
-            subDescription: bookInfo.subDescription,
-          },
-          publisher: bookInfo.publisher,
-          listedPrice: bookInfo.price,
-          discountEduso: bookInfo.discountEduso,
-          discount: bookInfo.discount,
-          metaData: metaData.value,
-          content: bookContent.value,
-          level: bookInfo.level,
-          subject: bookInfo.subject,
-          programme: studyProgram.value,
-          isSale: false,
-          bookId: Math.floor(Math.random() * 1000),
-        };
-        addBook(book);
+        // const book = {
+        //   bookInformation: {
+        //     image: previewImage.value,
+        //     title: bookInfo.title,
+        //     description: bookInfo.description,
+        //     subDescription: bookInfo.subDescription,
+        //   },
+        //   publisher: bookInfo.publisher,
+        //   listedPrice: bookInfo.price,
+        //   discountEduso: bookInfo.discountEduso,
+        //   discount: bookInfo.discount,
+        //   metaData: metaData.value,
+        //   content: bookContent.value,
+        //   level: bookInfo.level,
+        //   subject: bookInfo.subject,
+        //   programme: studyProgram.value,
+        //   isSale: false,
+        //   bookId: Math.floor(Math.random() * 1000),
+        // };
+        // addBook(book);
+        //Call API to add data
+
+        console.log(addNewForm.value);
+        const formData = new FormData(addNewForm.value);
+        console.log(formData);
+
+        axios
+          .post("https://apiadminbook.eduso.vn/api/book_store/save", formData)
+          .then((response) => {
+            console.log(response.data);
+          });
         updateAddNewModalStatus(false);
       }
     };
@@ -521,6 +524,8 @@ export default defineComponent({
       cropDragMode,
       fileImageInput,
       handleClearImage,
+      subjects,
+      addNewForm,
     };
   },
   components: {
@@ -556,6 +561,7 @@ export default defineComponent({
   padding: 16px 24px;
   border-radius: 10px;
   min-width: 470px;
+  max-width: 500px;
 }
 .clip-text {
   white-space: nowrap;

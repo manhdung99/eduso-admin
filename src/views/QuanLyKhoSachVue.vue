@@ -6,19 +6,29 @@
         <SearchBook />
       </div>
       <div
-        class="w-full lg:w-1/3 text-grey md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0 flex gap-x-2 3xl:gap-x-4"
+        class="w-full lg:w-1/3 md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0 flex gap-x-2 3xl:gap-x-4"
       >
         <div class="relative 3xl:flex-1">
-          <select class="input w-full pr-8">
+          <select class="input w-full pr-12 select">
             <option>Lọc theo môn học</option>
+            <option
+              v-for="subject in subjects"
+              :key="subject.id"
+              :value="subject.id"
+            >
+              {{ subject.name }}
+            </option>
           </select>
           <span class="absolute right-2 top-1/2 -translate-y-1/2">
             <img :src="downArrow" alt="icon" />
           </span>
         </div>
         <div class="relative 3xl:flex-1">
-          <select class="input w-full pr-8">
+          <select class="input w-full pr-12 select">
             <option>Lọc theo chương trình học</option>
+            <option v-for="grade in grades" :key="grade.id">
+              {{ grade.name }}
+            </option>
           </select>
           <span class="absolute right-2 top-1/2 -translate-y-1/2">
             <img :src="downArrow" alt="icon" />
@@ -40,11 +50,13 @@ import TablePagination from "@/components/common/TablePagination.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { useBookStore } from "../stores/booksStore";
 import { useModalStore } from "../stores/modalStore";
-import { usePaginationStore } from "../stores/paginationStore";
+import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 
 import axios from "axios";
+import { storeToRefs } from "pinia";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "QuanLyKhoSach",
   components: {
     TopContentVue,
@@ -57,6 +69,7 @@ export default {
     const bookStore = useBookStore();
     const pagination = usePaginationStore();
     const modal = useModalStore();
+    const { grades, subjects } = storeToRefs(useCommonStore());
     const { updateCurrentBook } = modal;
     const { getBooks, getKhoSachColumn } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
@@ -77,7 +90,9 @@ export default {
     return {
       title,
       downArrow,
+      grades,
+      subjects,
     };
   },
-};
+});
 </script>

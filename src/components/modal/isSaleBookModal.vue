@@ -36,7 +36,7 @@
 import { defineComponent, watchEffect, ref } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
-import { usePaginationStore } from "../../stores/paginationStore";
+import { usePaginationStore } from "../../stores/commonStore";
 import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";

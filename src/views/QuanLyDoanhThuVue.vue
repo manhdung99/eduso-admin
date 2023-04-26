@@ -6,11 +6,18 @@
         <SearchBook />
       </div>
       <div
-        class="w-full md:w-1/2 lg:w-1/3 text-grey pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0 justify-between md:justify-start"
+        class="w-full md:w-1/2 lg:w-1/3 pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0 justify-between md:justify-start"
       >
         <div class="relative 3xl:flex-1">
-          <select class="input w-full pr-7">
+          <select class="input w-full pr-7 select">
             <option>Lọc theo môn</option>
+            <option
+              v-for="subject in subjects"
+              :key="subject.id"
+              :value="subject.id"
+            >
+              {{ subject.name }}
+            </option>
           </select>
           <span class="absolute right-2 top-1/2 -translate-y-1/2">
             <img :src="downArrow" alt="icon" />
@@ -39,8 +46,9 @@ import RevenueTableVue from "@/components/quanlydoanhthu/RevenueTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import { useBookStore } from "../stores/booksStore";
 import { useModalStore } from "../stores/modalStore";
-import { usePaginationStore } from "../stores/paginationStore";
+import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
+import { storeToRefs } from "pinia";
 import axios from "axios";
 
 export default {
@@ -60,6 +68,7 @@ export default {
     const { updateCurrentBook } = modal;
     const { getBooks, getDoanhThuSachColumn } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
+    const { subjects } = storeToRefs(useCommonStore());
 
     axios
       .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/2")
@@ -79,6 +88,7 @@ export default {
       title,
       downArrow,
       action,
+      subjects,
     };
   },
 };

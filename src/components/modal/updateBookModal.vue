@@ -291,10 +291,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watchEffect, reactive, watch } from "vue";
+import { defineComponent, ref, watchEffect, reactive } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
-import { usePaginationStore } from "../../stores/paginationStore";
+import { usePaginationStore } from "../../stores/commonStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
@@ -474,18 +474,6 @@ export default defineComponent({
         });
     });
 
-    // Change metadata
-    watch(metaData, () => {
-      bookInfo.title = "SGK Ngữ Văn 12(Tập 1)";
-      bookInfo.description = "Bộ Giáo dục & Đào tạo";
-      bookInfo.publisher = "NXB Giáo dục";
-      bookInfo.level = "Cấp 1";
-      bookInfo.subject = "Ngữ văn";
-      bookInfo.price = "100000";
-      bookInfo.discount = "15";
-      bookInfo.discountEduso = "123456";
-      studyProgram.value = "IELTS";
-    });
     return {
       openUpdateBookModal,
       updateBookModalStatus,

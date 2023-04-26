@@ -23,7 +23,9 @@
 import SideBarVue from "./components/sidebar/SideBarVue.vue";
 import closeIcon from "../src/assets/image/close-solid.svg";
 import sideBarIcon from "../src/assets/image/side-bar.svg";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
+import { useCommonStore } from "./stores/commonStore";
+import axios from "axios";
 
 const openSidebar = ref(false);
 
@@ -31,6 +33,23 @@ export default defineComponent({
   name: "App",
   components: { SideBarVue },
   setup() {
+    const { getGrades, getSubjects } = useCommonStore();
+    const getAllGrade = () => {
+      axios
+        .get("https://apiadminbook.eduso.vn/api/book_store/get_grade")
+        .then((response) => {
+          getGrades(response.data);
+        });
+    };
+    const getAllSubjects = () => {
+      axios
+        .get("https://apiadminbook.eduso.vn/api/book_store/get_subject")
+        .then((response) => {
+          getSubjects(response.data);
+        });
+    };
+    onMounted(getAllGrade);
+    onMounted(getAllSubjects);
     return {
       closeIcon,
       openSidebar,

@@ -8,7 +8,7 @@
       <div
         class="w-full md:w-1/2 lg:w-1/3 text-grey relative md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0"
       >
-        <select class="input w-full pr-8 lg:pr-0">
+        <select class="input w-full pr-8 lg:pr-0 select">
           <option>Lọc theo tỉnh / trường / lớp</option>
         </select>
         <span class="absolute right-2 top-1/2 -translate-y-1/2">
@@ -30,7 +30,7 @@ import UnitTable from "@/components/quanlydonvi/UnitTable.vue";
 import { useBookStore } from "../stores/booksStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import axios from "axios";
-import { usePaginationStore } from "@/stores/paginationStore";
+import { usePaginationStore } from "@/stores/commonStore";
 export default {
   name: "QuanLyKhoSach",
   components: {

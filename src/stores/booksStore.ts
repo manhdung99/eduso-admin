@@ -26,7 +26,7 @@ export const useBookStore = defineStore("booksStore", {
       this.books = this.books.filter((book) => book.bookId != id);
     },
     addBook(book) {
-      this.books = [...this.books, book];
+      this.books = [book, ...this.books];
     },
     updateBook(book) {
       const index = this.books.findIndex((data) => data.bookId == book.bookId);

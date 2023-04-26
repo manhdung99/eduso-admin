@@ -28,7 +28,7 @@
 <script>
 import { defineComponent } from "vue";
 import { useBookStore } from "../../stores/booksStore";
-import { usePaginationStore } from "../../stores/paginationStore";
+import { usePaginationStore } from "../../stores/commonStore";
 import { useModalStore } from "../../stores/modalStore";
 import { storeToRefs } from "pinia";
 import axios from "axios";
