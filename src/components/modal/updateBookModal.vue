@@ -456,7 +456,7 @@ export default defineComponent({
     watchEffect(() => {
       axios
         .get(
-          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${pageIndex.value}/book/${currentBookUpdate.value}`
+          `https://apiadminbook.eduso.vn/api/book_store/get_detail/${currentBookUpdate.value}`
         )
         .then((response) => {
           let data = response.data;

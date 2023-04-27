@@ -56,7 +56,7 @@ export default defineComponent({
     watchEffect(() => {
       axios
         .get(
-          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${pageIndex.value}/book/${currentBookSale.value}`
+          `https://apiadminbook.eduso.vn/api/book_store/get_detail/${currentBookSale.value}`
         )
         .then((response) => {
           let data = response.data;

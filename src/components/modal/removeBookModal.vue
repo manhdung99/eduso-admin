@@ -41,7 +41,6 @@
 import { defineComponent, watchEffect, ref } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
-import { usePaginationStore } from "../../stores/commonStore";
 import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";
@@ -49,26 +48,27 @@ export default defineComponent({
   name: "RemoveBookModal",
   setup() {
     const modal = useModalStore();
-    const pagination = usePaginationStore();
     const { openRemoveBookModal, currentBookDelete } = storeToRefs(modal);
     const { updateRemoveModalStatus } = modal;
     const bookStore = useBookStore();
     const { deleteBook } = bookStore;
-    const { pageIndex } = storeToRefs(pagination);
     const title = ref(null);
 
     watchEffect(() => {
       axios
         .get(
-          `https://642e3a278ca0fe3352cb2e35.mockapi.io/books/${pageIndex.value}/book/${currentBookDelete.value}`
+          `https://apiadminbook.eduso.vn/api/book_store/get_detail/${currentBookDelete.value}`
         )
         .then((response) => {
           let data = response.data;
-          title.value = data.bookInformation.title;
+          title.value = data?.metadata?.bookContent;
         });
     });
 
     const deleteCurrentBook = () => {
+      axios.delete(
+        `https://apiadminbook.eduso.vn/api/book_store/delete_book/${currentBookDelete.value}`
+      );
       //Call API and delete in DB ở đây
       deleteBook(currentBookDelete.value);
       updateRemoveModalStatus(false);

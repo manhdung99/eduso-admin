@@ -12,6 +12,7 @@
         @input="previewFiles($event)"
         class="hidden"
         accept="image/*"
+        name="image"
       />
       <div v-if="imageSrc" class="crop-image-wrapper">
         <vue-cropper
@@ -43,6 +44,7 @@
         @input="uploadBookContent($event)"
         class="hidden"
         accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf,.csv"
+        name="BookContent"
       />
       <div class="add-book-modal">
         <div class="flex border-b border-gray-lighter pb-4 relative">
@@ -413,7 +415,6 @@ export default defineComponent({
       const docTypes = ["csv", "docx", "doc", "xlsx"];
       if (docTypes.includes(typeFile)) {
         metaData.value = file;
-        console.log(metaData.value);
 
         error.metadata = "";
       } else {
@@ -461,36 +462,32 @@ export default defineComponent({
           error
         )
       ) {
-        // const book = {
-        //   bookInformation: {
-        //     image: previewImage.value,
-        //     title: bookInfo.title,
-        //     description: bookInfo.description,
-        //     subDescription: bookInfo.subDescription,
-        //   },
-        //   publisher: bookInfo.publisher,
-        //   listedPrice: bookInfo.price,
-        //   discountEduso: bookInfo.discountEduso,
-        //   discount: bookInfo.discount,
-        //   metaData: metaData.value,
-        //   content: bookContent.value,
-        //   level: bookInfo.level,
-        //   subject: bookInfo.subject,
-        //   programme: studyProgram.value,
-        //   isSale: false,
-        //   bookId: Math.floor(Math.random() * 1000),
-        // };
-        // addBook(book);
-        //Call API to add data
-
-        console.log(addNewForm.value);
         const formData = new FormData(addNewForm.value);
-        console.log(formData);
-
         axios
           .post("https://apiadminbook.eduso.vn/api/book_store/save", formData)
           .then((response) => {
             console.log(response.data);
+            // const book = {
+            //   bookMetadata: {
+            //     image: previewImage.value,
+            //     title: bookInfo.title,
+            //     description: bookInfo.description,
+            //     subDescription: bookInfo.subDescription,
+            //   },
+            //   publisher: bookInfo.publisher,
+            //   listedPrice: bookInfo.price,
+            //   discountEduso: bookInfo.discountEduso,
+            //   discount: bookInfo.discount,
+            //   metaData: metaData.value,
+            //   content: bookContent.value,
+            //   level: bookInfo.level,
+            //   subject: bookInfo.subject,
+            //   programme: studyProgram.value,
+            //   isSale: false,
+            //   bookId: Math.floor(Math.random() * 1000),
+            // };
+            addBook(response.data);
+            //Call API to add data
           });
         updateAddNewModalStatus(false);
       }

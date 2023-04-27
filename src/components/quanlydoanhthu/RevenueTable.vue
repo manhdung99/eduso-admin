@@ -22,40 +22,40 @@
         v-for="book in books"
         :key="book.bookId"
       >
-        <td class="text-center">{{ book.bookId }}</td>
+        <td class="text-center">{{ book?.bookId }}</td>
         <td>
           <div class="flex justify-center">
             <div>
-              <img class="book-image" :src="book.bookInformation.image" />
+              <img class="book-image" :src="book?.metadata?.bookCover" />
             </div>
             <div class="ml-4">
               <p class="book-title">
-                {{ book.bookInformation.title }}
+                {{ book?.metadata?.bookName }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book.bookInformation.description }}
+                {{ book?.metadata?.bookSubject }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book.bookInformation.subDescription }}
+                {{ book?.metadata?.bookContent }}
               </p>
             </div>
           </div>
         </td>
         <td class="text-center">
           <span class="text-lg">{{
-            convertTimestampToDate(book.startDate)
+            convertTimestampToDate(book?.startDate)
           }}</span>
         </td>
         <td class="text-center">
           <span class="text-lg">{{
-            convertTimestampToDate(book.endDate)
+            convertTimestampToDate(book?.endDate)
           }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ convertPrice(book.revenue) }}</span>
+          <span class="text-lg">{{ convertPrice(book?.revenue) }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ book.numberDownload }}</span>
+          <span class="text-lg">{{ book?.numberDownload }}</span>
         </td>
         <td class="overflow-hidden">
           <button

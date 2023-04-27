@@ -79,12 +79,16 @@ export default defineComponent({
         getKhoSachColumn(response.data.columns);
       });
     axios
-      .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1")
+      .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
       .then((response) => {
-        let currentBookId = response.data.listBook[0].bookId;
-        getBooks(response.data.listBook);
-        updatePageIndex(response.data.pages.pageIndex);
-        getPagination(response.data.pages.pageNumber);
+        let currentBookId = response.data.Data[0].iD;
+        getBooks(response.data.Data);
+        updatePageIndex(response.data.Page.pageIndex);
+        getPagination(
+          Math.round(
+            response.data.Page.totalRecord / response.data.Page.pageSize
+          ) + 1
+        );
         updateCurrentBook(currentBookId);
       });
     return {

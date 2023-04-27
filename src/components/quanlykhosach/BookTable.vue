@@ -1,6 +1,6 @@
 <template>
   <table class="w-full table" border="1">
-    <thead v-columns-resizable class="table-head-wrapper">
+    <thead class="table-head-wrapper">
       <tr class="w-full">
         <th
           class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center"
@@ -22,51 +22,54 @@
         v-for="book in books"
         :key="book.bookId"
       >
-        <td class="ml-4 text-center">{{ book.bookId }}</td>
+        <td class="ml-4 text-center">{{ book?.iD }}</td>
         <td>
           <div class="flex justify-center">
             <div>
-              <img class="book-image" :src="book.bookInformation.image" />
+              <img
+                class="book-image"
+                :src="`https://static.eduso.vn/${book?.bookMetadata?.bookCover?.path}`"
+              />
             </div>
             <div class="ml-4">
               <p class="book-title">
-                {{ book.bookInformation.title }}
+                {{ book?.bookMetadata?.bookName }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book.bookInformation.description }}
+                {{ book?.bookMetadata?.bookSubject }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book.bookInformation.subDescription }}
+                {{ book?.bookMetadata?.bookContent }}
               </p>
             </div>
           </div>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ book.publisher }}</span>
+          <span class="text-lg">{{ book?.bookMetadata?.publisher }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ convertPrice(book.listedPrice) }}</span>
+          <span class="text-lg">{{ convertPrice(book?.bookPrice) }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ book.discountEduso }}</span>
+          <span class="text-lg">{{ book?.discountEduso }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ book.discount }}%</span>
+          <span class="text-lg">{{ book?.discount }}%</span>
         </td>
         <td class="">
           <div class="flex gap-x-2 lg:gap-x-4 justify-center">
             <img
               @click="
                 updateIsSaleBookModal(true);
-                currentBookSale = book.bookId;
+                currentBookSale = book.iD;
               "
               class="cursor-pointer"
-              :src="book.isSale ? eyeIcon : hideIcon"
+              :src="book.salesStatus ? eyeIcon : hideIcon"
               alt="icon"
             />
             <img
               class="cursor-pointer"
-              @click="updateBookModalStatus(true, book.bookId)"
+              @click="updateBookModalStatus(true, book.iD)"
               :src="editIcon"
               alt="icon"
             />
@@ -74,7 +77,7 @@
               class="cursor-pointer"
               @click="
                 updateRemoveModalStatus(true);
-                currentBookDelete = book.bookId;
+                currentBookDelete = book.iD;
               "
               :src="removeIcon"
               alt="icon"
@@ -84,9 +87,9 @@
       </tr>
     </tbody>
   </table>
-  <updateBookModalVue />
-  <removeBookModalVue />
-  <isSaleBookModalVue />
+  <updateBookModalVue v-if="openUpdateBookModal" />
+  <removeBookModalVue v-if="openRemoveBookModal" />
+  <isSaleBookModalVue v-if="openIsSaleBookModal" />
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -108,7 +111,13 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const bookStore = useBookStore();
-    const { currentBookDelete, currentBookSale } = storeToRefs(modal);
+    const {
+      currentBookDelete,
+      currentBookSale,
+      openUpdateBookModal,
+      openIsSaleBookModal,
+      openRemoveBookModal,
+    } = storeToRefs(modal);
     const {
       updateBookModalStatus,
       updateRemoveModalStatus,
@@ -138,6 +147,9 @@ export default defineComponent({
       convertPrice,
       updateIsSaleBookModal,
       currentBookSale,
+      openUpdateBookModal,
+      openIsSaleBookModal,
+      openRemoveBookModal,
     };
   },
   components: {
