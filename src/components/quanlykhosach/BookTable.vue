@@ -60,8 +60,8 @@
           <div class="flex gap-x-2 lg:gap-x-4 justify-center">
             <img
               @click="
+                getDetailBook(book.iD);
                 updateIsSaleBookModal(true);
-                currentBookSale = book.iD;
               "
               class="cursor-pointer"
               :src="book.salesStatus ? eyeIcon : hideIcon"
@@ -69,15 +69,18 @@
             />
             <img
               class="cursor-pointer"
-              @click="updateBookModalStatus(true, book.iD)"
+              @click="
+                getDetailBook(book.iD);
+                updateBookModalStatus(true);
+              "
               :src="editIcon"
               alt="icon"
             />
             <img
               class="cursor-pointer"
               @click="
+                getDetailBook(book.iD);
                 updateRemoveModalStatus(true);
-                currentBookDelete = book.iD;
               "
               :src="removeIcon"
               alt="icon"
@@ -90,6 +93,16 @@
   <updateBookModalVue v-if="openUpdateBookModal" />
   <removeBookModalVue v-if="openRemoveBookModal" />
   <isSaleBookModalVue v-if="openIsSaleBookModal" />
+  <div
+    v-if="isLoading"
+    class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
+  >
+    <div
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    >
+      <img class="w-20" src="../../assets/image/loading.gif" alt="" />
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -104,6 +117,7 @@ import updateBookModalVue from "../modal/updateBookModal.vue";
 import removeBookModalVue from "../modal/removeBookModal.vue";
 import isSaleBookModalVue from "../modal/isSaleBookModal.vue";
 import convertData from "@/uses/convertData";
+import axios from "axios";
 
 export default defineComponent({
   name: "BookTable",
@@ -112,11 +126,10 @@ export default defineComponent({
     const modal = useModalStore();
     const bookStore = useBookStore();
     const {
-      currentBookDelete,
-      currentBookSale,
       openUpdateBookModal,
       openIsSaleBookModal,
       openRemoveBookModal,
+      isLoading,
     } = storeToRefs(modal);
     const {
       updateBookModalStatus,
@@ -124,6 +137,7 @@ export default defineComponent({
       updateIsSaleBookModal,
     } = modal;
     const { books, khoSachColumns } = storeToRefs(bookStore);
+    const { setBookDetail } = bookStore;
     const { convertPrice } = convertData();
     const sortBooks = (data: string) => {
       if (data) {
@@ -132,13 +146,18 @@ export default defineComponent({
         });
       }
     };
-
+    const getDetailBook = async (id) => {
+      await axios
+        .get(`https://apiadminbook.eduso.vn/api/book_store/get_detail/${id}`)
+        .then((response) => {
+          setBookDetail(response.data);
+        });
+    };
     return {
       hideIcon,
       eyeIcon,
       removeIcon,
       editIcon,
-      currentBookDelete,
       books,
       khoSachColumns,
       sortBooks,
@@ -146,10 +165,11 @@ export default defineComponent({
       updateRemoveModalStatus,
       convertPrice,
       updateIsSaleBookModal,
-      currentBookSale,
       openUpdateBookModal,
       openIsSaleBookModal,
       openRemoveBookModal,
+      isLoading,
+      getDetailBook,
     };
   },
   components: {

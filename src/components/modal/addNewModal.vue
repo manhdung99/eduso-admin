@@ -346,7 +346,7 @@ export default defineComponent({
     const bookStore = useBookStore();
     const { openAddNewModal } = storeToRefs(modal);
     const { subjects } = storeToRefs(useCommonStore());
-    const { updateAddNewModalStatus } = modal;
+    const { updateAddNewModalStatus, updateLoadingStatus } = modal;
     const { addBook } = bookStore;
     const addNewForm = ref(null);
     let previewImage = ref(null);
@@ -451,6 +451,7 @@ export default defineComponent({
     };
 
     const onSubmit = () => {
+      updateLoadingStatus(true);
       // If all input values are present, add book
       if (
         checkValidationBeforeSubmit(
@@ -463,30 +464,13 @@ export default defineComponent({
         )
       ) {
         const formData = new FormData(addNewForm.value);
+        formData.append("cropimage", previewImage.value);
         axios
           .post("https://apiadminbook.eduso.vn/api/book_store/save", formData)
           .then((response) => {
             console.log(response.data);
-            // const book = {
-            //   bookMetadata: {
-            //     image: previewImage.value,
-            //     title: bookInfo.title,
-            //     description: bookInfo.description,
-            //     subDescription: bookInfo.subDescription,
-            //   },
-            //   publisher: bookInfo.publisher,
-            //   listedPrice: bookInfo.price,
-            //   discountEduso: bookInfo.discountEduso,
-            //   discount: bookInfo.discount,
-            //   metaData: metaData.value,
-            //   content: bookContent.value,
-            //   level: bookInfo.level,
-            //   subject: bookInfo.subject,
-            //   programme: studyProgram.value,
-            //   isSale: false,
-            //   bookId: Math.floor(Math.random() * 1000),
-            // };
             addBook(response.data);
+            updateLoadingStatus(false);
             //Call API to add data
           });
         updateAddNewModalStatus(false);
@@ -523,6 +507,7 @@ export default defineComponent({
       handleClearImage,
       subjects,
       addNewForm,
+      updateLoadingStatus,
     };
   },
   components: {

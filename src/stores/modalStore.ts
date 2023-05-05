@@ -9,20 +9,17 @@ export const useModalStore = defineStore("modalStore", {
     openBookManagementModal: false,
     openUnitManagementModal: false,
     openLogoutModal: false,
-    currentBookUpdate: 1,
     currentBookDetail: 1,
     currentUnitDetail: 1,
-    currentBookDelete: 1,
-    currentBookSale: 1,
+    isLoading: false,
   }),
   getters: {},
   actions: {
     updateAddNewModalStatus(status: boolean) {
       this.openAddNewModal = status;
     },
-    updateBookModalStatus(status: boolean, id = -1) {
+    updateBookModalStatus(status: boolean) {
       this.openUpdateBookModal = status;
-      if (id > 0) this.currentBookUpdate = id;
     },
     updateRemoveModalStatus(status: boolean) {
       this.openRemoveBookModal = status;
@@ -41,9 +38,8 @@ export const useModalStore = defineStore("modalStore", {
     updateLogoutModalStatus(status: boolean) {
       this.openLogoutModal = status;
     },
-    updateCurrentBook(id) {
-      this.currentBookUpdate = id;
-      this.currentBookDetail = id;
+    updateLoadingStatus(status) {
+      this.isLoading = status;
     },
   },
 });

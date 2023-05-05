@@ -7,6 +7,7 @@ export const useBookStore = defineStore("booksStore", {
     khoSachColumns: [],
     doanhThuSachColumns: [],
     doanhThuDonViColumns: [],
+    bookDetail: null,
   }),
   getters: {},
   actions: {
@@ -26,9 +27,7 @@ export const useBookStore = defineStore("booksStore", {
       this.books = this.books.filter((book) => book.iD != id);
     },
     addBook(book) {
-      console.log(book);
       this.books = [book, ...this.books];
-      console.log(this.books);
     },
     updateBook(book) {
       const index = this.books.findIndex((data) => data.iD == book.iD);
@@ -39,7 +38,11 @@ export const useBookStore = defineStore("booksStore", {
     },
     updateIsSaleBook(id, status) {
       const index = this.books.findIndex((data) => data.iD == id);
-      this.books[index].isSale = status;
+      this.books[index].salesStatus = status;
+    },
+    setBookDetail(data) {
+      this.bookDetail = data;
+      console.log(this.bookDetail);
     },
   },
 });

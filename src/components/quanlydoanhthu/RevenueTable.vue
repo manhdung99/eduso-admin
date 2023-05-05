@@ -90,7 +90,6 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const bookStore = useBookStore();
-    const { currentBookDelete } = storeToRefs(modal);
     const {
       updateBookModalStatus,
       updateRemoveModalStatus,
@@ -111,7 +110,6 @@ export default defineComponent({
       hideIcon,
       removeIcon,
       editIcon,
-      currentBookDelete,
       books,
       doanhThuSachColumns,
       sortBooks,

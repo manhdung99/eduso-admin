@@ -49,7 +49,6 @@ import BookTableVue from "@/components/quanlykhosach/BookTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { useBookStore } from "../stores/booksStore";
-import { useModalStore } from "../stores/modalStore";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 
 import axios from "axios";
@@ -68,9 +67,7 @@ export default defineComponent({
     const title = "Quản lý kho sách";
     const bookStore = useBookStore();
     const pagination = usePaginationStore();
-    const modal = useModalStore();
     const { grades, subjects } = storeToRefs(useCommonStore());
-    const { updateCurrentBook } = modal;
     const { getBooks, getKhoSachColumn } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
     axios
@@ -81,7 +78,7 @@ export default defineComponent({
     axios
       .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
       .then((response) => {
-        let currentBookId = response.data.Data[0].iD;
+        // let currentBookId = response.data.Data[0].iD;
         getBooks(response.data.Data);
         updatePageIndex(response.data.Page.pageIndex);
         getPagination(
@@ -89,7 +86,7 @@ export default defineComponent({
             response.data.Page.totalRecord / response.data.Page.pageSize
           ) + 1
         );
-        updateCurrentBook(currentBookId);
+        // updateCurrentBook(currentBookId);
       });
     return {
       title,

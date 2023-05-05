@@ -3,24 +3,24 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openIsSaleBookModal"
   >
-    <div class="remove-book-modal">
+    <div v-if="bookDetail != null" class="sale-book-modal">
       <div class="flex items-center justify-center">
         <img :src="warningIcon" alt="icon" />
       </div>
       <div
         class="font-bold text-xl text-blue-lighter flex items-center justify-center mt-3"
       >
-        {{ status ? "Tắt" : "Mở" }} bán sách ?
+        {{ bookDetail.salesStatus ? "Tắt" : "Mở" }} bán sách ?
       </div>
       <div
         class="font-bold text-tiny text-red flex items-center justify-center mt-3"
       >
-        {{ title }}
+        {{ bookDetail.name }}
       </div>
 
       <div class="flex gap-x-6 justify-center mt-6">
         <button @click="updateIsSaleID" class="button remove hover:opacity-80">
-          {{ status ? "Tắt" : "Mở" }}
+          {{ bookDetail.salesStatus ? "Tắt" : "Mở" }}
         </button>
         <button
           @click="updateIsSaleBookModal(false)"
@@ -33,10 +33,9 @@
   </div>
 </template>
 <script>
-import { defineComponent, watchEffect, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
-import { usePaginationStore } from "../../stores/commonStore";
 import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";
@@ -44,31 +43,33 @@ export default defineComponent({
   name: "isSaleBookModal",
   setup() {
     const modal = useModalStore();
-    const pagination = usePaginationStore();
-    const { openIsSaleBookModal, currentBookSale } = storeToRefs(modal);
+    const { openIsSaleBookModal } = storeToRefs(modal);
     const { updateIsSaleBookModal } = modal;
     const bookStore = useBookStore();
     const { updateIsSaleBook } = bookStore;
-    const { pageIndex } = storeToRefs(pagination);
+    const { bookDetail } = storeToRefs(bookStore);
     const title = ref(null);
     const status = ref(null);
 
-    watchEffect(() => {
-      axios
-        .get(
-          `https://apiadminbook.eduso.vn/api/book_store/get_detail/${currentBookSale.value}`
+    const updateIsSaleID = async () => {
+      const formData = new FormData();
+      formData.append("id", bookDetail.value.iD);
+      formData.append("salesStatus", !bookDetail.value.salesStatus);
+
+      await axios
+        .post(
+          "https://apiadminbook.eduso.vn/api/book_store/update_status_sale",
+          formData
         )
         .then((response) => {
-          let data = response.data;
-          title.value = data.bookInformation.title;
-          status.value = data.isSale;
+          if (response.status == 200) {
+            updateIsSaleBook(
+              bookDetail.value.iD,
+              !bookDetail.value.salesStatus
+            );
+            updateIsSaleBookModal(false);
+          }
         });
-    });
-
-    const updateIsSaleID = () => {
-      //Call API and update here in DB ở đây
-      updateIsSaleBook(currentBookSale.value, !status.value);
-      updateIsSaleBookModal(false);
     };
     return {
       warningIcon,
@@ -78,12 +79,13 @@ export default defineComponent({
       title,
       updateIsSaleBook,
       status,
+      bookDetail,
     };
   },
 });
 </script>
 <style scoped>
-.remove-book-modal {
+.sale-book-modal {
   position: absolute;
   top: 50%;
   left: 50%;

@@ -3,7 +3,7 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openUpdateBookModal"
   >
-    <form @submit.prevent="onSubmit" @keydown.enter="onSubmit">
+    <form ref="updateForm" @submit.prevent="onSubmit" @keydown.enter="onSubmit">
       <input
         id="book-image"
         ref="fileImageInput"
@@ -12,6 +12,7 @@
         @input="previewFiles($event)"
         class="hidden"
         accept="image/*"
+        name="image"
       />
       <div v-if="imageSrc" class="crop-image-wrapper">
         <vue-cropper
@@ -31,10 +32,11 @@
       </div>
       <input
         id="book-metadata"
+        name="files"
         type="file"
         @input="uploadMetadata($event)"
         class="hidden"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
+        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf,.csv"
       />
       <input
         id="book-content"
@@ -42,8 +44,9 @@
         @input="uploadBookContent($event)"
         class="hidden"
         accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
+        name="BookContent"
       />
-      <div class="update-book-modal max-h-screen">
+      <div v-if="bookDetail != null" class="update-book-modal max-h-screen">
         <div class="flex border-b border-gray-lighter pb-4 relative">
           <h3 class="text-xl font-bold text-blue-lighter w-4/5">
             Chỉnh sửa sách
@@ -61,13 +64,13 @@
           </div>
           <div class="book-info-wrapper">
             <p class="text-blue-lighter text-xl font-bold">
-              {{ bookInfo.title }}
+              {{ bookDetail.name }}
             </p>
             <p class="italic text-base text-grey-darker">
-              {{ bookInfo.description }}
+              {{ bookDetail.bookMetadata[0].bookContent }}
             </p>
             <p class="italic text-base text-grey-darker">
-              {{ bookInfo.subDescription }}
+              {{ bookDetail.bookMetadata[0].author }}
             </p>
             <label for="book-image" class="change-image-btn cursor-pointer"
               >Đổi ảnh bìa</label
@@ -83,7 +86,7 @@
                 <span><img :src="attachIcon" alt="icon" /></span>
                 <span
                   class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                  >{{ metaData }}</span
+                  >{{ bookDetail.bookMetadata[0].fileMetadata.name }}</span
                 >
               </div>
               <div class="flex gap-x-4">
@@ -243,10 +246,10 @@
             </p>
             <div class="relative mt-2">
               <input
-                @change="checkPriceValidation(bookInfo, error)"
                 class="select w-full py-1 text-2xs italic"
-                v-model="bookInfo.price"
+                v-model="bookDetail.bookPrice"
                 type="number"
+                name="BookPrice"
               />
               <span
                 class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
@@ -265,9 +268,9 @@
             <div class="relative mt-2">
               <input
                 type="number"
-                @change="checkDiscountValidation(bookInfo, error)"
                 class="select w-full py-1 text-2xs italic"
-                v-model="bookInfo.discount"
+                v-model="bookDetail.discount"
+                name="Discount"
               />
               <span
                 class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
@@ -286,21 +289,20 @@
             Lưu thay đổi
           </button>
         </div>
+        <input class="hidden" :value="bookDetail.iD" name="ID" />
       </div>
     </form>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watchEffect, reactive } from "vue";
+import { defineComponent, ref, reactive, watch } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
-import { usePaginationStore } from "../../stores/commonStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
 import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
-import axios from "axios";
 import {
   checkPriceValidation,
   checkDiscountValidation,
@@ -308,16 +310,16 @@ import {
 } from "../../uses/validation";
 import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
+import axios from "axios";
 export default defineComponent({
   name: "UpdateBookModal",
   setup() {
     const modal = useModalStore();
-    const pagination = usePaginationStore();
-    const { openUpdateBookModal, currentBookUpdate } = storeToRefs(modal);
-    const { pageIndex } = storeToRefs(pagination);
-    const { updateBookModalStatus } = modal;
+    const { openUpdateBookModal } = storeToRefs(modal);
+    const { updateBookModalStatus, updateLoadingStatus } = modal;
     const bookStore = useBookStore();
     const { updateBook } = bookStore;
+    const { bookDetail } = storeToRefs(bookStore);
     let previewImage = ref(null);
     let metaData = ref(null);
     let bookContent = ref(null);
@@ -325,10 +327,10 @@ export default defineComponent({
     const imageSrc = ref(null);
     const imageRef = ref(null);
     const fileImageInput = ref(null);
+    const updateForm = ref(null);
     const cropDragMode = ref("move");
     let listProgram = ["IELTS", "TOEIC"];
     let programAutocompletes = ref([]);
-    const book = ref({});
     let bookInfo = reactive({
       title: "",
       description: "",
@@ -363,6 +365,8 @@ export default defineComponent({
       imageSrc.value = null;
     };
     const previewFiles = (event) => {
+      console.log("here");
+
       const file = event.target.files[0];
       const typeFile = file.name.split(".")[1];
       const imageTypes = ["jpg", "svg", "png", "webp", "jfif"];
@@ -378,41 +382,18 @@ export default defineComponent({
       }
     };
     const onSubmit = () => {
-      // Validate
+      updateLoadingStatus(true);
+      const formData = new FormData(updateForm.value);
+      formData.append("cropimage", previewImage.value);
+      axios
+        .post("https://apiadminbook.eduso.vn/api/book_store/save", formData)
+        .then((response) => {
+          updateBook(response.data);
+          updateLoadingStatus(false);
+          //Call API to add data
+        });
 
-      // Call API
-
-      if (
-        checkValidationBeforeSubmit(
-          metaData,
-          previewImage,
-          bookInfo,
-          studyProgram,
-          bookContent,
-          error
-        )
-      ) {
-        const book = {
-          bookInformation: {
-            image: previewImage.value,
-            title: bookInfo.title,
-            description: bookInfo.description,
-            subDescription: bookInfo.subDescription,
-          },
-          publisher: bookInfo.publisher,
-          listedPrice: bookInfo.price,
-          discountEduso: bookInfo.discountEduso,
-          discount: bookInfo.discount,
-          metaData: metaData.value,
-          content: bookContent.value,
-          level: bookInfo.level,
-          subject: bookInfo.subject,
-          programme: studyProgram.value,
-          bookId: currentBookUpdate.value,
-        };
-        updateBook(book);
-        updateBookModalStatus(false);
-      }
+      updateBookModalStatus(false);
     };
     const uploadMetadata = (event) => {
       const file = event.target.files[0];
@@ -452,27 +433,12 @@ export default defineComponent({
       studyProgram.value = data;
       programAutocompletes.value = [];
     };
-
-    watchEffect(() => {
-      axios
-        .get(
-          `https://apiadminbook.eduso.vn/api/book_store/get_detail/${currentBookUpdate.value}`
-        )
-        .then((response) => {
-          let data = response.data;
-          bookInfo.title = data.bookInformation.title;
-          bookInfo.description = data.bookInformation.description;
-          bookInfo.subDescription = data.bookInformation.subDescription;
-          bookInfo.level = data.level;
-          bookInfo.subject = data.subject;
-          bookInfo.price = data.listedPrice;
-          bookInfo.discount = data.discount;
-          previewImage.value = data.bookInformation.image;
-          metaData.value = data.metaData;
-          bookContent.value = data.content;
-          studyProgram.value = data.programme;
-        });
-    });
+    watch(
+      () => bookDetail.value,
+      () => {
+        previewImage.value = `https://static.eduso.vn/${bookDetail.value.bookMetadata[0].bookCover.path}`;
+      }
+    );
 
     return {
       openUpdateBookModal,
@@ -482,7 +448,6 @@ export default defineComponent({
       downloadIcon,
       attachIcon,
       programAutocompletes,
-      book,
       bookInfo,
       metaData,
       bookContent,
@@ -503,6 +468,8 @@ export default defineComponent({
       cropDragMode,
       fileImageInput,
       handleClearImage,
+      bookDetail,
+      updateForm,
     };
   },
   components: {

@@ -45,7 +45,6 @@ import SearchBook from "@/components/common/SearchBook.vue";
 import RevenueTableVue from "@/components/quanlydoanhthu/RevenueTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import { useBookStore } from "../stores/booksStore";
-import { useModalStore } from "../stores/modalStore";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { storeToRefs } from "pinia";
@@ -64,8 +63,6 @@ export default {
     const action = "Export";
     const bookStore = useBookStore();
     const pagination = usePaginationStore();
-    const modal = useModalStore();
-    const { updateCurrentBook } = modal;
     const { getBooks, getDoanhThuSachColumn } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
     const { subjects } = storeToRefs(useCommonStore());
@@ -78,11 +75,9 @@ export default {
     axios
       .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1")
       .then((response) => {
-        let currentBookId = response.data.listBook[0].bookId;
         getBooks(response.data.listBook);
         updatePageIndex(response.data.pages.pageIndex);
         getPagination(response.data.pages.pageNumber);
-        updateCurrentBook(currentBookId);
       });
     return {
       title,

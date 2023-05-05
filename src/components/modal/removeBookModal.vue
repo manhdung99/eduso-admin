@@ -3,7 +3,7 @@
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
     v-if="openRemoveBookModal"
   >
-    <div class="remove-book-modal">
+    <div v-if="bookDetail != null" class="remove-book-modal">
       <div class="flex items-center justify-center">
         <img :src="warningIcon" alt="icon" />
       </div>
@@ -15,7 +15,7 @@
       <div
         class="font-bold text-tiny text-red flex items-center justify-center mt-3"
       >
-        {{ title }}
+        {{ bookDetail.name }}
       </div>
       <div class="text-tiny italic text-charcoal-lighter mt-3 text-center">
         Lưu ý : Sách đã xoá không thể khôi phục lại.
@@ -38,12 +38,13 @@
   </div>
 </template>
 <script>
-import { defineComponent, watchEffect, ref } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";
+
 export default defineComponent({
   name: "RemoveBookModal",
   setup() {
@@ -52,34 +53,24 @@ export default defineComponent({
     const { updateRemoveModalStatus } = modal;
     const bookStore = useBookStore();
     const { deleteBook } = bookStore;
-    const title = ref(null);
-
-    watchEffect(() => {
-      axios
-        .get(
-          `https://apiadminbook.eduso.vn/api/book_store/get_detail/${currentBookDelete.value}`
-        )
-        .then((response) => {
-          let data = response.data;
-          title.value = data?.metadata?.bookContent;
-        });
-    });
+    const { bookDetail } = storeToRefs(bookStore);
 
     const deleteCurrentBook = () => {
       axios.delete(
-        `https://apiadminbook.eduso.vn/api/book_store/delete_book/${currentBookDelete.value}`
+        `https://apiadminbook.eduso.vn/api/book_store/delete_book/${bookDetail.value.iD}`
       );
       //Call API and delete in DB ở đây
-      deleteBook(currentBookDelete.value);
+      deleteBook(bookDetail.value.iD);
       updateRemoveModalStatus(false);
     };
+    onMounted(() => console.log(bookDetail.value));
     return {
       openRemoveBookModal,
       warningIcon,
       currentBookDelete,
       updateRemoveModalStatus,
       deleteCurrentBook,
-      title,
+      bookDetail,
     };
   },
 });
