@@ -27,6 +27,7 @@ export const checkDiscountValidation = (
 export const checkValidationBeforeSubmit = (
   metaData,
   previewImage,
+  bookInfo,
   bookContent,
   error
 ) => {
@@ -38,8 +39,9 @@ export const checkValidationBeforeSubmit = (
       name: "Nội dung sách",
       value: bookContent.value,
     },
-    { key: "image", name: "Hình ảnh", value: previewImage.value },
+    { key: "image", name: "Bìa sách", value: previewImage.value },
     { key: "discount", name: "Giảm giá", value: bookInfo.discount },
+    { key: "price", name: "Giá sách", value: bookInfo.price },
   ];
 
   // Check for empty input values

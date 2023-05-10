@@ -72,6 +72,12 @@
                   >Chưa có file</span
                 >
               </div>
+              <span
+                class="absolute text-red -bottom-2 text-xs"
+                v-if="error.image"
+              >
+                {{ error.image }}
+              </span>
               <label class="cursor-pointer hover:opacity-80" for="book-image">
                 <img :src="uploadIcon" alt="icon" />
               </label>
@@ -453,7 +459,13 @@ export default defineComponent({
     const onSubmit = () => {
       // If all input values are present, add book
       if (
-        checkValidationBeforeSubmit(metaData, previewImage, bookContent, error)
+        checkValidationBeforeSubmit(
+          metaData,
+          previewImage,
+          bookInfo,
+          bookContent,
+          error
+        )
       ) {
         updateLoadingStatus(true);
         const formData = new FormData(addNewForm.value);
