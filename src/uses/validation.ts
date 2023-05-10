@@ -1,10 +1,10 @@
 export const checkPriceValidation = (
-  bookInfo: { price: number },
+  price: number,
   error: { price?: string }
 ) => {
-  if (bookInfo.price.toString() == "") {
+  if (price.toString() == "") {
     error.price = "Giá niêm yết không được để trống";
-  } else if (bookInfo.price < 0) {
+  } else if (price < 0) {
     error.price = "Giá niêm yết phải lớn hơn 0";
   } else {
     error.price = "";
@@ -12,12 +12,12 @@ export const checkPriceValidation = (
 };
 
 export const checkDiscountValidation = (
-  bookInfo: { discount: number },
+  discount: number,
   error: { discount?: string }
 ) => {
-  if (bookInfo.discount.toString() == "") {
+  if (discount.toString() == "") {
     error.discount = "Giảm giá không được để trống";
-  } else if (bookInfo.discount < 0) {
+  } else if (discount < 0) {
     error.discount = "Giảm giá phải lớn hơn 0";
   } else {
     error.discount = "";
@@ -27,8 +27,6 @@ export const checkDiscountValidation = (
 export const checkValidationBeforeSubmit = (
   metaData,
   previewImage,
-  bookInfo,
-  studyProgram,
   bookContent,
   error
 ) => {
@@ -41,10 +39,6 @@ export const checkValidationBeforeSubmit = (
       value: bookContent.value,
     },
     { key: "image", name: "Hình ảnh", value: previewImage.value },
-    { key: "level", name: "", value: bookInfo.level },
-    { key: "subject", name: "", value: bookInfo.subject },
-    { key: "program", name: "", value: studyProgram.value },
-    { key: "price", name: "Giá", value: bookInfo.price },
     { key: "discount", name: "Giảm giá", value: bookInfo.discount },
   ];
 

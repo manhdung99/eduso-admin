@@ -246,6 +246,7 @@
             </p>
             <div class="relative mt-2">
               <input
+                @change="checkPriceValidation(bookDetail.bookPrice, error)"
                 class="select w-full py-1 text-2xs italic"
                 v-model="bookDetail.bookPrice"
                 type="number"
@@ -267,6 +268,7 @@
             </p>
             <div class="relative mt-2">
               <input
+                @change="checkDiscountValidation(bookDetail.discount, error)"
                 type="number"
                 class="select w-full py-1 text-2xs italic"
                 v-model="bookDetail.discount"
@@ -306,7 +308,6 @@ import attachIcon from "../../assets/image/attach.svg";
 import {
   checkPriceValidation,
   checkDiscountValidation,
-  checkValidationBeforeSubmit,
 } from "../../uses/validation";
 import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
@@ -365,8 +366,6 @@ export default defineComponent({
       imageSrc.value = null;
     };
     const previewFiles = (event) => {
-      console.log("here");
-
       const file = event.target.files[0];
       const typeFile = file.name.split(".")[1];
       const imageTypes = ["jpg", "svg", "png", "webp", "jfif"];
@@ -382,18 +381,19 @@ export default defineComponent({
       }
     };
     const onSubmit = () => {
-      updateLoadingStatus(true);
-      const formData = new FormData(updateForm.value);
-      formData.append("cropimage", previewImage.value);
-      axios
-        .post("https://apiadminbook.eduso.vn/api/book_store/save", formData)
-        .then((response) => {
-          updateBook(response.data);
-          updateLoadingStatus(false);
-          //Call API to add data
-        });
-
-      updateBookModalStatus(false);
+      if (error.price == "" && error.discount == "") {
+        updateLoadingStatus(true);
+        const formData = new FormData(updateForm.value);
+        formData.append("cropimage", previewImage.value);
+        axios
+          .post("https://apiadminbook.eduso.vn/api/book_store/save", formData)
+          .then((response) => {
+            updateBook(response.data);
+            updateLoadingStatus(false);
+            //Call API to add data
+          });
+        updateBookModalStatus(false);
+      }
     };
     const uploadMetadata = (event) => {
       const file = event.target.files[0];

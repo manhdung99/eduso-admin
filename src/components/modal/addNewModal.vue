@@ -271,7 +271,7 @@
             </p>
             <div class="relative mt-2">
               <input
-                @change="checkPriceValidation(bookInfo, error)"
+                @change="checkPriceValidation(bookInfo.price, error)"
                 class="select w-full py-1 text-2xs italic no-arrows"
                 v-model="bookInfo.price"
                 type="number"
@@ -294,7 +294,7 @@
             <div class="relative mt-2">
               <input
                 type="number"
-                @change="checkDiscountValidation(bookInfo, error)"
+                @change="checkDiscountValidation(bookInfo.discount, error)"
                 class="select w-full py-1 text-2xs italic"
                 v-model="bookInfo.discount"
                 name="Discount"
@@ -451,18 +451,11 @@ export default defineComponent({
     };
 
     const onSubmit = () => {
-      updateLoadingStatus(true);
       // If all input values are present, add book
       if (
-        checkValidationBeforeSubmit(
-          metaData,
-          previewImage,
-          bookInfo,
-          studyProgram,
-          bookContent,
-          error
-        )
+        checkValidationBeforeSubmit(metaData, previewImage, bookContent, error)
       ) {
+        updateLoadingStatus(true);
         const formData = new FormData(addNewForm.value);
         formData.append("cropimage", previewImage.value);
         axios
