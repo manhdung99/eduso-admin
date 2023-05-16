@@ -183,7 +183,7 @@ export default defineComponent({
 <style scoped>
 .log-out-btn {
   display: flex;
-  padding-left: 39px;
+  padding-left: 27px;
   color: #a4a4a4;
   cursor: pointer;
 }

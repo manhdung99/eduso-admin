@@ -18,7 +18,7 @@
     </thead>
     <tbody>
       <tr
-        class="text-charcoal border-b border-grey-lighter"
+        class="text-charcoal border-b border-grey-lighter odd:bg-gray-200"
         v-for="book in books"
         :key="book.bookId"
       >

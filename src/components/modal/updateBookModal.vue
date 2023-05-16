@@ -30,22 +30,6 @@
           <button class="cancel" @click="imageSrc = null">Cancel</button>
         </div>
       </div>
-      <input
-        id="book-metadata"
-        name="files"
-        type="file"
-        @input="uploadMetadata($event)"
-        class="hidden"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf,.csv"
-      />
-      <input
-        id="book-content"
-        type="file"
-        @input="uploadBookContent($event)"
-        class="hidden"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf"
-        name="BookContent"
-      />
       <div v-if="bookDetail != null" class="update-book-modal max-h-screen">
         <div class="flex border-b border-gray-lighter pb-4 relative">
           <h3 class="text-xl font-bold text-blue-lighter w-4/5">
@@ -60,7 +44,17 @@
         <!-- Có sách -->
         <div class="flex justify-between mt-6">
           <div class="mr-6 md:mr-10">
-            <img class="book-image-modal" :src="previewImage" alt="" />
+            <img
+              class="book-image-modal"
+              :src="
+                previewImage != null
+                  ? previewImage
+                  : bookDetail != null
+                  ? `https://static.eduso.vn/${bookDetail.bookMetadata[0].bookCover.path}`
+                  : ''
+              "
+              alt=""
+            />
           </div>
           <div class="book-info-wrapper">
             <p class="text-blue-lighter text-xl font-bold">
@@ -77,66 +71,29 @@
             >
           </div>
         </div>
-        <!-- Meta data of book  -->
-        <div>
-          <div class="mt-2 relative">
-            <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
-            <div class="flex justify-between items-center mt-2">
-              <div class="flex">
-                <span><img :src="attachIcon" alt="icon" /></span>
-                <span
-                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                  >{{ bookDetail.bookMetadata[0].fileMetadata.name }}</span
-                >
-              </div>
-              <div class="flex gap-x-4">
-                <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
-                <label for="book-metadata">
-                  <img
-                    class="cursor-pointer hover:opacity-80"
-                    :src="uploadIcon"
-                    alt="icon"
-                  />
-                </label>
-              </div>
-              <span
-                class="absolute text-red -bottom-3 text-xs"
-                v-if="error.metadata"
-              >
-                {{ error.metadata }}
-              </span>
+        <div class="w-1/2 mt-6">
+          <p
+            class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
+          >
+            Phân loại:
+          </p>
+          <div class="relative mt-2">
+            <select class="select w-full py-1">
+              <option value="Cấp 1">Có bản quyền</option>
+              <option value="Cấp 2">Không bản quyền</option>
+            </select>
+            <div
+              class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
+            >
+              <span class="triangle_up active:border-b-black"></span>
+              <span class="triangle_down active:border-t-black"></span>
             </div>
-          </div>
-        </div>
-        <!-- Nội dung sách  -->
-        <div>
-          <div class="mt-2 relative">
-            <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
-            <div class="flex justify-between items-center mt-2">
-              <div class="flex">
-                <span><img :src="attachIcon" alt="icon" /></span>
-                <span
-                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                  >{{ bookContent }}</span
-                >
-              </div>
-              <div class="flex gap-x-4">
-                <img class="cursor-pointer" :src="downloadIcon" alt="icon" />
-                <label for="book-content">
-                  <img
-                    class="cursor-pointer hover:opacity-80"
-                    :src="uploadIcon"
-                    alt="icon"
-                  />
-                </label>
-              </div>
-              <span
-                class="absolute text-red -bottom-3 text-xs"
-                v-if="error.bookcontent"
-              >
-                {{ error.bookcontent }}
-              </span>
-            </div>
+            <span
+              class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+              v-if="error.level"
+            >
+              {{ error.level }}
+            </span>
           </div>
         </div>
         <!-- info -->
@@ -395,17 +352,6 @@ export default defineComponent({
         updateBookModalStatus(false);
       }
     };
-    const uploadMetadata = (event) => {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const docTypes = ["csv", "docx", "doc", "xlsx"];
-      if (docTypes.includes(typeFile)) {
-        metaData.value = file.name;
-        error.metadata = "";
-      } else {
-        error.metadata = "Chỉ hỗ trợ file tài liệu";
-      }
-    };
 
     const uploadBookContent = (event) => {
       const file = event.target.files[0];
@@ -454,7 +400,6 @@ export default defineComponent({
       previewFiles,
       previewImage,
       studyProgram,
-      uploadMetadata,
       uploadBookContent,
       updateAutocompleteProgram,
       updateStudyProgram,
@@ -504,6 +449,46 @@ export default defineComponent({
   padding: 16px 24px;
   border-radius: 10px;
   min-width: 470px;
+}
+.book-info-wrapper {
+  position: relative;
+  min-width: 50%;
+}
+.cropper-container.cropper-bg {
+  background: black;
+}
+.crop-image-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  z-index: 10;
+}
+.crop-image-btn-wrapper {
+  display: flex;
+  column-gap: 20px;
+}
+.crop-image-btn-wrapper .crop {
+  background: #3c9dd2;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+}
+.crop-image-btn-wrapper .cancel {
+  background: #c1272c;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+}
+.crop-image-btn-wrapper {
+  position: absolute;
+  bottom: 4px;
+  right: 16px;
 }
 @media screen and (max-width: 424px) {
   .update-book-modal {

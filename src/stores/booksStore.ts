@@ -42,7 +42,6 @@ export const useBookStore = defineStore("booksStore", {
     },
     setBookDetail(data) {
       this.bookDetail = data;
-      console.log(this.bookDetail);
     },
   },
 });

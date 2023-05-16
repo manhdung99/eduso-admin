@@ -1,348 +1,83 @@
 <template>
   <div
-    class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
-    v-if="openAddNewModal"
+    :class="openAddNewModal ? 'flex' : 'hidden'"
+    class="fixed top-0 bottom-0 left-0 right-0 bg-modal flex justify-center items-center z-10"
   >
-    <form ref="addNewForm" @submit.prevent="onSubmit" @keydown.enter="onSubmit">
-      <input
-        id="book-image"
-        ref="fileImageInput"
-        type="file"
-        @click="handleClearImage"
-        @input="previewFiles($event)"
-        class="hidden"
-        accept="image/*"
-        name="image"
-      />
-      <div v-if="imageSrc" class="crop-image-wrapper">
-        <vue-cropper
-          ref="imageRef"
-          :src="imageSrc"
-          :aspect-ratio="176 / 215"
-          :view-mode="1"
-          :drag-mode="cropDragMode"
-          :toggle-drag-mode-on-dblclick="false"
-          :crop-box-movable="true"
-          :crop-box-resizable="false"
+    <div class="w-[800px] h-[700px] bg-white p-4 relative">
+      <div
+        @click="() => updateAddNewModalStatus(false)"
+        class="absolute right-4 cursor-pointer"
+      >
+        <img :src="closeIcon" alt="icon" />
+      </div>
+      <div
+        class="border-b border-grey-lighter text-xl text-charcoal font-bold pb-3"
+      >
+        Thêm sách
+      </div>
+      <div class="my-5">
+        <input
+          class="w-full border border-[#BDBDBD] pl-4 py-2 outline-none focus:border-[#00000091] text-[13px]"
+          placeholder="Nhập tên sách..."
         />
-        <div class="crop-image-btn-wrapper">
-          <button class="crop" @click="cropImage">Crop Image</button>
-          <button class="cancel" @click="imageSrc = null">Cancel</button>
+      </div>
+      <div
+        class="flex flex-wrap overflow-y-auto max-h-[480px] gap-x-6 add-book-modal mb-2"
+      >
+        <div
+          v-for="book in books"
+          class="mb-8 rounded relative border"
+          v-bind:key="book.iD"
+          @click="getDetailBook(book.iD)"
+          :class="
+            book.iD == (bookDetail ? bookDetail.iD : 0)
+              ? 'border-blue-superiority'
+              : ''
+          "
+        >
+          <div class="book-wrapper">
+            <div>
+              <img
+                class="book-item-image"
+                :src="`https://static.eduso.vn/${book.bookMetadata.bookCover.path}`"
+                alt="book image"
+              />
+            </div>
+            <div class="bg-[#F8F9FA] px-[14px] rounded">
+              <span class="font-semibold text-[#00314C] text-base pt-2 block">
+                {{ book.name }}
+              </span>
+              <div class="flex space-x-2 pb-3 items-center">
+                <span class="font-bold text-[#D03239] text-sm">
+                  <!-- {{ currentPrice }} -->
+                </span>
+                <span class="text-xs line-through text-[#68818F]">
+                  <!-- {{ oldPrice }} -->
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <input
-        id="files"
-        name="files"
-        type="file"
-        @input="uploadMetadata($event)"
-        class="hidden"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf,.csv"
-      />
-      <input
-        id="book-content"
-        type="file"
-        @input="uploadBookContent($event)"
-        class="hidden"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt,.pdf,.csv"
-        name="BookContent"
-      />
-      <div class="add-book-modal">
-        <div class="flex border-b border-gray-lighter pb-4 relative">
-          <h3 class="text-xl font-bold text-blue-lighter">Thêm sách</h3>
-          <span
-            @click="updateAddNewModalStatus(false)"
-            class="absolute right-0 cursor-pointer"
-            ><img :src="closeIcon" alt="icon"
-          /></span>
-        </div>
-        <!-- Không có sách -->
-        <div v-if="!previewImage">
-          <div class="italic text-base mt-2">
-            <span class="text-grey-darker mr-1"
-              >* Vui lòng xem qua hướng dẫn tải sách tại</span
-            >
-            <a class="text-charcoal underline font-semibold" href="">HDSD </a>
-          </div>
-          <div class="mt-2">
-            <p class="text-blue-darker text-lg font-bold">Bìa sách</p>
-            <div class="flex justify-between items-center mt-2 relative">
-              <div class="flex">
-                <span><img :src="attachIcon" alt="icon" /></span>
-                <span class="text-grey-darker text-base italic ml-4"
-                  >Chưa có file</span
-                >
-              </div>
-              <span
-                class="absolute text-red -bottom-2 text-xs"
-                v-if="error.image"
-              >
-                {{ error.image }}
-              </span>
-              <label class="cursor-pointer hover:opacity-80" for="book-image">
-                <img :src="uploadIcon" alt="icon" />
-              </label>
-            </div>
-          </div>
-        </div>
-        <!-- Có sách -->
-        <div v-else class="flex justify-between mt-6">
-          <div class="mr-6 md:mr-10">
-            <img class="book-image-modal" :src="previewImage" alt="" />
-          </div>
-          <div class="book-info-wrapper">
-            <label for="book-image" class="change-image-btn cursor-pointer"
-              >Đổi ảnh bìa</label
-            >
-          </div>
-        </div>
-        <!-- Meta data of book  -->
-        <div>
-          <div class="mt-2">
-            <p class="text-blue-darker text-lg font-bold">Metadata của sách:</p>
-            <div class="flex justify-between items-center mt-2 relative">
-              <div class="flex items-center">
-                <span><img :src="attachIcon" alt="icon" /></span>
-                <span
-                  v-if="!metaData"
-                  class="text-grey-darker text-base italic ml-4"
-                  >Chưa có file</span
-                >
-                <span
-                  v-else
-                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                  >{{ metaData.name }}</span
-                >
-              </div>
-              <div class="flex gap-x-4">
-                <label for="files">
-                  <img
-                    class="cursor-pointer hover:opacity-80"
-                    :src="uploadIcon"
-                    alt="icon"
-                  />
-                </label>
-              </div>
-              <span
-                class="absolute text-red -bottom-2 text-xs"
-                v-if="error.metadata"
-              >
-                {{ error.metadata }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- Nội dung sách  -->
-        <div>
-          <div class="mt-2">
-            <p class="text-blue-darker text-lg font-bold">Nội dung sách:</p>
-            <div class="flex justify-between items-center mt-2 relative">
-              <div class="flex items-center">
-                <span><img :src="attachIcon" alt="icon" /></span>
-                <span
-                  v-if="!bookContent"
-                  class="text-grey-darker text-base italic ml-4"
-                  >Chưa có file</span
-                >
-                <span
-                  v-else
-                  class="text-grey-darker text-base italic ml-4 bg-modal px-3 py-1 clip-text"
-                  >{{ bookContent }}</span
-                >
-              </div>
-              <div class="flex gap-x-4">
-                <label
-                  class="cursor-pointer hover:opacity-80"
-                  for="book-content"
-                >
-                  <img :src="uploadIcon" alt="icon" />
-                </label>
-              </div>
-              <span
-                class="absolute text-red -bottom-2 text-xs"
-                v-if="error.bookcontent"
-              >
-                {{ error.bookcontent }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- info -->
-        <div class="flex gap-x-2 md:gap-x-4 mt-4">
-          <div class="w-1/3">
-            <p
-              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
-            >
-              Cấp học:
-            </p>
-            <div class="relative mt-2">
-              <select
-                @change="error.level = ''"
-                v-model="bookInfo.level"
-                class="select w-full py-1"
-              >
-                <option value="Cấp 1">Cấp 1</option>
-                <option value="Cấp 2">Cấp 2</option>
-                <option value="Cấp 3">Cấp 3</option>
-                <option value="Đại học">Đại học</option>
-              </select>
-              <div
-                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-              >
-                <span class="triangle_up active:border-b-black"></span>
-                <span class="triangle_down active:border-t-black"></span>
-              </div>
-              <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.level"
-              >
-                {{ error.level }}
-              </span>
-            </div>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
-            >
-              Môn học:
-            </p>
-            <div class="relative mt-2">
-              <select
-                @change="error.subject = ''"
-                v-model="bookInfo.subject"
-                class="select w-full py-1"
-              >
-                <option
-                  v-for="subject in subjects"
-                  :key="subject.id"
-                  :value="subject.id"
-                >
-                  {{ subject.name }}
-                </option>
-              </select>
-              <div
-                class="absolute right-2 flex flex-col gap-y-1 top-1/2 -translate-y-1/2"
-              >
-                <span class="triangle_up active:border-b-black"></span>
-                <span class="triangle_down active:border-t-black"></span>
-              </div>
-              <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.subject"
-              >
-                {{ error.subject }}
-              </span>
-            </div>
-          </div>
-          <div class="w-1/3">
-            <p
-              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
-            >
-              Chương trình:
-            </p>
-            <div class="relative mt-2">
-              <input
-                @input="updateAutocompleteProgram"
-                class="select w-full py-1 text-2xs italic"
-                v-model="studyProgram"
-              />
-              <div
-                v-if="programAutocompletes.length > 0"
-                class="autocomplete-wrapper"
-              >
-                <div
-                  class="text-center border-b border-grey first:border-t-0 last:border-b-0 hover:bg-modal cursor-pointer"
-                  v-for="(data, index) in programAutocompletes"
-                  :key="index"
-                  @click="updateStudyProgram(data)"
-                >
-                  {{ data }}
-                </div>
-              </div>
-              <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.program"
-              >
-                {{ error.program }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <!-- Price  -->
-        <div class="flex gap-x-4 mt-4">
-          <div class="w-1/2">
-            <p
-              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
-            >
-              Giá niêm yết (VND):
-            </p>
-            <div class="relative mt-2">
-              <input
-                @change="checkPriceValidation(bookInfo.price, error)"
-                class="select w-full py-1 text-2xs italic no-arrows"
-                v-model="bookInfo.price"
-                type="number"
-                name="BookPrice"
-              />
-              <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.price"
-              >
-                {{ error.price }}
-              </span>
-            </div>
-          </div>
-          <div class="w-1/2">
-            <p
-              class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
-            >
-              Mức giảm giá (%):
-            </p>
-            <div class="relative mt-2">
-              <input
-                type="number"
-                @change="checkDiscountValidation(bookInfo.discount, error)"
-                class="select w-full py-1 text-2xs italic"
-                v-model="bookInfo.discount"
-                name="Discount"
-              />
-              <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.discount"
-              >
-                {{ error.discount }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="flex items-center justify-center mt-6">
-          <button
-            type="submit"
-            class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90"
-          >
-            Thêm sách
-          </button>
-        </div>
-      </div>
-    </form>
+      <fieldset
+        @click="
+          updateBookModalStatus(true);
+          updateAddNewModalStatus(false);
+        "
+        class="bg-green text-white font-semibold inline-block px-5 py-2 rounded mt-4 ml-[50%] -translate-x-1/2 hover:opacity-80 cursor-pointer"
+      >
+        Lưu sách
+      </fieldset>
+    </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
-import closeIcon from "../../assets/image/close.svg";
-import uploadIcon from "../../assets/image/upload.svg";
-import downloadIcon from "../../assets/image/download.svg";
-import attachIcon from "../../assets/image/attach.svg";
-import { useCommonStore } from "../../stores/commonStore";
-import {
-  checkPriceValidation,
-  checkDiscountValidation,
-  checkValidationBeforeSubmit,
-} from "../../uses/validation";
-import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
+import closeIcon from "../../assets/image/close.svg";
 import axios from "axios";
 
 export default defineComponent({
@@ -351,277 +86,50 @@ export default defineComponent({
     const modal = useModalStore();
     const bookStore = useBookStore();
     const { openAddNewModal } = storeToRefs(modal);
-    const { subjects } = storeToRefs(useCommonStore());
-    const { updateAddNewModalStatus, updateLoadingStatus } = modal;
-    const { addBook } = bookStore;
-    const addNewForm = ref(null);
-    let previewImage = ref(null);
-    let metaData = ref(null);
-    let bookContent = ref(null);
-    let studyProgram = ref(null);
-    const imageSrc = ref(null);
-    const imageRef = ref(null);
-    const fileImageInput = ref(null);
-    const cropDragMode = ref("move");
-    let listProgram = ["IELTS", "TOEIC"];
-    let programAutocompletes = ref([]);
-    let bookInfo = reactive({
-      title: "",
-      description: "",
-      subDescription: "",
-      publisher: "",
-      level: "",
-      subject: "",
-      price: 0,
-      discount: 0,
-      discountEduso: "",
-    });
-    const error = reactive({
-      image: "",
-      metadata: "",
-      bookcontent: "",
-      level: "",
-      subject: "",
-      program: "",
-      price: "",
-      discount: "",
-    });
-    const handleClearImage = () => {
-      if (fileImageInput.value && fileImageInput.value.files.length > 0) {
-        fileImageInput.value.value = null;
-      }
+    const { updateAddNewModalStatus, updateBookModalStatus } = modal;
+    const { books, bookDetail } = storeToRefs(bookStore);
+    const { setBookDetail } = bookStore;
+    const getDetailBook = async (id) => {
+      console.log(id);
+
+      await axios
+        .get(`https://apiadminbook.eduso.vn/api/book_store/get_detail/${id}`)
+        .then((response) => {
+          setBookDetail(response.data);
+        });
     };
-
-    const cropImage = () => {
-      const croppedCanvas = imageRef.value.cropper.getCroppedCanvas();
-      const croppedImage = croppedCanvas.toDataURL();
-      previewImage.value = croppedImage;
-      imageSrc.value = null;
-    };
-
-    const previewFiles = (event) => {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const imageTypes = ["jpg", "svg", "png", "webp", "jfif"];
-      if (imageTypes.includes(typeFile)) {
-        const theReader = new FileReader();
-        theReader.onloadend = async () => {
-          imageSrc.value = await theReader.result;
-        };
-        theReader.readAsDataURL(file);
-        error.image = "";
-      } else {
-        error.image = "Chỉ hỗ trợ file ảnh";
-      }
-    };
-
-    const uploadMetadata = (event) => {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const docTypes = ["csv", "docx", "doc", "xlsx"];
-      if (docTypes.includes(typeFile)) {
-        metaData.value = file;
-
-        error.metadata = "";
-      } else {
-        error.metadata = "Chỉ hỗ trợ file tài liệu";
-      }
-    };
-
-    const uploadBookContent = (event) => {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const docTypes = ["csv", "docx", "doc", "xlsx"];
-      if (docTypes.includes(typeFile)) {
-        bookContent.value = file.name;
-        error.bookcontent = "";
-      } else {
-        error.bookcontent = "Chỉ hỗ trợ file tài liệu";
-      }
-    };
-
-    const updateAutocompleteProgram = () => {
-      error.program = "";
-      if (studyProgram.value.length > 0) {
-        programAutocompletes.value = listProgram.filter((data: string) =>
-          data.toUpperCase().includes(studyProgram.value.toUpperCase())
-        );
-      } else {
-        programAutocompletes.value = [];
-      }
-    };
-
-    const updateStudyProgram = (data) => {
-      studyProgram.value = data;
-      programAutocompletes.value = [];
-    };
-
-    const onSubmit = () => {
-      // If all input values are present, add book
-      if (
-        checkValidationBeforeSubmit(
-          metaData,
-          previewImage,
-          bookInfo,
-          bookContent,
-          error
-        )
-      ) {
-        updateLoadingStatus(true);
-        const formData = new FormData(addNewForm.value);
-        formData.append("cropimage", previewImage.value);
-        axios
-          .post("https://apiadminbook.eduso.vn/api/book_store/save", formData)
-          .then((response) => {
-            console.log(response.data);
-            addBook(response.data);
-            updateLoadingStatus(false);
-            //Call API to add data
-          });
-        updateAddNewModalStatus(false);
-      }
-    };
-
     return {
       openAddNewModal,
-      updateAddNewModalStatus,
+      books,
       closeIcon,
-      uploadIcon,
-      downloadIcon,
-      attachIcon,
-      previewImage,
-      bookInfo,
-      metaData,
-      bookContent,
-      studyProgram,
-      programAutocompletes,
-      previewFiles,
-      uploadMetadata,
-      uploadBookContent,
-      updateAutocompleteProgram,
-      updateStudyProgram,
-      onSubmit,
-      error,
-      checkPriceValidation,
-      checkDiscountValidation,
-      imageSrc,
-      imageRef,
-      cropImage,
-      cropDragMode,
-      fileImageInput,
-      handleClearImage,
-      subjects,
-      addNewForm,
-      updateLoadingStatus,
+      bookDetail,
+      getDetailBook,
+      updateAddNewModalStatus,
+      updateBookModalStatus,
     };
-  },
-  components: {
-    VueCropper,
   },
   methods: {},
 });
 </script>
 <style>
-.book-image-modal {
-  min-width: 160px;
-  max-width: 160px;
-  height: 200px;
+.book-wrapper {
+  max-width: 168px;
 }
-.change-image-btn {
-  background: #7d919c;
-  color: white;
-  border-radius: 5px;
-  position: absolute;
-  bottom: 0;
-  font-size: 16px;
-  padding: 10px 23px;
+.book-item-image {
+  width: 168px;
+  height: 205px;
+  object-fit: fill;
 }
-.change-image-btn:hover {
-  background: #3b4145;
+.add-book-modal::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
 }
-.add-book-modal {
-  background: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 16px 24px;
+.add-book-modal::-webkit-scrollbar-thumb {
+  background: #555555;
   border-radius: 10px;
-  min-width: 470px;
-  max-width: 500px;
 }
-.clip-text {
-  white-space: nowrap;
-  width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.book-info-wrapper {
-  position: relative;
-  min-width: 50%;
-}
-.autocomplete-wrapper {
-  width: 100%;
-  border: 1px solid #6f848f;
-  border-radius: 6px;
-  position: absolute;
-  background: white;
-}
-.cropper-container.cropper-bg {
-  background: black;
-}
-.crop-image-wrapper {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: black;
-  z-index: 10;
-}
-.crop-image-btn-wrapper {
-  display: flex;
-  column-gap: 20px;
-}
-.crop-image-btn-wrapper .crop {
-  background: #3c9dd2;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
-}
-.crop-image-btn-wrapper .cancel {
-  background: #c1272c;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
-}
-.crop-image-btn-wrapper {
-  position: absolute;
-  bottom: 4px;
-  right: 16px;
-}
-@media screen and (max-width: 767px) {
-  .add-book-modal {
-    min-width: 300px;
-  }
-}
-@media screen and (max-width: 424px) {
-  .add-book-modal {
-    position: fixed;
-    top: 4px;
-    bottom: 4px;
-    transform: translate(0, 0);
-    left: 2px;
-    right: 2px;
-    overflow-y: auto;
-    padding: 16px 12px;
-    min-width: 300px;
-  }
-  .book-info-wrapper {
-    min-width: auto;
-  }
+.add-book-modal::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px #555555;
+  border-radius: 10px;
 }
 </style>

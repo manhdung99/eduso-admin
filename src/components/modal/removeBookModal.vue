@@ -15,7 +15,7 @@
       <div
         class="font-bold text-tiny text-red flex items-center justify-center mt-3"
       >
-        {{ bookDetail.name }}
+        <!-- {{ bookDetail.name }} -->
       </div>
       <div class="text-tiny italic text-charcoal-lighter mt-3 text-center">
         Lưu ý : Sách đã xoá không thể khôi phục lại.

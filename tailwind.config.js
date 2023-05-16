@@ -42,6 +42,7 @@ export default {
           lighter: "#00314C",
           DEFAULT: "#3C9DD2",
           darker: "#002235",
+          superiority: "#7BA1B7",
         },
         red: {
           DEFAULT: "#ff0000",
@@ -52,6 +53,7 @@ export default {
       },
       spacing: {
         12.5: "3.125rem",
+        42: "10.5rem",
         "1/20": "5%",
         "1/10": "10%",
         "1/8": "12.5%",

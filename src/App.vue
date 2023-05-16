@@ -10,7 +10,7 @@
       </div>
       <SideBarVue />
     </div>
-    <div class="flex-1 w-full md:w-auto">
+    <div :class="openSidebar ? 'open-side-bar' : ''" class="main-content">
       <div @click="openSidebar = true" class="side-bar-icon">
         <img :src="sideBarIcon" alt="" />
       </div>
@@ -70,9 +70,11 @@ export default defineComponent({
   left: -300px;
   top: 0;
   bottom: 0;
+  padding-right: 8px;
 }
 .side-bar-wrapper.show {
   left: 0;
+  position: relative;
 }
 .side-bar-icon {
   width: 24px;
@@ -81,9 +83,21 @@ export default defineComponent({
   position: absolute;
   left: 20px;
 }
+.main-content {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+.main-content.has-side-bar {
+  left: 0;
+}
 @media screen and (max-width: 767px) {
   .side-bar-icon {
     top: 28px;
+  }
+  .side-bar-wrapper.show {
+    left: 0;
+    position: fixed;
   }
 }
 </style>
