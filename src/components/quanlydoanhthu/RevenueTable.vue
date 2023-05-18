@@ -10,7 +10,6 @@
             '!w-1/5': column.largeColumn,
             '!w-1/20': column.smallColumn,
           }"
-          @click="sortBooks(column.key)"
         >
           {{ column.name }}
         </th>
