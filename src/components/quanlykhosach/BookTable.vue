@@ -58,33 +58,27 @@
         </td>
         <td class="">
           <div class="flex gap-x-2 lg:gap-x-4 justify-center">
-            <img
+            <span
               @click="
                 getDetailBook(book.iD);
                 updateIsSaleBookModal(true);
               "
-              class="cursor-pointer"
-              :src="book.salesStatus ? eyeIcon : hideIcon"
-              alt="icon"
-            />
-            <img
-              class="cursor-pointer"
+              class="icon-hide text-slate-grey hover:text-slate text-2xl cursor-pointer"
+            ></span>
+            <span
               @click="
                 getDetailBook(book.iD);
                 updateBookModalStatus(true);
               "
-              :src="editIcon"
-              alt="icon"
-            />
-            <img
-              class="cursor-pointer"
+              class="icon-edit text-slate-grey hover:text-slate text-2xl cursor-pointer"
+            ></span>
+            <span
               @click="
                 getDetailBook(book.iD);
                 updateRemoveModalStatus(true);
               "
-              :src="removeIcon"
-              alt="icon"
-            />
+              class="icon-remove text-slate-grey hover:text-red text-2xl cursor-pointer"
+            ></span>
           </div>
         </td>
       </tr>

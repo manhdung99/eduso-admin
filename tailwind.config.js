@@ -24,6 +24,7 @@ export default {
       colors: {
         slate: {
           DEFAULT: "#2B3741",
+          grey: "#75858D",
         },
         charcoal: {
           darker: "#2B3236",

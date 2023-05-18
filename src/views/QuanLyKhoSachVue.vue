@@ -53,8 +53,8 @@ import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 
 import axios from "axios";
 import { storeToRefs } from "pinia";
-import { defineComponent } from "vue";
-
+import { defineComponent, onMounted } from "vue";
+import { useModalStore } from "../stores/modalStore";
 export default defineComponent({
   name: "QuanLyKhoSach",
   components: {
@@ -70,24 +70,34 @@ export default defineComponent({
     const { grades, subjects } = storeToRefs(useCommonStore());
     const { getBooks, getKhoSachColumn } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
-    axios
-      .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/1")
-      .then((response) => {
-        getKhoSachColumn(response.data.columns);
-      });
-    axios
-      .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
-      .then((response) => {
-        // let currentBookId = response.data.Data[0].iD;
-        getBooks(response.data.Data);
-        updatePageIndex(response.data.Page.pageIndex);
-        getPagination(
-          Math.round(
-            response.data.Page.totalRecord / response.data.Page.pageSize
-          ) + 1
-        );
-        // updateCurrentBook(currentBookId);
-      });
+    const { updateLoadingStatus } = useModalStore();
+
+    const getColumns = () => {
+      axios
+        .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/1")
+        .then((response) => {
+          getKhoSachColumn(response.data.columns);
+        });
+    };
+    const getBookData = () => {
+      updateLoadingStatus(true);
+      axios
+        .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
+        .then((response) => {
+          // let currentBookId = response.data.Data[0].iD;
+          getBooks(response.data.Data);
+          updatePageIndex(response.data.Page.pageIndex);
+          getPagination(
+            Math.round(
+              response.data.Page.totalRecord / response.data.Page.pageSize
+            ) + 1
+          );
+          updateLoadingStatus(false);
+        });
+    };
+
+    onMounted(getBookData);
+    onMounted(getColumns);
     return {
       title,
       downArrow,

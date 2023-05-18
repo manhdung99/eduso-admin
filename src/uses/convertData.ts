@@ -6,7 +6,7 @@ export default function () {
     }).format(price);
   };
   const convertTimestampToDate = (timestamp) => {
-    const date = new Date(timestamp * 1000);
+    const date = new Date(timestamp);
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();

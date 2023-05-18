@@ -16,39 +16,42 @@
         </th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="books.length > 0">
       <tr
         class="text-charcoal border-b border-grey-lighter"
         v-for="book in books"
         :key="book.bookId"
       >
-        <td class="text-center">{{ book?.bookId }}</td>
+        <td class="text-center">{{ book.iD }}</td>
         <td>
           <div class="flex justify-center">
             <div>
-              <img class="book-image" :src="book?.metadata?.bookCover" />
+              <img
+                class="book-image"
+                :src="`https://static.eduso.vn/${book?.bookMetadata?.bookCover?.path}`"
+              />
             </div>
             <div class="ml-4">
               <p class="book-title">
-                {{ book?.metadata?.bookName }}
+                {{ book.bookMetadata.bookName }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book?.metadata?.bookSubject }}
+                {{ book.bookMetadata.bookSubject }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book?.metadata?.bookContent }}
+                {{ book.bookMetadata.bookContent }}
               </p>
             </div>
           </div>
         </td>
         <td class="text-center">
           <span class="text-lg">{{
-            convertTimestampToDate(book?.startDate)
+            convertTimestampToDate(book.startDate)
           }}</span>
         </td>
         <td class="text-center">
           <span class="text-lg">{{
-            convertTimestampToDate(book?.endDate)
+            convertTimestampToDate(book.endDate)
           }}</span>
         </td>
         <td class="text-center">
@@ -68,8 +71,6 @@
       </tr>
     </tbody>
   </table>
-  <updateBookModalVue />
-  <removeBookModalVue />
   <bookManagementModalVue />
 </template>
 <script lang="ts">
@@ -80,8 +81,6 @@ import { useBookStore } from "../../stores/booksStore";
 import hideIcon from "../../assets/image/hide.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
-import updateBookModalVue from "../modal/updateBookModal.vue";
-import removeBookModalVue from "../modal/removeBookModal.vue";
 import bookManagementModalVue from "../modal/bookManagementModal.vue";
 import convertData from "@/uses/convertData";
 export default defineComponent({
@@ -121,8 +120,6 @@ export default defineComponent({
     };
   },
   components: {
-    updateBookModalVue,
-    removeBookModalVue,
     bookManagementModalVue,
   },
 });

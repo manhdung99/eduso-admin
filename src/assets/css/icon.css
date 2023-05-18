@@ -1,0 +1,11 @@
+.hide-icon {
+    background-image: url('../image/hide.svg');
+    width: 22px;
+    height: 20px;
+}
+
+.hide-icon-hover {
+    background-image: url('../image/hide.svg');
+    width: 22px;
+    height: 20px;
+}

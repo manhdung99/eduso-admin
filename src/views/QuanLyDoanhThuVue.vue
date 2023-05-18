@@ -45,12 +45,14 @@ import SearchBook from "@/components/common/SearchBook.vue";
 import RevenueTableVue from "@/components/quanlydoanhthu/RevenueTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import { useBookStore } from "../stores/booksStore";
+import { useModalStore } from "../stores/modalStore";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { storeToRefs } from "pinia";
 import axios from "axios";
+import { defineComponent, onMounted } from "vue";
 
-export default {
+export default defineComponent({
   name: "QuanLyKhoSach",
   components: {
     TopContentVue,
@@ -66,19 +68,32 @@ export default {
     const { getBooks, getDoanhThuSachColumn } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
     const { subjects } = storeToRefs(useCommonStore());
+    const { updateLoadingStatus } = useModalStore();
 
     axios
       .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/2")
       .then((response) => {
         getDoanhThuSachColumn(response.data.columns);
       });
-    axios
-      .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1")
-      .then((response) => {
-        getBooks(response.data.listBook);
-        updatePageIndex(response.data.pages.pageIndex);
-        getPagination(response.data.pages.pageNumber);
-      });
+
+    const getBookData = () => {
+      updateLoadingStatus(true);
+      axios
+        .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
+        .then((response) => {
+          // let currentBookId = response.data.Data[0].iD;
+          let data = response.data;
+          getBooks(data.Data);
+          updatePageIndex(data.Page.pageIndex);
+          getPagination(
+            data.Page.totalRecord % data.Page.pageSize == 0
+              ? data.Page.totalRecord / data.Page.pageSize
+              : Math.round(data.Page.totalRecord / data.Page.pageSize) + 1
+          );
+          updateLoadingStatus(false);
+        });
+    };
+    onMounted(getBookData);
     return {
       title,
       downArrow,
@@ -86,5 +101,5 @@ export default {
       subjects,
     };
   },
-};
+});
 </script>

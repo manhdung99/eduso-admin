@@ -23,7 +23,7 @@
               <input
                 class="input text-base"
                 type="date"
-                v-model="fromDate"
+                v-model="startDate"
                 lang="en-US"
               />
             </div>
@@ -34,7 +34,7 @@
               <input
                 class="input text-base"
                 type="date"
-                v-model="toDate"
+                v-model="endDate"
                 lang="en-US"
               />
             </div>
@@ -83,6 +83,7 @@
 import { defineComponent, ref, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 import { useModalStore } from "@/stores/modalStore";
+import { useCommonStore } from "../../stores/commonStore";
 import closeIcon from "../../assets/image/close.svg";
 import convertData from "@/uses/convertData";
 
@@ -91,11 +92,14 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const { openBookManagementModal, currentBookDetail } = storeToRefs(modal);
+    const { fromDate, toDate } = storeToRefs(useCommonStore());
     const { updateBookManagementStatus } = modal;
-    const fromDate = ref("2023-01-01");
-    const toDate = ref("2023-04-04");
     const orders = ref([]);
     const { convertPrice, dateFormater } = convertData();
+
+    const startDate = dateFormater(fromDate.value);
+
+    const endDate = dateFormater(toDate.value);
     watchEffect(() => {
       //Get data here
       const data = [
@@ -182,24 +186,12 @@ export default defineComponent({
       openBookManagementModal,
       updateBookManagementStatus,
       closeIcon,
-      fromDate,
-      toDate,
+      endDate,
+      startDate,
       orders,
       convertPrice,
       dateFormater,
     };
-  },
-  methods: {
-    changeFromDate(activeDays: number) {
-      let newDate = new Date(this.fromDate);
-      newDate.setDate(newDate.getDate() + activeDays);
-      this.fromDate = this.dateFormater(newDate);
-    },
-    changeToDate(activeDays: number) {
-      let newDate = new Date(this.toDate);
-      newDate.setDate(newDate.getDate() + activeDays);
-      this.toDate = this.dateFormater(newDate);
-    },
   },
 });
 </script>

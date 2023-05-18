@@ -3,7 +3,9 @@
     :class="openAddNewModal ? 'flex' : 'hidden'"
     class="fixed top-0 bottom-0 left-0 right-0 bg-modal flex justify-center items-center z-10"
   >
-    <div class="w-[800px] h-[700px] bg-white p-4 relative">
+    <div
+      class="add-book-modal-wrapper w-[800px] h-[700px] bg-white p-4 relative"
+    >
       <div
         @click="() => updateAddNewModalStatus(false)"
         class="absolute right-4 cursor-pointer"
@@ -17,18 +19,21 @@
       </div>
       <div class="my-5">
         <input
-          class="w-full border border-[#BDBDBD] pl-4 py-2 outline-none focus:border-[#00000091] text-[13px]"
+          v-model="searchInput"
+          class="w-full border border-grey-lighter pl-4 py-2 outline-none focus:border-blue-superiority text-[13px]"
           placeholder="Nhập tên sách..."
+          @input="filterBook"
         />
       </div>
-      <div
-        class="flex flex-wrap overflow-y-auto max-h-[480px] gap-x-6 add-book-modal mb-2"
-      >
+      <div class="add-book-modal">
         <div
           v-for="book in books"
-          class="mb-8 rounded relative border"
+          class="mb-8 rounded relative border border-grey-lighter cursor-pointer hover:scale-105"
           v-bind:key="book.iD"
-          @click="getDetailBook(book.iD)"
+          @click="
+            getDetailBook(book.iD);
+            updateBookModalStatus(true);
+          "
           :class="
             book.iD == (bookDetail ? bookDetail.iD : 0)
               ? 'border-blue-superiority'
@@ -58,25 +63,25 @@
             </div>
           </div>
         </div>
+        <div
+          v-if="isLoading"
+          class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
+        >
+          <div
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          >
+            <img class="w-16" src="../../assets/image/loading.gif" alt="" />
+          </div>
+        </div>
       </div>
-      <fieldset
-        @click="
-          updateBookModalStatus(true);
-          updateAddNewModalStatus(false);
-        "
-        class="bg-green text-white font-semibold inline-block px-5 py-2 rounded mt-4 ml-[50%] -translate-x-1/2 hover:opacity-80 cursor-pointer"
-      >
-        Lưu sách
-      </fieldset>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
-import "cropperjs/dist/cropper.css";
 import closeIcon from "../../assets/image/close.svg";
 import axios from "axios";
 
@@ -85,24 +90,44 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const bookStore = useBookStore();
+    const isLoading = ref(false);
     const { openAddNewModal } = storeToRefs(modal);
-    const { updateAddNewModalStatus, updateBookModalStatus } = modal;
+    const {
+      updateAddNewModalStatus,
+      updateBookModalStatus,
+      updateLoadingStatus,
+    } = modal;
     const { books, bookDetail } = storeToRefs(bookStore);
-    const { setBookDetail } = bookStore;
+    const { setBookDetail, getBooks } = bookStore;
+    const searchInput = ref("");
     const getDetailBook = async (id) => {
-      console.log(id);
-
       await axios
         .get(`https://apiadminbook.eduso.vn/api/book_store/get_detail/${id}`)
         .then((response) => {
           setBookDetail(response.data);
         });
     };
+    const filterBook = () => {
+      isLoading.value = true;
+      getBooks([]);
+      setTimeout(() => {
+        axios
+          .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
+          .then((response) => {
+            // let currentBookId = response.data.Data[0].iD;
+            getBooks(response.data.Data);
+            isLoading.value = false;
+          });
+      }, 1000);
+    };
     return {
       openAddNewModal,
       books,
       closeIcon,
       bookDetail,
+      searchInput,
+      isLoading,
+      filterBook,
       getDetailBook,
       updateAddNewModalStatus,
       updateBookModalStatus,
@@ -119,6 +144,18 @@ export default defineComponent({
   width: 168px;
   height: 205px;
   object-fit: fill;
+}
+.add-book-modal {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  max-height: 500px;
+  column-gap: 24px;
+  margin-bottom: 8px;
+  position: relative;
+}
+.add-book-modal-wrapper {
+  border: 1px solid #aeaeae;
 }
 .add-book-modal::-webkit-scrollbar {
   height: 6px;

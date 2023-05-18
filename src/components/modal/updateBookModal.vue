@@ -14,22 +14,6 @@
         accept="image/*"
         name="image"
       />
-      <div v-if="imageSrc" class="crop-image-wrapper">
-        <vue-cropper
-          ref="imageRef"
-          :src="imageSrc"
-          :aspect-ratio="176 / 215"
-          :view-mode="1"
-          :drag-mode="cropDragMode"
-          :toggle-drag-mode-on-dblclick="false"
-          :crop-box-movable="true"
-          :crop-box-resizable="false"
-        />
-        <div class="crop-image-btn-wrapper">
-          <button class="crop" @click="cropImage">Crop Image</button>
-          <button class="cancel" @click="imageSrc = null">Cancel</button>
-        </div>
-      </div>
       <div v-if="bookDetail != null" class="update-book-modal max-h-screen">
         <div class="flex border-b border-gray-lighter pb-4 relative">
           <h3 class="text-xl font-bold text-blue-lighter w-4/5">
@@ -66,9 +50,6 @@
             <p class="italic text-base text-grey-darker">
               {{ bookDetail.bookMetadata[0].author }}
             </p>
-            <label for="book-image" class="change-image-btn cursor-pointer"
-              >Đổi ảnh bìa</label
-            >
           </div>
         </div>
         <div class="w-1/2 mt-6">
@@ -266,8 +247,6 @@ import {
   checkPriceValidation,
   checkDiscountValidation,
 } from "../../uses/validation";
-import VueCropper from "vue-cropperjs";
-import "cropperjs/dist/cropper.css";
 import axios from "axios";
 export default defineComponent({
   name: "UpdateBookModal",
@@ -416,9 +395,6 @@ export default defineComponent({
       bookDetail,
       updateForm,
     };
-  },
-  components: {
-    VueCropper,
   },
 });
 </script>
