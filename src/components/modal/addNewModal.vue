@@ -3,9 +3,7 @@
     :class="openAddNewModal ? 'flex' : 'hidden'"
     class="fixed top-0 bottom-0 left-0 right-0 bg-modal flex justify-center items-center z-10"
   >
-    <div
-      class="add-book-modal-wrapper w-[800px] h-[700px] bg-white p-4 relative"
-    >
+    <div class="add-book-modal-wrapper w-200 h-175 bg-white p-4 relative">
       <div
         @click="() => updateAddNewModalStatus(false)"
         class="absolute right-4 cursor-pointer"

@@ -50,11 +50,17 @@ export default {
         },
         modal: {
           DEFAULT: "#8c8c8c33",
+          darker: "#00000080",
         },
       },
       spacing: {
         12.5: "3.125rem",
         42: "10.5rem",
+        75: "18.75rem",
+        90: "22.5rem",
+        100: "25rem",
+        175: "43.75rem",
+        200: "50rem",
         "1/20": "5%",
         "1/10": "10%",
         "1/8": "12.5%",
@@ -64,6 +70,7 @@ export default {
       },
       fontSize: {
         "2xs": "0.8125rem",
+        xml: "1.375rem",
       },
     },
   },

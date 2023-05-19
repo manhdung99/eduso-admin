@@ -5,12 +5,14 @@
       :class="openSidebar ? 'show' : ''"
       class="side-bar-wrapper min-h-screen"
     >
-      <div @click="openSidebar = false" class="w-8 h-8 absolute right-0">
-        <img :src="closeIcon" alt="" />
-      </div>
       <SideBarVue />
     </div>
-    <div :class="openSidebar ? 'open-side-bar' : ''" class="main-content">
+    <div class="main-content">
+      <div
+        @click="openSidebar = false"
+        v-if="openSidebar"
+        class="absolute top-0 left-0 w-full h-full bg-modal-darker z-10"
+      ></div>
       <div @click="openSidebar = true" class="side-bar-icon">
         <img :src="sideBarIcon" alt="" />
       </div>
