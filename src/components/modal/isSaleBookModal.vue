@@ -10,17 +10,17 @@
       <div
         class="font-bold text-xl text-blue-lighter flex items-center justify-center mt-3"
       >
-        {{ bookDetail.salesStatus ? "Tắt" : "Mở" }} bán sách ?
+        {{ bookDetail.IsPublish ? "Tắt" : "Mở" }} bán sách ?
       </div>
       <div
         class="font-bold text-tiny text-red flex items-center justify-center mt-3"
       >
-        {{ bookDetail.name }}
+        {{ bookDetail.Name }}
       </div>
 
       <div class="flex gap-x-6 justify-center mt-6">
         <button @click="updateIsSaleID" class="button remove hover:opacity-80">
-          {{ bookDetail.salesStatus ? "Tắt" : "Mở" }}
+          {{ bookDetail.IsPublish ? "Tắt" : "Mở" }}
         </button>
         <button
           @click="updateIsSaleBookModal(false)"
@@ -39,6 +39,7 @@ import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";
+import { BASE_URL, PUBLIC_BOOK } from "../../constants";
 export default defineComponent({
   name: "isSaleBookModal",
   setup() {
@@ -52,24 +53,20 @@ export default defineComponent({
     const status = ref(null);
 
     const updateIsSaleID = async () => {
+      console.log(bookDetail.value.BookID, !bookDetail.value.IsPublish);
       const formData = new FormData();
-      formData.append("id", bookDetail.value.iD);
-      formData.append("salesStatus", !bookDetail.value.salesStatus);
-
-      await axios
-        .post(
-          "https://apiadminbook.eduso.vn/api/book_store/update_status_sale",
-          formData
-        )
-        .then((response) => {
-          if (response.status == 200) {
-            updateIsSaleBook(
-              bookDetail.value.iD,
-              !bookDetail.value.salesStatus
-            );
-            updateIsSaleBookModal(false);
-          }
-        });
+      formData.append("id", bookDetail.value.ID);
+      formData.append("status", !bookDetail.value.IsPublish);
+      const url = BASE_URL + PUBLIC_BOOK;
+      await axios.put(url, formData).then((response) => {
+        if (response.status == 200) {
+          updateIsSaleBook(
+            bookDetail.value.BookID,
+            !bookDetail.value.IsPublish
+          );
+          updateIsSaleBookModal(false);
+        }
+      });
     };
     return {
       warningIcon,

@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
-    v-if="openUpdateBookModal"
+    v-if="openAddNewModal"
   >
     <form ref="updateForm" @submit.prevent="onSubmit" @keydown.enter="onSubmit">
       <input
@@ -13,13 +13,11 @@
         class="hidden"
         accept="image/*"
       />
-      <div v-if="bookDetail != null" class="update-book-modal max-h-screen">
+      <div v-if="bookDetail != null" class="add-new-book-modal max-h-screen">
         <div class="flex border-b border-gray-lighter pb-4 relative">
-          <h3 class="text-xl font-bold text-blue-lighter w-4/5">
-            Chỉnh sửa sách
-          </h3>
+          <h3 class="text-xl font-bold text-blue-lighter w-4/5">Thêm Sách</h3>
           <span
-            @click="updateBookModalStatus(false)"
+            @click="updateAddNewModalStatus(false)"
             class="absolute right-0 cursor-pointer"
             ><img :src="closeIcon" alt="icon"
           /></span>
@@ -45,13 +43,12 @@
             </p>
             <div class="flex gap-x-4 items-center my-2">
               <span class="text-blue-lighter text-lg font-bold">NXB : </span>
-              <input
-                class="select"
-                name="Publisher"
-                v-model="bookDetail.Publisher"
-              />
+              <input class="select" name="Publisher" />
             </div>
-            <div v-html="bookDetail.Description"></div>
+            <div
+              v-if="bookDetail.Description != 'null'"
+              v-html="bookDetail.Description"
+            ></div>
           </div>
         </div>
         <div class="flex gap-x-4">
@@ -62,11 +59,7 @@
               Phân loại:
             </p>
             <div class="relative mt-2">
-              <select
-                v-model="bookDetail.Type"
-                name="Type"
-                class="select w-full py-1"
-              >
+              <select name="Type" class="select w-full py-1">
                 <option value="0">Có bản quyền</option>
                 <option value="1">Sách Tham Khảo</option>
               </select>
@@ -91,15 +84,10 @@
               Mã sách:
             </p>
             <div class="relative mt-2">
-              <input
-                v-model="bookDetail.Code"
-                name="Code"
-                class="select w-full py-1"
-              />
+              <input name="Code" class="select w-full py-1" />
             </div>
           </div>
         </div>
-
         <!-- Date -->
         <div class="flex gap-x-4 mt-2">
           <div class="w-1/2">
@@ -113,7 +101,6 @@
                 type="date"
                 class="select w-full py-1"
                 name="DateStartBuy"
-                :value="startDate"
               />
             </div>
           </div>
@@ -125,12 +112,7 @@
               Ngày kết thúc:
             </p>
             <div class="relative mt-2">
-              <input
-                type="date"
-                class="select w-full py-1"
-                name="DateEndBuy"
-                :value="endDate"
-              />
+              <input type="date" class="select w-full py-1" name="DateEndBuy" />
             </div>
           </div>
         </div>
@@ -198,11 +180,18 @@
             </p>
             <div class="relative mt-2">
               <input
+                @change="checkPriceValidation(bookDetail.bookPrice, error)"
                 class="select w-full py-1 text-2xs italic"
-                v-model="bookDetail.Price"
+                v-model="bookDetail.bookPrice"
                 type="number"
                 name="Price"
               />
+              <span
+                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
+                v-if="error.price"
+              >
+                {{ error.price }}
+              </span>
             </div>
           </div>
           <div class="w-1/2">
@@ -213,9 +202,10 @@
             </p>
             <div class="relative mt-2">
               <input
+                @change="checkDiscountValidation(bookDetail.discount, error)"
                 type="number"
                 class="select w-full py-1 text-2xs italic"
-                v-model="bookDetail.Sales"
+                v-model="bookDetail.discount"
                 name="Sales"
               />
               <span
@@ -227,13 +217,13 @@
             </div>
           </div>
         </div>
-        <input class="hidden" name="BookID" :value="bookDetail.BookID" />
+        <input class="hidden" name="bookID" :value="bookDetail.ID" />
         <div class="flex items-center justify-center mt-6">
           <button
             type="submit"
             class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90"
           >
-            Lưu thay đổi
+            Thêm Sách
           </button>
         </div>
       </div>
@@ -250,22 +240,24 @@ import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
 import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
-import { checkPriceValidation } from "../../uses/validation";
-import { BASE_URL, ADD_BOOKS } from "../../constants";
-import convertData from "../../uses/convertData";
 import Multiselect from "@vueform/multiselect";
+import {
+  checkPriceValidation,
+  checkDiscountValidation,
+} from "../../uses/validation";
+import { BASE_URL, ADD_BOOKS } from "../../constants";
 import axios from "axios";
 export default defineComponent({
-  name: "UpdateBookModal",
+  name: "addNewBookModal",
   components: {
     Multiselect,
   },
   setup() {
     const modal = useModalStore();
-    const { openUpdateBookModal } = storeToRefs(modal);
-    const { updateBookModalStatus, updateAddNewModalStatus } = modal;
+    const { openAddNewModal } = storeToRefs(modal);
+    const { updateAddNewModalStatus, updateLibraryBookModal } = modal;
     const bookStore = useBookStore();
-    const { updateBook, removeLibraryBookAdded } = bookStore;
+    const { addBook, removeLibraryBookAdded } = bookStore;
     const { bookDetail } = storeToRefs(bookStore);
     const { subjects, programs } = storeToRefs(useCommonStore());
     let previewImage = ref(null);
@@ -275,16 +267,13 @@ export default defineComponent({
     const programID = ref(null);
     const imageSrc = ref(null);
     const imageRef = ref(null);
-    const startDate = ref(null);
-    const endDate = ref(null);
+    const searchable = ref(true);
     const fileImageInput = ref(null);
     const updateForm = ref(null);
     const cropDragMode = ref("move");
     let listProgram = ref([]);
     let programAutocompletes = ref([]);
     const subjectRef = ref(null);
-    const { convertUTCToString } = convertData();
-    const searchable = ref(true);
     let bookInfo = reactive({
       level: "",
       subject: "",
@@ -335,13 +324,14 @@ export default defineComponent({
         formData.append("ProgramID", bookDetail.value.ProgramID);
         formData.append("SubjectID", bookInfo.subject);
         const url = BASE_URL + ADD_BOOKS;
-        axios.put(url, formData).then((response) => {
-          updateBook(response.data.Data);
+        axios.post(url, formData).then((response) => {
+          addBook(response.data.Data);
+          removeLibraryBookAdded(response.data.Data.bookID);
           // updateLoadingStatus(false);
           //Call API to add data
         });
-        updateBookModalStatus(false);
         updateAddNewModalStatus(false);
+        updateLibraryBookModal(false);
       }
     };
 
@@ -378,18 +368,7 @@ export default defineComponent({
     watch(
       () => bookDetail.value,
       () => {
-        console.log(bookDetail.value);
-
         previewImage.value = `https://static.eduso.vn/${bookDetail.value.Image}`;
-        bookInfo.subject = bookDetail.value.SubjectID;
-        bookInfo.level = bookDetail.value.Level;
-        programID.value = bookDetail.value.ProgramID;
-        startDate.value = convertUTCToString(
-          new Date(bookDetail.value.DateStartBuy)
-        );
-        endDate.value = convertUTCToString(
-          new Date(bookDetail.value.DateEndBuy)
-        );
       }
     );
     watch(
@@ -411,8 +390,8 @@ export default defineComponent({
       }
     );
     return {
-      openUpdateBookModal,
-      updateBookModalStatus,
+      openAddNewModal,
+      updateAddNewModalStatus,
       closeIcon,
       uploadIcon,
       downloadIcon,
@@ -428,6 +407,7 @@ export default defineComponent({
       onSubmit,
       error,
       checkPriceValidation,
+      checkDiscountValidation,
       imageSrc,
       imageRef,
       cropImage,
@@ -443,8 +423,6 @@ export default defineComponent({
       updateAutocompleteProgram,
       updateStudyProgram,
       programID,
-      startDate,
-      endDate,
       searchable,
       listProgram,
     };
@@ -469,7 +447,7 @@ export default defineComponent({
 .change-image-btn:hover {
   background: #3b4145;
 }
-.update-book-modal {
+.add-new-book-modal {
   background: white;
   position: absolute;
   top: 50%;
@@ -478,6 +456,7 @@ export default defineComponent({
   padding: 16px 24px;
   border-radius: 10px;
   min-width: 470px;
+  max-width: 600px;
 }
 .book-info-wrapper {
   position: relative;
@@ -528,7 +507,7 @@ export default defineComponent({
   z-index: 1;
 }
 @media screen and (max-width: 424px) {
-  .update-book-modal {
+  .add-new-book-modal {
     position: fixed;
     top: 4px;
     bottom: 4px;

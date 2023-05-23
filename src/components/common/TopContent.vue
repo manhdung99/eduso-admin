@@ -15,17 +15,20 @@
       </button>
       <button
         v-else
-        @click="updateAddNewModalStatus(true)"
+        @click="
+          getLibraryBooks();
+          updateLibraryBookModal(true);
+        "
         class="add-new-button hover:opacity-90"
       >
         Thêm sách
       </button>
     </div>
   </div>
-  <AddNewModal />
+  <LibraryBookModal />
 </template>
 <script lang="ts">
-import AddNewModal from "../modal/addNewModal.vue";
+import LibraryBookModal from "../modal/libraryBookModal.vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { defineComponent } from "vue";
@@ -41,8 +44,9 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const bookStore = useBookStore();
-    const { updateAddNewModalStatus } = modal;
+    const { updateLibraryBookModal } = modal;
     const { khoSachColumns, books } = storeToRefs(bookStore);
+    const { getLibraryBooks } = bookStore;
     const exportToExcel = (type) => {
       if (type == "book") {
         const columns = [...khoSachColumns.value];
@@ -65,13 +69,14 @@ export default defineComponent({
     };
 
     return {
-      updateAddNewModalStatus,
+      updateLibraryBookModal,
       helpIcon,
       exportToExcel,
+      getLibraryBooks,
     };
   },
   components: {
-    AddNewModal,
+    LibraryBookModal,
   },
 });
 </script>

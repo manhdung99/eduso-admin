@@ -5,10 +5,12 @@ export const useSearchStore = defineStore("searchStore", {
     books: [],
     authors: [],
     openSearchArea: false,
+    searchText: "",
   }),
   getters: {},
   actions: {
-    getBooks(data) {
+    getSearchtBooks(data) {
+      console.log(data);
       this.books = data;
     },
     getAuthors(data) {

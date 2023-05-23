@@ -12,6 +12,13 @@ export default function () {
     const year = date.getFullYear();
     return ("0" + day).slice(-2) + "/" + ("0" + month).slice(-2) + "/" + year;
   };
+  const convertUTCToString = (time) => {
+    const date = new Date(time);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return year + "-" + ("0" + month).slice(-2) + "-" + ("0" + day).slice(-2);
+  };
   const dateFormater = (date) => {
     const day: string | number =
       date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
@@ -20,5 +27,10 @@ export default function () {
     const year: string | number = date.getFullYear();
     return year + "-" + month + "-" + day;
   };
-  return { convertPrice, convertTimestampToDate, dateFormater };
+  return {
+    convertPrice,
+    convertTimestampToDate,
+    convertUTCToString,
+    dateFormater,
+  };
 }

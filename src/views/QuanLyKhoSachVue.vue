@@ -2,37 +2,33 @@
   <div class="px-4">
     <TopContentVue :title="title" />
     <div class="px-0 lg:px-4 flex items-center flex-wrap lg:flex-nowrap">
-      <div class="w-full lg:w-2/3">
+      <div class="w-full 2xl:w-2/3">
         <SearchBook />
       </div>
       <div
-        class="w-full lg:w-1/3 md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0 flex gap-x-2 3xl:gap-x-4"
+        class="w-full 2xl:w-1/3 md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0 flex gap-x-2 3xl:gap-x-4"
       >
-        <div class="relative 3xl:flex-1">
-          <select class="input w-full pr-12 select">
-            <option>Lọc theo môn học</option>
-            <option
-              v-for="subject in subjects"
-              :key="subject.id"
-              :value="subject.id"
-            >
-              {{ subject.name }}
-            </option>
-          </select>
-          <span class="absolute right-2 top-1/2 -translate-y-1/2">
-            <img :src="downArrow" alt="icon" />
-          </span>
+        <div class="relative w-51.25">
+          <multiselect
+            v-model="subject"
+            :searchable="searchable"
+            :options="subjects"
+            valueProp="ID"
+            track-by="Name"
+            label="Name"
+            placeholder="Môn học"
+          ></multiselect>
         </div>
-        <div class="relative 3xl:flex-1">
-          <select class="input w-full pr-12 select">
-            <option>Lọc theo chương trình học</option>
-            <option v-for="grade in grades" :key="grade.id">
-              {{ grade.name }}
-            </option>
-          </select>
-          <span class="absolute right-2 top-1/2 -translate-y-1/2">
-            <img :src="downArrow" alt="icon" />
-          </span>
+        <div class="relative w-51.25">
+          <multiselect
+            v-model="program"
+            :searchable="searchable"
+            :options="programs"
+            valueProp="ID"
+            track-by="Name"
+            label="Name"
+            placeholder="Chương trình học"
+          ></multiselect>
         </div>
       </div>
     </div>
@@ -49,11 +45,15 @@ import BookTableVue from "@/components/quanlykhosach/BookTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { useBookStore } from "../stores/booksStore";
+import { BASE_URL, GET_LIBRARY, GET_BOOKS } from "../constants";
+import convertData from "../uses/convertData";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
-
+import { useSearchStore } from "../stores/searchStore";
+import Multiselect from "@vueform/multiselect";
 import axios from "axios";
+import debounce from "lodash/debounce";
 import { storeToRefs } from "pinia";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import { useModalStore } from "../stores/modalStore";
 export default defineComponent({
   name: "QuanLyKhoSach",
@@ -62,48 +62,108 @@ export default defineComponent({
     SearchBook,
     BookTableVue,
     TablePagination,
+    Multiselect,
   },
   setup() {
     const title = "Quản lý kho sách";
     const bookStore = useBookStore();
     const pagination = usePaginationStore();
-    const { grades, subjects } = storeToRefs(useCommonStore());
-    const { getBooks, getKhoSachColumn } = bookStore;
+    const { programs, subjects, fromDate, toDate } = storeToRefs(
+      useCommonStore()
+    );
+    const { getSearchtBooks, getAuthors, updateSearchAreaStatus } =
+      useSearchStore();
+    const { searchText } = storeToRefs(useSearchStore());
+    const { convertTimestampToDate } = convertData();
+    const { getBooks } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
     const { updateLoadingStatus } = useModalStore();
-
-    const getColumns = () => {
-      axios
-        .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/1")
-        .then((response) => {
-          getKhoSachColumn(response.data.columns);
-        });
-    };
+    const program = ref("");
+    const subject = ref("");
+    const searchable = true;
+    const value = ref(null);
     const getBookData = () => {
       updateLoadingStatus(true);
-      axios
-        .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
-        .then((response) => {
-          // let currentBookId = response.data.Data[0].iD;
-          getBooks(response.data.Data);
-          updatePageIndex(response.data.Page.pageIndex);
-          getPagination(
-            Math.round(
-              response.data.Page.totalRecord / response.data.Page.pageSize
-            ) + 1
-          );
-          updateLoadingStatus(false);
-        });
+      const url =
+        BASE_URL +
+        GET_BOOKS +
+        "?start=" +
+        convertTimestampToDate(fromDate.value) +
+        "&end=" +
+        convertTimestampToDate(toDate.value);
+      axios.get(url).then((response) => {
+        getBooks(response.data.Data);
+        updateLoadingStatus(false);
+      });
     };
-
+    const filterBook = () => {
+      updateLoadingStatus(true);
+      const url =
+        BASE_URL +
+        GET_BOOKS +
+        "?start=" +
+        convertTimestampToDate(fromDate.value) +
+        "&end=" +
+        convertTimestampToDate(toDate.value) +
+        `&subjectid=${subject.value}` +
+        `&programid=${program.value}`;
+      axios.get(url).then((response) => {
+        getBooks(response.data.Data);
+        updateLoadingStatus(false);
+      });
+    };
+    const filterBookByText = debounce(() => {
+      if (searchText.value.length > 0) {
+        const url =
+          BASE_URL +
+          GET_BOOKS +
+          "?start=" +
+          convertTimestampToDate(fromDate.value) +
+          "&end=" +
+          convertTimestampToDate(toDate.value) +
+          `&subjectid=${subject.value}` +
+          `&programid=${program.value}` +
+          `&text=${searchText.value}`;
+        updateSearchAreaStatus(true);
+        const fetchBooks = async () => {
+          try {
+            const response = await axios.get(url);
+            getSearchtBooks(response.data.Data);
+          } catch (err) {
+            throw new Error("Some thing went wrong");
+          }
+        };
+        fetchBooks();
+      } else {
+        getSearchtBooks([]);
+        getAuthors([]);
+      }
+    }, 1000);
+    watch([program, subject, fromDate, toDate], () => {
+      if (program.value == null) program.value = "";
+      if (subject.value == null) subject.value = "";
+      filterBook();
+      // if (fromDate.value < toDate.value) {
+      // }
+    });
+    watch(
+      () => searchText.value,
+      () => {
+        filterBookByText();
+      }
+    );
     onMounted(getBookData);
-    onMounted(getColumns);
     return {
       title,
       downArrow,
-      grades,
+      programs,
       subjects,
+      value,
+      searchable,
+      program,
+      subject,
     };
   },
 });
 </script>
+<style src="@vueform/multiselect/themes/default.css"></style>

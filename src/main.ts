@@ -5,6 +5,7 @@ import Antd from "ant-design-vue";
 import { createPinia } from "pinia";
 import "ant-design-vue/dist/antd.css";
 import "./assets/css/main.css";
+
 const pinia = createPinia();
 const app = createApp(App);
 

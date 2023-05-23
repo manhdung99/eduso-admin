@@ -1,11 +1,11 @@
 <template>
   <div
-    :class="openAddNewModal ? 'flex' : 'hidden'"
+    :class="openLibraryBookModal ? 'flex' : 'hidden'"
     class="fixed top-0 bottom-0 left-0 right-0 bg-modal flex justify-center items-center z-10"
   >
-    <div class="add-book-modal-wrapper w-200 h-175 bg-white p-4 relative">
+    <div class="library-book-modal-wrapper w-200 h-175 bg-white p-4 relative">
       <div
-        @click="() => updateAddNewModalStatus(false)"
+        @click="() => updateLibraryBookModal(false)"
         class="absolute right-4 cursor-pointer"
       >
         <img :src="closeIcon" alt="icon" />
@@ -20,35 +20,30 @@
           v-model="searchInput"
           class="w-full border border-grey-lighter pl-4 py-2 outline-none focus:border-blue-superiority text-[13px]"
           placeholder="Nhập tên sách..."
-          @input="filterBook"
+          @input="filterLibraryBook(searchInput)"
         />
       </div>
-      <div class="add-book-modal">
+      <div class="library-book-modal">
         <div
-          v-for="book in books"
+          v-for="book in libraryBooks"
           class="mb-8 rounded relative border border-grey-lighter cursor-pointer hover:scale-105"
-          v-bind:key="book.iD"
+          v-bind:key="book.ID"
           @click="
-            getDetailBook(book.iD);
-            updateBookModalStatus(true);
-          "
-          :class="
-            book.iD == (bookDetail ? bookDetail.iD : 0)
-              ? 'border-blue-superiority'
-              : ''
+            setBookFromLibrary(book.ID);
+            updateAddNewModalStatus(true);
           "
         >
           <div class="book-wrapper">
             <div>
               <img
                 class="book-item-image"
-                :src="`https://static.eduso.vn/${book.bookMetadata.bookCover.path}`"
+                :src="`https://static.eduso.vn/${book.Image}`"
                 alt="book image"
               />
             </div>
             <div class="bg-[#F8F9FA] px-[14px] rounded">
               <span class="font-semibold text-[#00314C] text-base pt-2 block">
-                {{ book.name }}
+                {{ book.Name }}
               </span>
               <div class="flex space-x-2 pb-3 items-center">
                 <span class="font-bold text-[#D03239] text-sm">
@@ -74,61 +69,49 @@
       </div>
     </div>
   </div>
+  <addNewBookModal />
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import axios from "axios";
+import addNewBookModal from "./addNewBookModal.vue";
 
 export default defineComponent({
-  name: "AddNewModal",
+  components: { addNewBookModal },
+  name: "LibraryBookModal",
   setup() {
     const modal = useModalStore();
-    const bookStore = useBookStore();
     const isLoading = ref(false);
-    const { openAddNewModal } = storeToRefs(modal);
-    const {
-      updateAddNewModalStatus,
-      updateBookModalStatus,
-      updateLoadingStatus,
-    } = modal;
-    const { books, bookDetail } = storeToRefs(bookStore);
-    const { setBookDetail, getBooks } = bookStore;
+    const { openLibraryBookModal } = storeToRefs(modal);
+    const { libraryBooks } = storeToRefs(useBookStore());
+    const { updateAddNewModalStatus, updateLibraryBookModal } = modal;
     const searchInput = ref("");
-    const getDetailBook = async (id) => {
-      await axios
-        .get(`https://apiadminbook.eduso.vn/api/book_store/get_detail/${id}`)
-        .then((response) => {
-          setBookDetail(response.data);
-        });
-    };
-    const filterBook = () => {
-      isLoading.value = true;
-      getBooks([]);
-      setTimeout(() => {
-        axios
-          .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
-          .then((response) => {
-            // let currentBookId = response.data.Data[0].iD;
-            getBooks(response.data.Data);
-            isLoading.value = false;
-          });
-      }, 1000);
-    };
+    const { setBookFromLibrary, filterLibraryBook } = useBookStore();
+    // const filterBook = () => {
+    //   isLoading.value = true;
+    //   libraryBooks.value = [];
+    //   axios
+    //     .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
+    //     .then((response) => {
+    //       // let currentBookId = response.data.Data[0].iD;
+    //       libraryBooks.value = response.data.Data;
+    //       isLoading.value = false;
+    //     });
+    // };
     return {
-      openAddNewModal,
-      books,
+      openLibraryBookModal,
       closeIcon,
-      bookDetail,
       searchInput,
       isLoading,
-      filterBook,
-      getDetailBook,
+      libraryBooks,
+      setBookFromLibrary,
       updateAddNewModalStatus,
-      updateBookModalStatus,
+      updateLibraryBookModal,
+      filterLibraryBook,
     };
   },
   methods: {},
@@ -143,7 +126,7 @@ export default defineComponent({
   height: 205px;
   object-fit: fill;
 }
-.add-book-modal {
+.library-book-modal {
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
@@ -151,19 +134,21 @@ export default defineComponent({
   column-gap: 24px;
   margin-bottom: 8px;
   position: relative;
+  justify-content: space-between;
 }
-.add-book-modal-wrapper {
+.library-book-modal-wrapper {
   border: 1px solid #aeaeae;
+  border-radius: 10px;
 }
-.add-book-modal::-webkit-scrollbar {
+.library-book-modal::-webkit-scrollbar {
   height: 6px;
   width: 6px;
 }
-.add-book-modal::-webkit-scrollbar-thumb {
+.library-book-modal::-webkit-scrollbar-thumb {
   background: #555555;
   border-radius: 10px;
 }
-.add-book-modal::-webkit-scrollbar-track {
+.library-book-modal::-webkit-scrollbar-track {
   box-shadow: inset 0 0 2px #555555;
   border-radius: 10px;
 }

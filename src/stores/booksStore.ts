@@ -1,5 +1,11 @@
+import axios from "axios";
 import { defineStore } from "pinia";
-
+import {
+  BASE_URL,
+  GET_LIBRARY,
+  GET_BOOKS,
+  GET_DETAIL_BOOK,
+} from "../constants";
 export const useBookStore = defineStore("booksStore", {
   state: () => ({
     books: [],
@@ -8,6 +14,7 @@ export const useBookStore = defineStore("booksStore", {
     doanhThuSachColumns: [],
     doanhThuDonViColumns: [],
     bookDetail: null,
+    libraryBooks: [],
   }),
   getters: {},
   actions: {
@@ -27,21 +34,50 @@ export const useBookStore = defineStore("booksStore", {
       this.books = this.books.filter((book) => book.iD != id);
     },
     addBook(book) {
+      console.log(book);
       this.books = [book, ...this.books];
     },
     updateBook(book) {
-      const index = this.books.findIndex((data) => data.iD == book.iD);
+      console.log(book);
+
+      const index = this.books.findIndex((data) => data.BookID == book.BookID);
       this.books[index] = book;
     },
     getUnits(data) {
       this.units = data;
     },
     updateIsSaleBook(id, status) {
-      const index = this.books.findIndex((data) => data.iD == id);
-      this.books[index].salesStatus = status;
+      const index = this.books.findIndex((data) => data.BookID == id);
+      this.books[index].IsPublish = status;
     },
-    setBookDetail(data) {
-      this.bookDetail = data;
+    setBookDetail(id) {
+      const url = BASE_URL + GET_DETAIL_BOOK + `?id=${id}`;
+      axios.get(url).then((response) => {
+        this.bookDetail = response.data.Data.Book;
+      });
+    },
+    setBookFromLibrary(id) {
+      const url = BASE_URL + GET_DETAIL_BOOK + `?id=${id}`;
+      axios.get(url).then((response) => {
+        console.log(response.data);
+        this.bookDetail = response.data.Data.Origin;
+      });
+    },
+    getLibraryBooks() {
+      const url = BASE_URL + GET_LIBRARY;
+      axios.get(url).then((response) => {
+        this.libraryBooks = response.data.Data;
+      });
+    },
+    filterLibraryBook(text) {
+      const url = BASE_URL + GET_LIBRARY + `?text=${text}`;
+      axios.get(url).then((response) => {
+        this.libraryBooks = response.data.Data;
+      });
+    },
+    removeLibraryBookAdded(id) {
+      console.log(this.libraryBooks);
+      this.libraryBooks = this.libraryBooks.filter((item) => item.BookID != id);
     },
   },
 });

@@ -1,11 +1,10 @@
 <template>
   <div
     @click.self="updateSearchAreaStatus(false)"
-    class="flex py-6 flex-wrap lg:flex-nowrap gap-y-5"
+    class="flex py-6 flex-wrap lg:flex-nowrap justify-between gap-y-5"
   >
     <div class="w-75 relative md:mb-0">
       <input
-        @input="searchData"
         class="input search-input"
         placeholder="Tìm kiếm (tên sản phẩm, mã...)"
         v-model="searchText"
@@ -13,9 +12,11 @@
       <span class="absolute right-4 top-1/2 -translate-y-1/2">
         <img :src="searchIcon" alt="" />
       </span>
-      <searchBookModalVue />
+      <searchBookModalVue v-show="openSearchArea" />
     </div>
-    <div class="w-90 flex items-center justify-between md:justify-start">
+    <div
+      class="w-90 xl:w-126 flex items-center justify-between md:justify-start"
+    >
       <div class="flex items-center">
         <div
           class="text-base 2xl:text-lg text-charcoal font-medium mx-2 2xl:px-3"
@@ -44,6 +45,8 @@
             type="date"
             v-model="endDate"
             lang="en-US"
+            @input="updateEndDate($event)"
+            :min="dateFormater(fromDate)"
           />
         </div>
       </div>
@@ -66,60 +69,61 @@ export default defineComponent({
   setup() {
     const { fromDate, toDate } = storeToRefs(useCommonStore());
     const searchStore = useSearchStore();
-    const { getBooks, getAuthors, updateSearchAreaStatus } = searchStore;
+    const { searchText } = storeToRefs(searchStore);
+    const { updateSearchAreaStatus } = searchStore;
+    const { openSearchArea } = storeToRefs(searchStore);
     const { updateFromDate, updateToDate } = useCommonStore();
-    const searchText = ref("");
     const { dateFormater } = convertData();
-    const searchData = debounce(() => {
-      if (searchText.value.length > 0) {
-        updateSearchAreaStatus(true);
-        const fetchBooks = async () => {
-          try {
-            const response = await axios.get(
-              "https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1"
-            );
-            getBooks(response.data.listBook);
-          } catch (err) {
-            throw new Error("Some thing went wrong");
-          }
-        };
-        fetchBooks();
-        const authors = [
-          {
-            id: 1,
-            name: "Bộ Giáo dục & Đào tạo",
-          },
-          {
-            id: 2,
-            name: "Bộ Giáo dục & Đào tạo",
-          },
-          {
-            id: 3,
-            name: "Bộ Giáo dục & Đào tạo",
-          },
-          {
-            id: 4,
-            name: "Bộ Giáo dục & Đào tạo",
-          },
-          {
-            id: 5,
-            name: "Bộ Giáo dục & Đào tạo",
-          },
-          {
-            id: 5,
-            name: "Bộ Giáo dục & Đào tạo",
-          },
-          {
-            id: 5,
-            name: "Bộ Giáo dục & Đào tạo",
-          },
-        ];
-        getAuthors(authors);
-      } else {
-        getBooks([]);
-        getAuthors([]);
-      }
-    }, 1000);
+    // const searchData = debounce(() => {
+    //   if (searchText.value.length > 0) {
+    //     updateSearchAreaStatus(true);
+    //     const fetchBooks = async () => {
+    //       try {
+    //         const response = await axios.get(
+    //           "https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1"
+    //         );
+    //         getSearchtBooks(response.data.listBook);
+    //       } catch (err) {
+    //         throw new Error("Some thing went wrong");
+    //       }
+    //     };
+    //     fetchBooks();
+    //     const authors = [
+    //       {
+    //         id: 1,
+    //         name: "Bộ Giáo dục & Đào tạo",
+    //       },
+    //       {
+    //         id: 2,
+    //         name: "Bộ Giáo dục & Đào tạo",
+    //       },
+    //       {
+    //         id: 3,
+    //         name: "Bộ Giáo dục & Đào tạo",
+    //       },
+    //       {
+    //         id: 4,
+    //         name: "Bộ Giáo dục & Đào tạo",
+    //       },
+    //       {
+    //         id: 5,
+    //         name: "Bộ Giáo dục & Đào tạo",
+    //       },
+    //       {
+    //         id: 5,
+    //         name: "Bộ Giáo dục & Đào tạo",
+    //       },
+    //       {
+    //         id: 5,
+    //         name: "Bộ Giáo dục & Đào tạo",
+    //       },
+    //     ];
+    //     getAuthors(authors);
+    //   } else {
+    //     getSearchtBooks([]);
+    //     getAuthors([]);
+    //   }
+    // }, 1000);
     const startDate = dateFormater(fromDate.value);
 
     const endDate = dateFormater(toDate.value);
@@ -130,23 +134,11 @@ export default defineComponent({
     const updateEndDate = (event) => {
       updateToDate(new Date(event.target.value));
     };
-    watch(
-      () => fromDate.value,
-      (newVal, oldVal) => {
-        console.log(`Start date changed from ${oldVal} to ${newVal}`);
-      }
-    );
-    watch(
-      () => toDate.value,
-      (newVal, oldVal) => {
-        console.log(`End daete changed from ${oldVal} to ${newVal}`);
-      }
-    );
     return {
       fromDate,
       toDate,
       searchIcon,
-      searchData,
+      // searchData,
       searchText,
       startDate,
       endDate,
@@ -154,6 +146,7 @@ export default defineComponent({
       updateSearchAreaStatus,
       updateStartDate,
       updateEndDate,
+      openSearchArea,
     };
   },
   components: {

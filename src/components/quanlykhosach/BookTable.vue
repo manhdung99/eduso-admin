@@ -2,37 +2,44 @@
   <table class="w-full table" border="1">
     <thead class="table-head-wrapper">
       <tr class="w-full">
+        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
+          Mã Sách
+        </th>
+        <th class="text-lg text-charcoal font-medium md:w-1/4 pl-1 text-center">
+          Thông tin sách
+        </th>
+        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
+          Nhà xuất bản
+        </th>
+        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
+          Giá niêm yết
+        </th>
+        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
+          Mức giảm giá
+        </th>
         <th
           class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center"
-          v-for="column in khoSachColumns"
-          :key="column.id"
-          :class="{
-            '!w-1/5': column.largeColumn,
-            '!w-1/20': column.smallColumn,
-          }"
-        >
-          {{ column.name }}
-        </th>
+        ></th>
       </tr>
     </thead>
     <tbody>
       <tr
         class="text-charcoal border-b border-grey-lighter odd:bg-gray-200"
         v-for="book in books"
-        :key="book.bookId"
+        :key="book.ID"
       >
-        <td class="ml-4 text-center">{{ book?.iD }}</td>
+        <td class="ml-4 text-center">{{ book.Code }}</td>
         <td>
-          <div class="flex justify-center">
+          <div class="flex">
             <div>
               <img
                 class="book-image"
-                :src="`https://static.eduso.vn/${book?.bookMetadata?.bookCover?.path}`"
+                :src="`https://static.eduso.vn/${book.Image}`"
               />
             </div>
             <div class="ml-4">
               <p class="book-title">
-                {{ book?.bookMetadata?.bookName }}
+                {{ book.Name }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
                 {{ book?.bookMetadata?.bookSubject }}
@@ -44,46 +51,37 @@
           </div>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ book?.bookMetadata?.publisher }}</span>
+          <span class="text-lg">{{ book.Publisher }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ convertPrice(book?.bookPrice) }}</span>
+          <span class="text-lg">{{ convertPrice(book.Price) }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ book?.discountEduso }}</span>
-        </td>
-        <td class="text-center">
-          <span class="text-lg">{{ book?.discount }}%</span>
+          <span class="text-lg">{{ book.Sales }}%</span>
         </td>
         <td class="">
-          <div class="flex gap-x-2 lg:gap-x-4 justify-center">
+          <div class="flex gap-x-4 lg:gap-x-8 justify-center">
             <span
               @click="
-                getDetailBook(book.iD);
+                setBookDetail(book.BookID);
                 updateIsSaleBookModal(true);
               "
-              class="icon-hide text-slate-grey hover:text-slate text-2xl cursor-pointer"
+              :class="book.IsPublish ? 'icon-eye' : 'icon-hide'"
+              class="text-slate-grey hover:text-slate text-2xl cursor-pointer"
             ></span>
             <span
               @click="
-                getDetailBook(book.iD);
+                setBookDetail(book.BookID);
                 updateBookModalStatus(true);
               "
               class="icon-edit text-slate-grey hover:text-slate text-2xl cursor-pointer"
-            ></span>
-            <span
-              @click="
-                getDetailBook(book.iD);
-                updateRemoveModalStatus(true);
-              "
-              class="icon-remove text-slate-grey hover:text-red text-2xl cursor-pointer"
             ></span>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
-  <updateBookModalVue v-if="openUpdateBookModal" />
+  <UpdateBookModal v-if="openUpdateBookModal" />
   <removeBookModalVue v-if="openRemoveBookModal" />
   <isSaleBookModalVue v-if="openIsSaleBookModal" />
   <div
@@ -106,7 +104,7 @@ import hideIcon from "../../assets/image/hide.svg";
 import eyeIcon from "../../assets/image/eye.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
-import updateBookModalVue from "../modal/updateBookModal.vue";
+import UpdateBookModal from "../modal/updateBookModal.vue";
 import removeBookModalVue from "../modal/removeBookModal.vue";
 import isSaleBookModalVue from "../modal/isSaleBookModal.vue";
 import convertData from "@/uses/convertData";
@@ -139,13 +137,6 @@ export default defineComponent({
         });
       }
     };
-    const getDetailBook = async (id) => {
-      await axios
-        .get(`https://apiadminbook.eduso.vn/api/book_store/get_detail/${id}`)
-        .then((response) => {
-          setBookDetail(response.data);
-        });
-    };
     return {
       hideIcon,
       eyeIcon,
@@ -162,11 +153,11 @@ export default defineComponent({
       openIsSaleBookModal,
       openRemoveBookModal,
       isLoading,
-      getDetailBook,
+      setBookDetail,
     };
   },
   components: {
-    updateBookModalVue,
+    UpdateBookModal,
     removeBookModalVue,
     isSaleBookModalVue,
   },

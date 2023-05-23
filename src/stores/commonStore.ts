@@ -1,5 +1,13 @@
 import { defineStore } from "pinia";
-
+import axios from "axios";
+import {
+  BASE_URL,
+  GET_LIBRARY,
+  GET_BOOKS,
+  GET_DETAIL_BOOK,
+  GET_SUBJECT,
+  GET_PROGRAM,
+} from "../constants";
 export const usePaginationStore = defineStore("paginationStore", {
   state: () => ({
     paginations: [],
@@ -21,7 +29,7 @@ export const usePaginationStore = defineStore("paginationStore", {
 });
 export const useCommonStore = defineStore("commonStore", {
   state: () => ({
-    grades: [],
+    programs: [],
     subjects: [],
     fromDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     toDate: new Date(
@@ -32,11 +40,18 @@ export const useCommonStore = defineStore("commonStore", {
   }),
   getters: {},
   actions: {
-    getGrades(data) {
-      this.grades = data;
+    getPrograms() {
+      const url = BASE_URL + GET_PROGRAM;
+      axios.get(url).then((response) => {
+        this.programs = response.data.Data;
+      });
     },
-    getSubjects(data) {
-      this.subjects = data;
+    getSubjects() {
+      const url = BASE_URL + GET_SUBJECT;
+      axios.get(url).then((response) => {
+        this.subjects = response.data.Data;
+        console.log(this.subjects);
+      });
     },
     updateFromDate(data) {
       this.fromDate = data;

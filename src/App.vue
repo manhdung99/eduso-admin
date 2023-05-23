@@ -35,23 +35,9 @@ export default defineComponent({
   name: "App",
   components: { SideBarVue },
   setup() {
-    const { getGrades, getSubjects } = useCommonStore();
-    const getAllGrade = () => {
-      axios
-        .get("https://apiadminbook.eduso.vn/api/book_store/get_grade")
-        .then((response) => {
-          getGrades(response.data);
-        });
-    };
-    const getAllSubjects = () => {
-      axios
-        .get("https://apiadminbook.eduso.vn/api/book_store/get_subject")
-        .then((response) => {
-          getSubjects(response.data);
-        });
-    };
-    onMounted(getAllGrade);
-    onMounted(getAllSubjects);
+    const { getPrograms, getSubjects } = useCommonStore();
+    onMounted(getPrograms);
+    onMounted(getSubjects);
     return {
       closeIcon,
       openSidebar,
