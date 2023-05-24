@@ -41,12 +41,25 @@
             <p class="text-blue-lighter text-xl font-bold">
               {{ bookDetail.Name }}
             </p>
-            <div class="flex gap-x-4 items-center my-2">
+            <div class="flex gap-x-4 items-center my-2 relative">
               <span
                 class="text-blue-lighter text-lg font-bold whitespace-nowrap"
                 >NXB :
               </span>
-              <input class="select" name="Publisher" />
+              <input
+                v-model="bookInfo.publisher"
+                class="select"
+                name="Publisher"
+              />
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.publisher.$errors
+                  : v2$.publisher.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
             <div
               v-if="bookDetail.Description != 'null'"
@@ -62,7 +75,7 @@
               Phân loại:
             </p>
             <div class="relative mt-2">
-              <select name="Type" class="select w-full py-1">
+              <select v-model="classify" name="Type" class="select w-full py-1">
                 <option value="0">Có bản quyền</option>
                 <option value="1">Sách Tham Khảo</option>
               </select>
@@ -72,27 +85,34 @@
                 <span class="triangle_up active:border-b-black"></span>
                 <span class="triangle_down active:border-t-black"></span>
               </div>
-              <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.level"
-              >
-                {{ error.level }}
-              </span>
             </div>
           </div>
-          <div class="w-1/2 mt-6">
+          <div class="w-1/2 mt-6 relative">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
             >
               Mã sách:
             </p>
             <div class="relative mt-2">
-              <input name="Code" class="select w-full py-1" />
+              <input
+                v-model="bookInfo.code"
+                name="Code"
+                class="select w-full py-1"
+              />
             </div>
+            <span
+              class="text-red-500 -bottom-5 absolute left-0"
+              v-for="error in classify != 1
+                ? v1$.code.$errors
+                : v2$.code.$errors"
+              :key="error.$uid"
+            >
+              {{ $t(error.$message) }}
+            </span>
           </div>
         </div>
         <!-- Date -->
-        <div class="flex gap-x-4 mt-2">
+        <div v-if="classify != 1" class="flex gap-x-4 mt-4">
           <div class="w-1/2">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
@@ -104,7 +124,17 @@
                 type="date"
                 class="select w-full py-1"
                 name="DateStartBuy"
+                v-model="bookInfo.startDate"
               />
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.startDate.$errors
+                  : v2$.startDate.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
 
@@ -115,12 +145,27 @@
               Ngày kết thúc:
             </p>
             <div class="relative mt-2">
-              <input type="date" class="select w-full py-1" name="DateEndBuy" />
+              <input
+                type="date"
+                class="select w-full py-1"
+                name="DateEndBuy"
+                v-model="bookInfo.endDate"
+                :min="bookInfo.startDate"
+              />
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.endDate.$errors
+                  : v2$.endDate.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
         </div>
         <!-- info -->
-        <div class="flex gap-x-4 mt-2 flex-wrap">
+        <div class="flex gap-x-4 mt-4 flex-wrap">
           <div class="w-full md:w-auto">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
@@ -137,6 +182,15 @@
                 label="Name"
                 name="SubjectID"
               ></multiselect>
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.subject.$errors
+                  : v2$.subject.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
           <div class="w-full md:w-auto">
@@ -151,6 +205,15 @@
                 :searchable="searchable"
                 :options="EducationLevels"
               ></multiselect>
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.level.$errors
+                  : v2$.level.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
 
@@ -162,7 +225,7 @@
             </p>
             <div class="relative mt-2 md:w-50">
               <multiselect
-                v-model="bookDetail.ProgramID"
+                v-model="bookInfo.ProgramID"
                 :searchable="searchable"
                 :options="listProgram"
                 valueProp="ID"
@@ -170,11 +233,20 @@
                 label="Name"
                 name="ProgramID"
               ></multiselect>
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.ProgramID.$errors
+                  : v2$.ProgramID.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
         </div>
         <!-- Price  -->
-        <div class="flex gap-x-4 mt-4">
+        <div v-if="classify != 1" class="flex gap-x-4 mt-4">
           <div class="w-1/2">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
@@ -183,17 +255,19 @@
             </p>
             <div class="relative mt-2">
               <input
-                @change="checkPriceValidation(bookDetail.bookPrice, error)"
                 class="select w-full py-1 text-2xs italic"
-                v-model="bookDetail.bookPrice"
+                v-model="bookInfo.bookPrice"
                 type="number"
                 name="Price"
               />
               <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.price"
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.bookPrice.$errors
+                  : v2$.bookPrice.$errors"
+                :key="error.$uid"
               >
-                {{ error.price }}
+                {{ $t(error.$message) }}
               </span>
             </div>
           </div>
@@ -205,17 +279,19 @@
             </p>
             <div class="relative mt-2">
               <input
-                @change="checkDiscountValidation(bookDetail.discount, error)"
                 type="number"
                 class="select w-full py-1 text-2xs italic"
-                v-model="bookDetail.discount"
+                v-model="bookInfo.discount"
                 name="Sales"
               />
               <span
-                class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
-                v-if="error.discount"
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.discount.$errors
+                  : v2$.discount.$errors"
+                :key="error.$uid"
               >
-                {{ error.discount }}
+                {{ $t(error.$message) }}
               </span>
             </div>
           </div>
@@ -244,6 +320,8 @@ import uploadIcon from "../../assets/image/upload.svg";
 import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
 import Multiselect from "@vueform/multiselect";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minValue, maxValue } from "@vuelidate/validators";
 import {
   checkPriceValidation,
   checkDiscountValidation,
@@ -277,21 +355,19 @@ export default defineComponent({
     let listProgram = ref([]);
     let programAutocompletes = ref([]);
     const subjectRef = ref(null);
+    const classify = ref(0);
     let bookInfo = reactive({
+      code: "",
       level: "",
       subject: "",
+      publisher: "",
+      discount: "",
+      bookPrice: "",
+      ProgramID: "",
+      startDate: "",
+      endDate: "",
     });
     const EducationLevels = ref([]);
-    const error = reactive({
-      image: "",
-      metadata: "",
-      bookcontent: "",
-      level: "",
-      subject: "",
-      program: "",
-      price: "",
-      discount: "",
-    });
     const handleClearImage = () => {
       if (fileImageInput.value && fileImageInput.value.files.length > 0) {
         fileImageInput.value.value = null;
@@ -304,27 +380,18 @@ export default defineComponent({
       previewImage.value = croppedImage;
       imageSrc.value = null;
     };
-    const previewFiles = (event) => {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const imageTypes = ["jpg", "svg", "png", "webp", "jfif"];
-      if (imageTypes.includes(typeFile)) {
-        const theReader = new FileReader();
-        theReader.onloadend = async () => {
-          imageSrc.value = await theReader.result;
-        };
-        theReader.readAsDataURL(file);
-        error.image = "";
+    const onSubmit = async () => {
+      let result;
+      if (classify.value == 1) {
+        result = await v2$.value.$validate();
       } else {
-        error.image = "Chỉ hỗ trợ file ảnh";
+        result = await v1$.value.$validate();
       }
-    };
-    const onSubmit = () => {
-      if (error.price == "" && error.discount == "") {
+      if (result) {
         // updateLoadingStatus(true);
         const formData = new FormData(updateForm.value);
         formData.append("Level", bookInfo.level);
-        formData.append("ProgramID", bookDetail.value.ProgramID);
+        formData.append("ProgramID", bookInfo.ProgramID);
         formData.append("SubjectID", bookInfo.subject);
         const url = BASE_URL + ADD_BOOKS;
         axios.post(url, formData).then((response) => {
@@ -338,17 +405,17 @@ export default defineComponent({
       }
     };
 
-    const uploadBookContent = (event) => {
-      const file = event.target.files[0];
-      const typeFile = file.name.split(".")[1];
-      const docTypes = ["csv", "docx", "doc", "xlsx"];
-      if (docTypes.includes(typeFile)) {
-        bookContent.value = file.name;
-        error.bookcontent = "";
-      } else {
-        error.bookcontent = "Chỉ hỗ trợ file tài liệu";
-      }
-    };
+    // const uploadBookContent = (event) => {
+    //   const file = event.target.files[0];
+    //   const typeFile = file.name.split(".")[1];
+    //   const docTypes = ["csv", "docx", "doc", "xlsx"];
+    //   if (docTypes.includes(typeFile)) {
+    //     bookContent.value = file.name;
+    //     error.bookcontent = "";
+    //   } else {
+    //     error.bookcontent = "Chỉ hỗ trợ file tài liệu";
+    //   }
+    // };
 
     const updateAutocompleteProgram = () => {
       console.log(studyProgram.value);
@@ -368,6 +435,26 @@ export default defineComponent({
       programID.value = data.ID;
       programAutocompletes.value = [];
     };
+    const licenseRules = {
+      code: { required }, // Matches state.firstName
+      level: { required }, // Matches state.lastName
+      subject: { required },
+      publisher: { required },
+      discount: { required, minValue: minValue(1), maxValue: maxValue(99) },
+      bookPrice: { required, minValue: minValue(1) },
+      ProgramID: { required },
+      startDate: { required },
+      endDate: { required },
+    };
+    const noLicenseRules = {
+      code: { required }, // Matches state.firstName
+      level: { required }, // Matches state.lastName
+      subject: { required },
+      publisher: { required },
+      ProgramID: { required },
+    };
+    const v1$ = useVuelidate(licenseRules, bookInfo);
+    const v2$ = useVuelidate(noLicenseRules, bookInfo);
     watch(
       () => bookDetail.value,
       () => {
@@ -388,7 +475,7 @@ export default defineComponent({
           EducationLevels.value = [];
           listProgram.value = [];
           bookInfo.level = null;
-          bookDetail.value.ProgramID = null;
+          bookInfo.ProgramID = null;
         }
       }
     );
@@ -403,12 +490,12 @@ export default defineComponent({
       bookInfo,
       metaData,
       bookContent,
-      previewFiles,
+      // previewFiles,
       previewImage,
       studyProgram,
-      uploadBookContent,
+      // uploadBookContent,
       onSubmit,
-      error,
+      // error,
       checkPriceValidation,
       checkDiscountValidation,
       imageSrc,
@@ -428,6 +515,9 @@ export default defineComponent({
       programID,
       searchable,
       listProgram,
+      v1$,
+      v2$,
+      classify,
     };
   },
 });

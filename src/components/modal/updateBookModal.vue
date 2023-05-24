@@ -43,7 +43,7 @@
             <p class="text-blue-lighter text-xl font-bold">
               {{ bookDetail.Name }}
             </p>
-            <div class="flex gap-x-4 items-center my-2">
+            <div class="flex gap-x-4 items-center my-2 relative">
               <span
                 class="text-blue-lighter text-lg whitespace-nowrap font-bold"
                 >NXB :
@@ -53,6 +53,15 @@
                 name="Publisher"
                 v-model="bookDetail.Publisher"
               />
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in bookDetail.Type != 1
+                  ? v1$.Publisher.$errors
+                  : v2$.Publisher.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
             <div v-html="bookDetail.Description"></div>
           </div>
@@ -99,12 +108,21 @@
                 name="Code"
                 class="select w-full py-1"
               />
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in bookDetail.Type != 1
+                  ? v1$.Code.$errors
+                  : v2$.Code.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
         </div>
 
         <!-- Date -->
-        <div class="flex gap-x-4 mt-2">
+        <div v-if="bookDetail.Type != 1" class="flex gap-x-4 mt-4">
           <div class="w-1/2">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
@@ -155,6 +173,13 @@
                 label="Name"
                 name="SubjectID"
               ></multiselect>
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in v3$.subject.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
           <div class="w-full md:w-auto">
@@ -169,6 +194,13 @@
                 :searchable="searchable"
                 :options="EducationLevels"
               ></multiselect>
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in v3$.level.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
 
@@ -192,7 +224,7 @@
           </div>
         </div>
         <!-- Price  -->
-        <div class="flex gap-x-4 mt-4">
+        <div v-if="bookDetail.Type != 1" class="flex gap-x-4 mt-4">
           <div class="w-1/2">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
@@ -206,6 +238,15 @@
                 type="number"
                 name="Price"
               />
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.Price.$errors
+                  : v2$.Price.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
             </div>
           </div>
           <div class="w-1/2">
@@ -221,6 +262,15 @@
                 v-model="bookDetail.Sales"
                 name="Sales"
               />
+              <span
+                class="text-red-500 -bottom-5 absolute left-0"
+                v-for="error in classify != 1
+                  ? v1$.Sales.$errors
+                  : v2$.Sales.$errors"
+                :key="error.$uid"
+              >
+                {{ $t(error.$message) }}
+              </span>
               <span
                 class="absolute text-red -bottom-5 text-xs whitespace-nowrap left-0"
                 v-if="error.discount"
@@ -257,6 +307,8 @@ import { checkPriceValidation } from "../../uses/validation";
 import { BASE_URL, ADD_BOOKS } from "../../constants";
 import convertData from "../../uses/convertData";
 import Multiselect from "@vueform/multiselect";
+import { useVuelidate } from "@vuelidate/core";
+import { required, minValue, maxValue } from "@vuelidate/validators";
 import axios from "axios";
 export default defineComponent({
   name: "UpdateBookModal",
@@ -330,8 +382,15 @@ export default defineComponent({
         error.image = "Chỉ hỗ trợ file ảnh";
       }
     };
-    const onSubmit = () => {
-      if (error.price == "" && error.discount == "") {
+    const onSubmit = async () => {
+      let result;
+      if (bookDetail.value.Type == 1) {
+        result = await v2$.value.$validate();
+      } else {
+        result = await v1$.value.$validate();
+      }
+      const levelValidate = await v3$.value.$validate();
+      if (result && levelValidate) {
         // updateLoadingStatus(true);
         const formData = new FormData(updateForm.value);
         formData.append("Level", bookInfo.level);
@@ -378,11 +437,33 @@ export default defineComponent({
       programID.value = data.ID;
       programAutocompletes.value = [];
     };
+    const licenseRules = {
+      Code: { required }, // Matches state.firstName
+      level: { required }, // Matches state.lastName
+      subject: { required },
+      Publisher: { required },
+      Sales: { required, minValue: minValue(1), maxValue: maxValue(99) },
+      Price: { required, minValue: minValue(1) },
+      ProgramID: { required },
+      startDate: { required },
+      endDate: { required },
+    };
+    const noLicenseRules = {
+      Code: { required }, // Matches state.firstName
+      level: { required }, // Matches state.lastName
+      Publisher: { required },
+      ProgramID: { required },
+    };
+    const subjectandLevel = {
+      level: { required }, // Matches state.lastName
+      subject: { required },
+    };
+    const v1$ = useVuelidate(licenseRules, bookDetail);
+    const v2$ = useVuelidate(noLicenseRules, bookDetail);
+    const v3$ = useVuelidate(subjectandLevel, bookInfo);
     watch(
       () => bookDetail.value,
       () => {
-        console.log(bookDetail.value);
-
         previewImage.value = `https://static.eduso.vn/${bookDetail.value.Image}`;
         bookInfo.subject = bookDetail.value.SubjectID;
         bookInfo.level = bookDetail.value.Level;
@@ -450,6 +531,9 @@ export default defineComponent({
       endDate,
       searchable,
       listProgram,
+      v1$,
+      v2$,
+      v3$,
     };
   },
 });
