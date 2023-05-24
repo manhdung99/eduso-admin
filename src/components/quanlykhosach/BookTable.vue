@@ -1,5 +1,5 @@
 <template>
-  <table class="w-full table" border="1">
+  <table v-if="books.length > 0" class="w-full table" border="1">
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
@@ -81,9 +81,18 @@
       </tr>
     </tbody>
   </table>
-  <UpdateBookModal v-if="openUpdateBookModal" />
-  <removeBookModalVue v-if="openRemoveBookModal" />
-  <isSaleBookModalVue v-if="openIsSaleBookModal" />
+  <div
+    v-else
+    class="text-red-600 text-xl font-semibold left-1/2 -translate-x-1/2 relative inline-block"
+  >
+    Không tìm thấy sách
+  </div>
+  <Teleport to="body">
+    <UpdateBookModal v-if="openUpdateBookModal" />
+  </Teleport>
+  <Teleport to="body">
+    <isSaleBookModalVue v-if="openIsSaleBookModal" />
+  </Teleport>
   <div
     v-if="isLoading"
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
@@ -105,10 +114,8 @@ import eyeIcon from "../../assets/image/eye.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
 import UpdateBookModal from "../modal/updateBookModal.vue";
-import removeBookModalVue from "../modal/removeBookModal.vue";
 import isSaleBookModalVue from "../modal/isSaleBookModal.vue";
 import convertData from "@/uses/convertData";
-import axios from "axios";
 
 export default defineComponent({
   name: "BookTable",
@@ -116,12 +123,8 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const bookStore = useBookStore();
-    const {
-      openUpdateBookModal,
-      openIsSaleBookModal,
-      openRemoveBookModal,
-      isLoading,
-    } = storeToRefs(modal);
+    const { openUpdateBookModal, openIsSaleBookModal, isLoading } =
+      storeToRefs(modal);
     const {
       updateBookModalStatus,
       updateRemoveModalStatus,
@@ -151,14 +154,12 @@ export default defineComponent({
       updateIsSaleBookModal,
       openUpdateBookModal,
       openIsSaleBookModal,
-      openRemoveBookModal,
       isLoading,
       setBookDetail,
     };
   },
   components: {
     UpdateBookModal,
-    removeBookModalVue,
     isSaleBookModalVue,
   },
 });

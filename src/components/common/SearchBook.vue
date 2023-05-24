@@ -54,12 +54,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent } from "vue";
 import searchBookModalVue from "../modal/searchBookModal.vue";
 import searchIcon from "../../assets/image/search.svg";
 import { useSearchStore } from "../../stores/searchStore";
-import axios from "axios";
-import debounce from "lodash/debounce";
 import convertData from "@/uses/convertData";
 import { useCommonStore } from "../../stores/commonStore";
 import { storeToRefs } from "pinia";

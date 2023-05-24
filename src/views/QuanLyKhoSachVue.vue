@@ -45,7 +45,7 @@ import BookTableVue from "@/components/quanlykhosach/BookTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { useBookStore } from "../stores/booksStore";
-import { BASE_URL, GET_LIBRARY, GET_BOOKS } from "../constants";
+import { BASE_URL, GET_BOOKS } from "../constants";
 import convertData from "../uses/convertData";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 import { useSearchStore } from "../stores/searchStore";
@@ -77,6 +77,7 @@ export default defineComponent({
     const { convertTimestampToDate } = convertData();
     const { getBooks } = bookStore;
     const { getPagination, updatePageIndex } = pagination;
+    const { pageIndex } = storeToRefs(pagination);
     const { updateLoadingStatus } = useModalStore();
     const program = ref("");
     const subject = ref("");
@@ -90,9 +91,21 @@ export default defineComponent({
         "?start=" +
         convertTimestampToDate(fromDate.value) +
         "&end=" +
-        convertTimestampToDate(toDate.value);
+        convertTimestampToDate(toDate.value) +
+        `&subjectid=${subject.value}` +
+        `&programid=${program.value}` +
+        `&pageindex=${pageIndex.value - 1}`;
       axios.get(url).then((response) => {
         getBooks(response.data.Data);
+        updatePageIndex(response.data.Page.PageIndex + 1);
+        getPagination(
+          response.data.Page.Total % response.data.Page.PageSize == 0
+            ? response.data.Page.Total / response.data.Page.PageSize
+            : Math.floor(
+                response.data.Page.Total / response.data.Page.PageSize
+              ) + 1
+        );
+
         updateLoadingStatus(false);
       });
     };
@@ -106,10 +119,25 @@ export default defineComponent({
         "&end=" +
         convertTimestampToDate(toDate.value) +
         `&subjectid=${subject.value}` +
-        `&programid=${program.value}`;
+        `&programid=${program.value}` +
+        `&pageindex=${pageIndex.value - 1}`;
       axios.get(url).then((response) => {
-        getBooks(response.data.Data);
-        updateLoadingStatus(false);
+        if (response.data.Code == 404) {
+          updateLoadingStatus(false);
+          getBooks([]);
+          getPagination(0);
+        } else {
+          getBooks(response.data.Data);
+          updatePageIndex(response.data.Page.PageIndex + 1);
+          getPagination(
+            response.data.Page.Total % response.data.Page.PageSize == 0
+              ? response.data.Page.Total / response.data.Page.PageSize
+              : Math.floor(
+                  response.data.Page.Total / response.data.Page.PageSize
+                ) + 1
+          );
+          updateLoadingStatus(false);
+        }
       });
     };
     const filterBookByText = debounce(() => {
@@ -139,13 +167,19 @@ export default defineComponent({
         getAuthors([]);
       }
     }, 1000);
-    watch([program, subject, fromDate, toDate], () => {
+    watch([program, subject, fromDate, toDate, pageIndex], () => {
       if (program.value == null) program.value = "";
       if (subject.value == null) subject.value = "";
       filterBook();
       // if (fromDate.value < toDate.value) {
       // }
     });
+    watch(
+      () => subject.value,
+      () => {
+        program.value = "";
+      }
+    );
     watch(
       () => searchText.value,
       () => {

@@ -1,13 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import {
-  BASE_URL,
-  GET_LIBRARY,
-  GET_BOOKS,
-  GET_DETAIL_BOOK,
-  GET_SUBJECT,
-  GET_PROGRAM,
-} from "../constants";
+import { BASE_URL, GET_SUBJECT, GET_PROGRAM } from "../constants";
 export const usePaginationStore = defineStore("paginationStore", {
   state: () => ({
     paginations: [],
@@ -50,7 +43,6 @@ export const useCommonStore = defineStore("commonStore", {
       const url = BASE_URL + GET_SUBJECT;
       axios.get(url).then((response) => {
         this.subjects = response.data.Data;
-        console.log(this.subjects);
       });
     },
     updateFromDate(data) {

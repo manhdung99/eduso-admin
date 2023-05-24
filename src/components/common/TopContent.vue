@@ -25,7 +25,9 @@
       </button>
     </div>
   </div>
-  <LibraryBookModal />
+  <Teleport to="body">
+    <LibraryBookModal />
+  </Teleport>
 </template>
 <script lang="ts">
 import LibraryBookModal from "../modal/libraryBookModal.vue";

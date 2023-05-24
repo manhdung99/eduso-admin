@@ -69,7 +69,9 @@
       </div>
     </div>
   </div>
-  <addNewBookModal />
+  <Teleport to="body">
+    <addNewBookModal />
+  </Teleport>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
@@ -77,7 +79,6 @@ import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
-import axios from "axios";
 import addNewBookModal from "./addNewBookModal.vue";
 
 export default defineComponent({

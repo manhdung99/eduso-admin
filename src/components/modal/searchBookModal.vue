@@ -61,7 +61,7 @@
   </div>
 </template>
 <script>
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import rightArrowIcon from "../../assets/image/right-arrow.svg";
 import searchIcon from "../../assets/image/search.svg";
 import useDetectOutsideClick from "../../uses/useDetectOutsideClick";

@@ -25,7 +25,7 @@
           /></span>
         </div>
         <!-- Có sách -->
-        <div class="flex justify-between mt-6">
+        <div class="flex justify-between flex-wrap md:flex-nowrap mt-6">
           <div class="mr-6 md:mr-10">
             <img
               class="book-image-modal"
@@ -44,7 +44,10 @@
               {{ bookDetail.Name }}
             </p>
             <div class="flex gap-x-4 items-center my-2">
-              <span class="text-blue-lighter text-lg font-bold">NXB : </span>
+              <span
+                class="text-blue-lighter text-lg whitespace-nowrap font-bold"
+                >NXB :
+              </span>
               <input
                 class="select"
                 name="Publisher"
@@ -135,14 +138,14 @@
           </div>
         </div>
         <!-- info -->
-        <div class="flex gap-x-4 mt-2">
-          <div class="">
+        <div class="flex flex-wrap gap-x-4 mt-2">
+          <div class="w-full md:w-auto">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
             >
               Môn học:
             </p>
-            <div class="relative mt-2 w-40">
+            <div class="relative mt-2 md:w-40">
               <multiselect
                 v-model="bookInfo.subject"
                 :searchable="searchable"
@@ -154,13 +157,13 @@
               ></multiselect>
             </div>
           </div>
-          <div class="">
+          <div class="w-full md:w-auto">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
             >
               Cấp học:
             </p>
-            <div class="relative mt-2 w-40">
+            <div class="relative mt-2 md:w-40">
               <multiselect
                 v-model="bookInfo.level"
                 :searchable="searchable"
@@ -169,13 +172,13 @@
             </div>
           </div>
 
-          <div class="">
+          <div class="w-full md:w-auto">
             <p
               class="text-tiny md:text-base lg:text-lg text-blue-darker font-bold"
             >
               Chương trình:
             </p>
-            <div class="relative mt-2 w-50">
+            <div class="relative mt-2 md:w-50">
               <multiselect
                 v-model="bookDetail.ProgramID"
                 :searchable="searchable"
@@ -265,7 +268,7 @@ export default defineComponent({
     const { openUpdateBookModal } = storeToRefs(modal);
     const { updateBookModalStatus, updateAddNewModalStatus } = modal;
     const bookStore = useBookStore();
-    const { updateBook, removeLibraryBookAdded } = bookStore;
+    const { updateBook } = bookStore;
     const { bookDetail } = storeToRefs(bookStore);
     const { subjects, programs } = storeToRefs(useCommonStore());
     let previewImage = ref(null);
@@ -527,7 +530,7 @@ export default defineComponent({
   background: white;
   z-index: 1;
 }
-@media screen and (max-width: 424px) {
+@media screen and (max-width: 767px) {
   .update-book-modal {
     position: fixed;
     top: 4px;
@@ -538,6 +541,9 @@ export default defineComponent({
     overflow-y: auto;
     min-width: 300px;
     padding: 16px 12px;
+  }
+  .book-info-wrapper {
+    min-width: none;
   }
 }
 </style>
