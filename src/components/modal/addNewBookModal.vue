@@ -51,15 +51,15 @@
                 class="select"
                 name="Publisher"
               />
-              <span
-                class="text-red-500 -bottom-5 absolute left-0"
-                v-for="error in classify != 1
-                  ? v1$.publisher.$errors
-                  : v2$.publisher.$errors"
-                :key="error.$uid"
-              >
-                {{ $t(error.$message) }}
-              </span>
+            </div>
+            <div
+              class="text-red-500"
+              v-for="error in classify != 1
+                ? v1$.publisher.$errors
+                : v2$.publisher.$errors"
+              :key="error.$uid"
+            >
+              {{ $t(error.$message) }}
             </div>
             <div
               v-if="bookDetail.Description != 'null'"
@@ -440,8 +440,8 @@ export default defineComponent({
       level: { required }, // Matches state.lastName
       subject: { required },
       publisher: { required },
-      discount: { required, minValue: minValue(1), maxValue: maxValue(99) },
-      bookPrice: { required, minValue: minValue(1) },
+      discount: { required, minValue: minValue(0), maxValue: maxValue(99) },
+      bookPrice: { required, minValue: minValue(0) },
       ProgramID: { required },
       startDate: { required },
       endDate: { required },

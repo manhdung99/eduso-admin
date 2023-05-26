@@ -134,7 +134,7 @@
                 type="date"
                 class="select w-full py-1"
                 name="DateStartBuy"
-                :value="startDate"
+                v-model="startDate"
               />
             </div>
           </div>
@@ -150,7 +150,8 @@
                 type="date"
                 class="select w-full py-1"
                 name="DateEndBuy"
-                :value="endDate"
+                v-model="endDate"
+                :min="startDate"
               />
             </div>
           </div>
@@ -240,7 +241,7 @@
               />
               <span
                 class="text-red-500 -bottom-5 absolute left-0"
-                v-for="error in classify != 1
+                v-for="error in bookDetail.Type != 1
                   ? v1$.Price.$errors
                   : v2$.Price.$errors"
                 :key="error.$uid"
@@ -264,7 +265,7 @@
               />
               <span
                 class="text-red-500 -bottom-5 absolute left-0"
-                v-for="error in classify != 1
+                v-for="error in bookDetail.Type != 1
                   ? v1$.Sales.$errors
                   : v2$.Sales.$errors"
                 :key="error.$uid"
@@ -390,6 +391,9 @@ export default defineComponent({
         result = await v1$.value.$validate();
       }
       const levelValidate = await v3$.value.$validate();
+      // console.log(result, levelValidate, result && levelValidate);
+      console.log(result);
+
       if (result && levelValidate) {
         // updateLoadingStatus(true);
         const formData = new FormData(updateForm.value);
@@ -438,24 +442,19 @@ export default defineComponent({
       programAutocompletes.value = [];
     };
     const licenseRules = {
-      Code: { required }, // Matches state.firstName
-      level: { required }, // Matches state.lastName
-      subject: { required },
+      Code: { required },
       Publisher: { required },
       Sales: { required, minValue: minValue(1), maxValue: maxValue(99) },
       Price: { required, minValue: minValue(1) },
       ProgramID: { required },
-      startDate: { required },
-      endDate: { required },
     };
     const noLicenseRules = {
-      Code: { required }, // Matches state.firstName
-      level: { required }, // Matches state.lastName
+      Code: { required },
       Publisher: { required },
       ProgramID: { required },
     };
     const subjectandLevel = {
-      level: { required }, // Matches state.lastName
+      level: { required },
       subject: { required },
     };
     const v1$ = useVuelidate(licenseRules, bookDetail);
