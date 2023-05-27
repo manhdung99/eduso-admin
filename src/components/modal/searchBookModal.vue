@@ -1,7 +1,7 @@
 <template>
   <div
     ref="divSearchElement"
-    v-show="books.length > 0 || authors.length > 0"
+    v-if="books.length > 0 || authors.length > 0"
     class="search-wrapper"
   >
     <div class="px-2" v-show="books.length > 0">
@@ -109,6 +109,7 @@ export default defineComponent({
   border: 1px solid #8799a5;
   border-radius: 5px;
   padding: 16px;
+  z-index: 20;
 }
 .list-book-wrapper {
   margin-top: 16px;

@@ -72,56 +72,6 @@ export default defineComponent({
     const { openSearchArea } = storeToRefs(searchStore);
     const { updateFromDate, updateToDate } = useCommonStore();
     const { dateFormater } = convertData();
-    // const searchData = debounce(() => {
-    //   if (searchText.value.length > 0) {
-    //     updateSearchAreaStatus(true);
-    //     const fetchBooks = async () => {
-    //       try {
-    //         const response = await axios.get(
-    //           "https://642e3a278ca0fe3352cb2e35.mockapi.io/books/1"
-    //         );
-    //         getSearchtBooks(response.data.listBook);
-    //       } catch (err) {
-    //         throw new Error("Some thing went wrong");
-    //       }
-    //     };
-    //     fetchBooks();
-    //     const authors = [
-    //       {
-    //         id: 1,
-    //         name: "Bộ Giáo dục & Đào tạo",
-    //       },
-    //       {
-    //         id: 2,
-    //         name: "Bộ Giáo dục & Đào tạo",
-    //       },
-    //       {
-    //         id: 3,
-    //         name: "Bộ Giáo dục & Đào tạo",
-    //       },
-    //       {
-    //         id: 4,
-    //         name: "Bộ Giáo dục & Đào tạo",
-    //       },
-    //       {
-    //         id: 5,
-    //         name: "Bộ Giáo dục & Đào tạo",
-    //       },
-    //       {
-    //         id: 5,
-    //         name: "Bộ Giáo dục & Đào tạo",
-    //       },
-    //       {
-    //         id: 5,
-    //         name: "Bộ Giáo dục & Đào tạo",
-    //       },
-    //     ];
-    //     getAuthors(authors);
-    //   } else {
-    //     getSearchtBooks([]);
-    //     getAuthors([]);
-    //   }
-    // }, 1000);
     const startDate = dateFormater(fromDate.value);
 
     const endDate = dateFormater(toDate.value);

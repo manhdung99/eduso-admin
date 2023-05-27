@@ -5,8 +5,13 @@
         <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
           Mã Sách
         </th>
-        <th class="text-lg text-charcoal font-medium md:w-1/4 pl-1 text-center">
+        <th class="text-lg text-charcoal font-medium md:w-1/5 pl-1 text-center">
           Thông tin sách
+        </th>
+        <th
+          class="text-lg text-charcoal font-medium md:w-1//8 pl-1 text-center"
+        >
+          Phân loại
         </th>
         <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
           Nhà xuất bản
@@ -49,6 +54,11 @@
               </p>
             </div>
           </div>
+        </td>
+        <td class="text-center">
+          <span class="text-lg">{{
+            book.Type == 0 ? "Có bản quyền" : "Sách tham khảo"
+          }}</span>
         </td>
         <td class="text-center">
           <span class="text-lg">{{ book.Publisher }}</span>

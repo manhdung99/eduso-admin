@@ -27,8 +27,6 @@ import closeIcon from "../src/assets/image/close-solid.svg";
 import sideBarIcon from "../src/assets/image/side-bar.svg";
 import { defineComponent, ref, onMounted } from "vue";
 import { useCommonStore } from "./stores/commonStore";
-import axios from "axios";
-
 const openSidebar = ref(false);
 
 export default defineComponent({

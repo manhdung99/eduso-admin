@@ -1,11 +1,6 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import {
-  BASE_URL,
-  GET_LIBRARY,
-  GET_BOOKS,
-  GET_DETAIL_BOOK,
-} from "../constants";
+import { BASE_URL, GET_LIBRARY, GET_DETAIL_BOOK } from "../constants";
 export const useBookStore = defineStore("booksStore", {
   state: () => ({
     books: [],

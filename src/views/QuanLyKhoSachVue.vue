@@ -1,14 +1,14 @@
 <template>
   <div class="px-4">
     <TopContentVue :title="title" />
-    <div class="px-0 lg:px-4 flex items-center flex-wrap lg:flex-nowrap">
+    <div class="px-0 lg:px-4 flex items-center flex-wrap">
       <div class="w-full 2xl:w-2/3">
         <SearchBook />
       </div>
       <div
-        class="w-full 2xl:w-1/3 md:pl-0 lg:pl-8 2xl:pl-12 mb-6 lg:mb-0 flex gap-x-2 3xl:gap-x-4"
+        class="w-full gap-y-4 flex-wrap md:flex-nowrap 2xl:w-1/3 md:pl-0 mb-6 lg:mb-0 flex gap-x-2 3xl:gap-x-4"
       >
-        <div class="relative w-51.25">
+        <div class="relative w-full md:w-51.25">
           <multiselect
             v-model="subject"
             :searchable="searchable"
@@ -19,7 +19,7 @@
             placeholder="Môn học"
           ></multiselect>
         </div>
-        <div class="relative w-51.25">
+        <div class="relative w-full md:w-51.25">
           <multiselect
             v-model="program"
             :searchable="searchable"
@@ -28,6 +28,16 @@
             track-by="Name"
             label="Name"
             placeholder="Chương trình học"
+          ></multiselect>
+        </div>
+        <div class="relative w-full md:w-51.25">
+          <multiselect
+            v-model="type"
+            :options="types"
+            valueProp="id"
+            track-by="content"
+            label="content"
+            placeholder="Phân loại"
           ></multiselect>
         </div>
       </div>
@@ -83,6 +93,17 @@ export default defineComponent({
     const subject = ref("");
     const searchable = true;
     const value = ref(null);
+    const type = ref("");
+    const types = [
+      {
+        id: 0,
+        content: "Có bản quyền",
+      },
+      {
+        id: 1,
+        content: "Sách tham khảo",
+      },
+    ];
     const getBookData = () => {
       updateLoadingStatus(true);
       const url =
@@ -94,7 +115,8 @@ export default defineComponent({
         convertTimestampToDate(toDate.value) +
         `&subjectid=${subject.value}` +
         `&programid=${program.value}` +
-        `&pageindex=${pageIndex.value - 1}`;
+        `&pageindex=${pageIndex.value - 1}` +
+        `&type=${type.value}`;
       axios.get(url).then((response) => {
         getBooks(response.data.Data);
         updatePageIndex(response.data.Page.PageIndex + 1);
@@ -120,7 +142,8 @@ export default defineComponent({
         convertTimestampToDate(toDate.value) +
         `&subjectid=${subject.value}` +
         `&programid=${program.value}` +
-        `&pageindex=${pageIndex.value - 1}`;
+        `&pageindex=${pageIndex.value - 1}` +
+        `&type=${type.value}`;
       axios.get(url).then((response) => {
         if (response.data.Code == 404) {
           updateLoadingStatus(false);
@@ -151,12 +174,15 @@ export default defineComponent({
           convertTimestampToDate(toDate.value) +
           `&subjectid=${subject.value}` +
           `&programid=${program.value}` +
-          `&text=${searchText.value}`;
+          `&text=${searchText.value}` +
+          `&type=${type.value}`;
         updateSearchAreaStatus(true);
         const fetchBooks = async () => {
           try {
             const response = await axios.get(url);
-            getSearchtBooks(response.data.Data);
+            if (response.data.Code != 404) {
+              getSearchtBooks(response.data.Data);
+            }
           } catch (err) {
             throw new Error("Some thing went wrong");
           }
@@ -167,8 +193,9 @@ export default defineComponent({
         getAuthors([]);
       }
     }, 1000);
-    watch([program, subject, fromDate, toDate, pageIndex], () => {
+    watch([program, subject, fromDate, toDate, pageIndex, type], () => {
       if (program.value == null) program.value = "";
+      if (type.value == null) type.value = "";
       if (subject.value == null) subject.value = "";
       filterBook();
       // if (fromDate.value < toDate.value) {
@@ -196,6 +223,8 @@ export default defineComponent({
       searchable,
       program,
       subject,
+      type,
+      types,
     };
   },
 });
