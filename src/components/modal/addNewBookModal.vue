@@ -388,7 +388,6 @@ export default defineComponent({
         result = await v1$.value.$validate();
       }
       if (result) {
-        // updateLoadingStatus(true);
         const formData = new FormData(updateForm.value);
         formData.append("Level", bookInfo.level);
         formData.append("ProgramID", bookInfo.ProgramID);
@@ -397,25 +396,11 @@ export default defineComponent({
         axios.post(url, formData).then((response) => {
           addBook(response.data.Data);
           removeLibraryBookAdded(response.data.Data.bookID);
-          // updateLoadingStatus(false);
-          //Call API to add data
         });
         updateAddNewModalStatus(false);
         updateLibraryBookModal(false);
       }
     };
-
-    // const uploadBookContent = (event) => {
-    //   const file = event.target.files[0];
-    //   const typeFile = file.name.split(".")[1];
-    //   const docTypes = ["csv", "docx", "doc", "xlsx"];
-    //   if (docTypes.includes(typeFile)) {
-    //     bookContent.value = file.name;
-    //     error.bookcontent = "";
-    //   } else {
-    //     error.bookcontent = "Chỉ hỗ trợ file tài liệu";
-    //   }
-    // };
 
     const updateAutocompleteProgram = () => {
       console.log(studyProgram.value);
@@ -440,7 +425,7 @@ export default defineComponent({
       level: { required }, // Matches state.lastName
       subject: { required },
       publisher: { required },
-      discount: { required, minValue: minValue(0), maxValue: maxValue(99) },
+      discount: { required, minValue: minValue(0), maxValue: maxValue(100) },
       bookPrice: { required, minValue: minValue(0) },
       ProgramID: { required },
       startDate: { required },
@@ -477,6 +462,21 @@ export default defineComponent({
           bookInfo.level = null;
           bookInfo.ProgramID = null;
         }
+      }
+    );
+    watch(
+      () => openAddNewModal.value,
+      () => {
+        bookInfo.bookPrice = "";
+        bookInfo.code = "";
+        bookInfo.discount = "";
+        bookInfo.endDate = "";
+        bookInfo.level = "";
+        bookInfo.ProgramID = "";
+        bookInfo.publisher = "";
+        bookInfo.startDate = "";
+        bookInfo.subject = null;
+        classify.value = 0;
       }
     );
     return {
