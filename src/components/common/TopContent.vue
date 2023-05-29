@@ -16,7 +16,7 @@
       <button
         v-else
         @click="
-          getLibraryBooks();
+          getLibraryBooks(0);
           updateLibraryBookModal(true);
         "
         class="add-new-button hover:opacity-90"

@@ -18,12 +18,12 @@
       <div class="my-5">
         <input
           v-model="searchInput"
-          class="w-full border border-grey-lighter pl-4 py-2 outline-none focus:border-blue-superiority text-[13px]"
+          class="w-full border border-grey-lighter pl-4 py-2 outline-none focus:border-blue-superiority text-sm"
           placeholder="Nhập tên sách..."
           @input="filterLibraryBook(searchInput)"
         />
       </div>
-      <div class="library-book-modal">
+      <div @scroll="onScroll" class="library-book-modal">
         <div
           v-for="book in libraryBooks"
           class="mb-8 rounded relative border border-grey-lighter cursor-pointer hover:scale-105"
@@ -87,22 +87,21 @@ export default defineComponent({
   setup() {
     const modal = useModalStore();
     const isLoading = ref(false);
+    let pageNumber = 0;
     const { openLibraryBookModal } = storeToRefs(modal);
     const { libraryBooks } = storeToRefs(useBookStore());
     const { updateAddNewModalStatus, updateLibraryBookModal } = modal;
     const searchInput = ref("");
-    const { setBookFromLibrary, filterLibraryBook } = useBookStore();
-    // const filterBook = () => {
-    //   isLoading.value = true;
-    //   libraryBooks.value = [];
-    //   axios
-    //     .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
-    //     .then((response) => {
-    //       // let currentBookId = response.data.Data[0].iD;
-    //       libraryBooks.value = response.data.Data;
-    //       isLoading.value = false;
-    //     });
-    // };
+    const { setBookFromLibrary, filterLibraryBook, getLibraryBooks } =
+      useBookStore();
+    const onScroll = ({
+      target: { scrollTop, clientHeight, scrollHeight },
+    }) => {
+      if (scrollTop + clientHeight >= scrollHeight) {
+        pageNumber = pageNumber + 1;
+        getLibraryBooks(pageNumber);
+      }
+    };
     return {
       openLibraryBookModal,
       closeIcon,
@@ -113,9 +112,9 @@ export default defineComponent({
       updateAddNewModalStatus,
       updateLibraryBookModal,
       filterLibraryBook,
+      onScroll,
     };
   },
-  methods: {},
 });
 </script>
 <style>
@@ -135,7 +134,6 @@ export default defineComponent({
   column-gap: 24px;
   margin-bottom: 8px;
   position: relative;
-  justify-content: space-between;
 }
 .library-book-modal-wrapper {
   border: 1px solid #aeaeae;
@@ -152,5 +150,10 @@ export default defineComponent({
 .library-book-modal::-webkit-scrollbar-track {
   box-shadow: inset 0 0 2px #555555;
   border-radius: 10px;
+}
+@media screen and (max-width: 1023px) {
+  .library-book-modal {
+    justify-content: space-evenly;
+  }
 }
 </style>

@@ -58,10 +58,10 @@ export const useBookStore = defineStore("booksStore", {
         this.bookDetail = response.data.Data.Origin;
       });
     },
-    getLibraryBooks() {
-      const url = BASE_URL + GET_LIBRARY;
+    getLibraryBooks(page) {
+      const url = BASE_URL + GET_LIBRARY + `?pageIndex=${page}`;
       axios.get(url).then((response) => {
-        this.libraryBooks = response.data.Data;
+        this.libraryBooks = [...this.libraryBooks, ...response.data.Data];
       });
     },
     filterLibraryBook(text) {

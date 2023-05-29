@@ -118,16 +118,21 @@ export default defineComponent({
         `&pageindex=${pageIndex.value - 1}` +
         `&type=${type.value}`;
       axios.get(url).then((response) => {
-        getBooks(response.data.Data);
-        updatePageIndex(response.data.Page.PageIndex + 1);
-        getPagination(
-          response.data.Page.Total % response.data.Page.PageSize == 0
-            ? response.data.Page.Total / response.data.Page.PageSize
-            : Math.floor(
-                response.data.Page.Total / response.data.Page.PageSize
-              ) + 1
-        );
-
+        if (response.data.Code != 404) {
+          getBooks(response.data.Data);
+          updatePageIndex(response.data.Page.PageIndex + 1);
+          getPagination(
+            response.data.Page.Total % response.data.Page.PageSize == 0
+              ? response.data.Page.Total / response.data.Page.PageSize
+              : Math.floor(
+                  response.data.Page.Total / response.data.Page.PageSize
+                ) + 1
+          );
+        } else {
+          getBooks([]);
+          updatePageIndex(1);
+          getPagination(0);
+        }
         updateLoadingStatus(false);
       });
     };
