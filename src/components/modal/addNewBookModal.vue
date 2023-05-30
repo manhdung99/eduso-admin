@@ -394,11 +394,15 @@ export default defineComponent({
         formData.append("SubjectID", bookInfo.subject);
         const url = BASE_URL + ADD_BOOKS;
         axios.post(url, formData).then((response) => {
-          addBook(response.data.Data);
-          removeLibraryBookAdded(response.data.Data.bookID);
+          if (response.data.Code == 200) {
+            addBook(response.data.Data);
+            removeLibraryBookAdded(response.data.Data.bookID);
+            updateAddNewModalStatus(false);
+            updateLibraryBookModal(false);
+          } else {
+            alert(response.data.Message);
+          }
         });
-        updateAddNewModalStatus(false);
-        updateLibraryBookModal(false);
       }
     };
 

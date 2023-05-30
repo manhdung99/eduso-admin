@@ -1,4 +1,4 @@
-export const BASE_URL = "https://apiadminbook.eduso.vn/api/";
+export const BASE_URL = "https://bookapi.eduso.vn/api/";
 export const GET_LIBRARY = "books/getlibrary";
 export const GET_BOOKS = "books/get";
 export const ADD_BOOKS = "books/addbook";

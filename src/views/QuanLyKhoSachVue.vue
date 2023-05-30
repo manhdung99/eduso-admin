@@ -118,7 +118,7 @@ export default defineComponent({
         `&pageindex=${pageIndex.value - 1}` +
         `&type=${type.value}`;
       axios.get(url).then((response) => {
-        if (response.data.Code != 404) {
+        if (response.data.Code == 200) {
           getBooks(response.data.Data);
           updatePageIndex(response.data.Page.PageIndex + 1);
           getPagination(
@@ -132,6 +132,7 @@ export default defineComponent({
           getBooks([]);
           updatePageIndex(1);
           getPagination(0);
+          alert(response.data.Message);
         }
         updateLoadingStatus(false);
       });
@@ -150,11 +151,7 @@ export default defineComponent({
         `&pageindex=${pageIndex.value - 1}` +
         `&type=${type.value}`;
       axios.get(url).then((response) => {
-        if (response.data.Code == 404) {
-          updateLoadingStatus(false);
-          getBooks([]);
-          getPagination(0);
-        } else {
+        if (response.data.Code == 200) {
           getBooks(response.data.Data);
           updatePageIndex(response.data.Page.PageIndex + 1);
           getPagination(
@@ -165,6 +162,11 @@ export default defineComponent({
                 ) + 1
           );
           updateLoadingStatus(false);
+        } else {
+          updateLoadingStatus(false);
+          getBooks([]);
+          getPagination(0);
+          alert(response.data.Message);
         }
       });
     };
@@ -185,7 +187,7 @@ export default defineComponent({
         const fetchBooks = async () => {
           try {
             const response = await axios.get(url);
-            if (response.data.Code != 404) {
+            if (response.data.Code == 200) {
               getSearchtBooks(response.data.Data);
             }
           } catch (err) {
