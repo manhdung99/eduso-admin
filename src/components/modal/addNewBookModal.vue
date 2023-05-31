@@ -30,9 +30,9 @@
               :src="
                 previewImage != null
                   ? previewImage
-                  : bookDetail != null
+                  : bookDetail.Image
                   ? `https://static.eduso.vn/${bookDetail.Image}`
-                  : ''
+                  : defaultBookCover
               "
               alt=""
             />
@@ -327,6 +327,7 @@ import {
   checkDiscountValidation,
 } from "../../uses/validation";
 import { BASE_URL, ADD_BOOKS } from "../../constants";
+import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import axios from "axios";
 export default defineComponent({
   name: "addNewBookModal",
@@ -447,7 +448,9 @@ export default defineComponent({
     watch(
       () => bookDetail.value,
       () => {
-        previewImage.value = `https://static.eduso.vn/${bookDetail.value.Image}`;
+        previewImage.value = bookDetail.value.Image
+          ? `https://static.eduso.vn/${bookDetail.value.Image}`
+          : null;
       }
     );
     watch(
@@ -522,6 +525,7 @@ export default defineComponent({
       v1$,
       v2$,
       classify,
+      defaultBookCover,
     };
   },
 });

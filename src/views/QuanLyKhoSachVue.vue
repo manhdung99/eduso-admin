@@ -132,7 +132,6 @@ export default defineComponent({
           getBooks([]);
           updatePageIndex(1);
           getPagination(0);
-          alert(response.data.Message);
         }
         updateLoadingStatus(false);
       });
@@ -166,7 +165,6 @@ export default defineComponent({
           updateLoadingStatus(false);
           getBooks([]);
           getPagination(0);
-          alert(response.data.Message);
         }
       });
     };

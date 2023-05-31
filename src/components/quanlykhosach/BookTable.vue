@@ -39,7 +39,11 @@
             <div>
               <img
                 class="book-image"
-                :src="`https://static.eduso.vn/${book.Image}`"
+                :src="
+                  book.Image
+                    ? `https://static.eduso.vn/${book.Image}`
+                    : defaultBookCover
+                "
               />
             </div>
             <div class="ml-4">
@@ -124,6 +128,7 @@ import eyeIcon from "../../assets/image/eye.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
 import UpdateBookModal from "../modal/updateBookModal.vue";
+import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import isSaleBookModalVue from "../modal/isSaleBookModal.vue";
 import convertData from "@/uses/convertData";
 
@@ -166,6 +171,7 @@ export default defineComponent({
       openIsSaleBookModal,
       isLoading,
       setBookDetail,
+      defaultBookCover,
     };
   },
   components: {

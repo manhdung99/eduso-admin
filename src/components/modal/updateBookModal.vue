@@ -32,9 +32,9 @@
               :src="
                 previewImage != null
                   ? previewImage
-                  : bookDetail != null
+                  : bookDetail.Image != null
                   ? `https://static.eduso.vn/${bookDetail.Image}`
-                  : ''
+                  : defaultBookCover
               "
               alt=""
             />
@@ -311,6 +311,7 @@ import Multiselect from "@vueform/multiselect";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minValue, maxValue } from "@vuelidate/validators";
 import axios from "axios";
+import defaultBookCover from "../../assets/image/default-book-image.jpg";
 export default defineComponent({
   name: "UpdateBookModal",
   components: {
@@ -463,7 +464,9 @@ export default defineComponent({
     watch(
       () => bookDetail.value,
       () => {
-        previewImage.value = `https://static.eduso.vn/${bookDetail.value.Image}`;
+        previewImage.value = bookDetail.value.Image
+          ? `https://static.eduso.vn/${bookDetail.value.Image}`
+          : null;
         bookInfo.subject = bookDetail.value.SubjectID;
         bookInfo.level = bookDetail.value.Level;
         programID.value = bookDetail.value.ProgramID;
@@ -533,6 +536,7 @@ export default defineComponent({
       v1$,
       v2$,
       v3$,
+      defaultBookCover,
     };
   },
 });

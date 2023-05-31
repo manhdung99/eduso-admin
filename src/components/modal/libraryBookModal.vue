@@ -37,7 +37,11 @@
             <div>
               <img
                 class="book-item-image"
-                :src="`https://static.eduso.vn/${book.Image}`"
+                :src="
+                  book.Image
+                    ? `https://static.eduso.vn/${book.Image}`
+                    : defaultBookCover
+                "
                 alt="book image"
               />
             </div>
@@ -78,6 +82,7 @@ import { defineComponent, ref } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
+import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import closeIcon from "../../assets/image/close.svg";
 import addNewBookModal from "./addNewBookModal.vue";
 
@@ -113,6 +118,7 @@ export default defineComponent({
       updateLibraryBookModal,
       filterLibraryBook,
       onScroll,
+      defaultBookCover,
     };
   },
 });
