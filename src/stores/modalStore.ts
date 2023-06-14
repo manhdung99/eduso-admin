@@ -7,7 +7,7 @@ export const useModalStore = defineStore("modalStore", {
     openRemoveBookModal: false,
     openLibraryBookModal: false,
     openIsSaleBookModal: false,
-    openBookManagementModal: false,
+    openOrderManagementModal: false,
     openUnitManagementModal: false,
     openLogoutModal: false,
     currentBookDetail: 1,
@@ -31,9 +31,8 @@ export const useModalStore = defineStore("modalStore", {
     updateIsSaleBookModal(status: boolean) {
       this.openIsSaleBookModal = status;
     },
-    updateBookManagementStatus(status: boolean, id = -1) {
-      this.openBookManagementModal = status;
-      if (id > 0) this.currentBookDetail = id;
+    updateOrderManagementStatus(status: boolean) {
+      this.openOrderManagementModal = status;
     },
     updateUnitManagementStatus(status: boolean, id = -1) {
       this.openUnitManagementModal = status;

@@ -568,6 +568,7 @@ export default defineComponent({
   padding: 16px 24px;
   border-radius: 10px;
   min-width: 470px;
+  overflow-y: auto;
 }
 .book-info-wrapper {
   position: relative;

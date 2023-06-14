@@ -1,67 +1,70 @@
 <template>
-  <table class="w-full">
+  <table v-if="orders.length > 0" class="w-full">
     <thead class="table-head-wrapper">
       <tr class="w-full">
-        <th
-          class="text-lg text-charcoal font-medium w-1/8 text-center"
-          v-for="column in doanhThuSachColumns"
-          :key="column.id"
-          :class="{
-            '!w-1/5': column.largeColumn,
-            '!w-1/20': column.smallColumn,
-          }"
-        >
-          {{ column.name }}
-        </th>
+        <th class="w-1/8">Mã sách</th>
+        <th class="w-1/5">Thông tin sách</th>
+        <th class="w-1/8">Ngày mở bán</th>
+        <th class="w-1/8">Ngày hết hạn</th>
+        <th class="w-1/8">Doanh thu</th>
+        <th class="w-1/8">Tổng số lượt tải</th>
+        <th class="w-1/8">Tác vụ</th>
       </tr>
     </thead>
-    <tbody v-if="books.length > 0">
+    <tbody>
       <tr
         class="text-charcoal border-b border-grey-lighter"
-        v-for="book in books"
-        :key="book.bookId"
+        v-for="order in orders"
+        :key="order.ID"
       >
-        <td class="text-center">{{ book.iD }}</td>
+        <td class="text-center">{{ order.Code }}</td>
         <td>
-          <div class="flex justify-center">
+          <div class="flex">
             <div>
               <img
                 class="book-image"
-                :src="`https://static.eduso.vn/${book?.bookMetadata?.bookCover?.path}`"
+                :src="
+                  order.Image
+                    ? `https://static.eduso.vn/${order.Image}`
+                    : defaultBookCover
+                "
               />
             </div>
             <div class="ml-4">
               <p class="book-title">
-                {{ book.bookMetadata.bookName }}
+                {{ order.Name }}
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book.bookMetadata.bookSubject }}
+                <!-- {{ order.bookMetadata.bookSubject }} -->
               </p>
               <p class="text-charcoal-lighter text-2xs">
-                {{ book.bookMetadata.bookContent }}
+                {{ order.Publisher }}
               </p>
             </div>
           </div>
         </td>
         <td class="text-center">
           <span class="text-lg">{{
-            convertTimestampToDate(book.startDate)
+            convertTimestampToDate(order.DateStartBuy)
           }}</span>
         </td>
         <td class="text-center">
           <span class="text-lg">{{
-            convertTimestampToDate(book.endDate)
+            convertTimestampToDate(order.DateEndBuy)
           }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ convertPrice(book?.revenue) }}</span>
+          <span class="text-lg">{{ convertPrice(order.Totals) }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ book?.numberDownload }}</span>
+          <span class="text-lg">{{ order.Orders }}</span>
         </td>
         <td class="overflow-hidden">
           <button
-            @click="updateBookManagementStatus(true, book.bookId)"
+            @click="
+              setOrderDetail(order.ID);
+              updateOrderManagementStatus(true);
+            "
             class="show-detail-button"
           >
             Chi tiết
@@ -70,56 +73,51 @@
       </tr>
     </tbody>
   </table>
-  <bookManagementModalVue />
+  <orderManagementModalVue />
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
 import { storeToRefs } from "pinia";
 import { useModalStore } from "../../stores/modalStore";
-import { useBookStore } from "../../stores/booksStore";
+import { useOrderStore } from "../../stores/ordersStore";
 import hideIcon from "../../assets/image/hide.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
-import bookManagementModalVue from "../modal/bookManagementModal.vue";
+import defaultBookCover from "../../assets/image/default-book-image.jpg";
+import orderManagementModalVue from "../modal/orderManagementModal.vue";
 import convertData from "@/uses/convertData";
 export default defineComponent({
   name: "RevenueTable",
   // eslint-disable-next-line vue/no-setup-props-destructure
   setup() {
     const modal = useModalStore();
-    const bookStore = useBookStore();
+    const orderStore = useOrderStore();
     const {
       updateBookModalStatus,
       updateRemoveModalStatus,
-      updateBookManagementStatus,
+      updateOrderManagementStatus,
     } = modal;
-    const { books, doanhThuSachColumns } = storeToRefs(bookStore);
+    const { orders } = storeToRefs(orderStore);
+    const { setOrderDetail } = orderStore;
 
     const { convertTimestampToDate, convertPrice } = convertData();
 
-    const sortBooks = (data: string) => {
-      if (data) {
-        books.value.sort((a, b) => {
-          return a[data] - b[data];
-        });
-      }
-    };
     return {
       hideIcon,
       removeIcon,
       editIcon,
-      books,
-      doanhThuSachColumns,
-      sortBooks,
+      orders,
+      defaultBookCover,
       updateBookModalStatus,
       updateRemoveModalStatus,
-      updateBookManagementStatus,
+      updateOrderManagementStatus,
       convertTimestampToDate,
       convertPrice,
+      setOrderDetail,
     };
   },
   components: {
-    bookManagementModalVue,
+    orderManagementModalVue,
   },
 });
 </script>

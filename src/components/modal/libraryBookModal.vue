@@ -3,7 +3,7 @@
     :class="openLibraryBookModal ? 'flex' : 'hidden'"
     class="fixed top-0 bottom-0 left-0 right-0 bg-modal flex justify-center items-center z-10"
   >
-    <div class="library-book-modal-wrapper w-200 h-175 bg-white p-4 relative">
+    <div class="library-book-modal-wrapper bg-white p-4 relative">
       <div
         @click="() => updateLibraryBookModal(false)"
         class="absolute right-4 cursor-pointer"
@@ -144,6 +144,10 @@ export default defineComponent({
 .library-book-modal-wrapper {
   border: 1px solid #aeaeae;
   border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+  max-height: 700px;
 }
 .library-book-modal::-webkit-scrollbar {
   height: 6px;

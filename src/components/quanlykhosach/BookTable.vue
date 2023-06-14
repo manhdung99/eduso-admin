@@ -1,30 +1,16 @@
 <template>
-  <table v-if="books.length > 0" class="w-full table" border="1">
+  <table v-if="books.length > 0" class="w-full table mt-8" border="1">
     <thead class="table-head-wrapper">
       <tr class="w-full">
-        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
+        <th class="md:w-1/8 pl-1 text-center border border-gray-400">
           Mã Sách
         </th>
-        <th class="text-lg text-charcoal font-medium md:w-1/5 pl-1 text-center">
-          Thông tin sách
-        </th>
-        <th
-          class="text-lg text-charcoal font-medium md:w-1//8 pl-1 text-center"
-        >
-          Phân loại
-        </th>
-        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
-          Nhà xuất bản
-        </th>
-        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
-          Giá niêm yết
-        </th>
-        <th class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center">
-          Mức giảm giá
-        </th>
-        <th
-          class="text-lg text-charcoal font-medium md:w-1/8 pl-1 text-center"
-        ></th>
+        <th class="md:w-1/5">Thông tin sách</th>
+        <th class="md:w-1//8">Phân loại</th>
+        <th class="md:w-1/8">Nhà xuất bản</th>
+        <th class="md:w-1/8">Giá niêm yết</th>
+        <th class="md:w-1/8">Mức giảm giá</th>
+        <th class="md:w-1/8">Tác vụ</th>
       </tr>
     </thead>
     <tbody>
@@ -33,7 +19,9 @@
         v-for="book in books"
         :key="book.ID"
       >
-        <td class="ml-4 text-center">{{ book.Code }}</td>
+        <td class="ml-4">
+          {{ book.Code }}
+        </td>
         <td>
           <div class="flex">
             <div>
@@ -59,21 +47,21 @@
             </div>
           </div>
         </td>
-        <td class="text-center">
+        <td>
           <span class="text-lg">{{
             book.Type == 0 ? "Có bản quyền" : "Sách tham khảo"
           }}</span>
         </td>
-        <td class="text-center">
+        <td>
           <span class="text-lg">{{ book.Publisher }}</span>
         </td>
-        <td class="text-center">
+        <td>
           <span class="text-lg">{{ convertPrice(book.Price) }}</span>
         </td>
-        <td class="text-center">
+        <td>
           <span class="text-lg">{{ book.Sales }}%</span>
         </td>
-        <td class="">
+        <td class="border border-gray-400">
           <div class="flex gap-x-4 lg:gap-x-8 justify-center">
             <span
               @click="

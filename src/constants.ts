@@ -6,3 +6,5 @@ export const GET_DETAIL_BOOK = "books/getdetail";
 export const GET_SUBJECT = "filter/getsubjects";
 export const GET_PROGRAM = "filter/getprograms";
 export const PUBLIC_BOOK = "books/PublicBook";
+export const GET_ORDERS = "manage/getorders";
+export const GET_DETAIL_ORDER = "manage/GetOrderDetails";

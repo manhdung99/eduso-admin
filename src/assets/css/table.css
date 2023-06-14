@@ -3,13 +3,22 @@
     padding: 22px 30px;
 }
 
-th {
+table thead th {
     height: 100px;
     text-align: left;
+    border: 1px solid #9ca3afcc;
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+    padding-left: 4px;
+    color: #354859;
 }
 
-td {
+table tbody td {
     height: 105px;
+    padding-left: 8px;
+    border: 1px solid #9ca3afcc;
+    text-align: center;
 }
 
 @media screen and (max-width:767px) {

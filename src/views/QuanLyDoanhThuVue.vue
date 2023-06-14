@@ -44,7 +44,8 @@ import TopContentVue from "@/components/common/TopContent.vue";
 import SearchBook from "@/components/common/SearchBook.vue";
 import RevenueTableVue from "@/components/quanlydoanhthu/RevenueTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
-import { useBookStore } from "../stores/booksStore";
+import { useOrderStore } from "../stores/ordersStore";
+import { BASE_URL, GET_ORDERS } from "../constants";
 import { useModalStore } from "../stores/modalStore";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
@@ -63,37 +64,41 @@ export default defineComponent({
   setup() {
     const title = "Quản lý doanh thu theo đầu sách";
     const action = "Export";
-    const bookStore = useBookStore();
+    const orderStore = useOrderStore();
     const pagination = usePaginationStore();
-    const { getBooks, getDoanhThuSachColumn } = bookStore;
+    const { getOrders } = orderStore;
     const { getPagination, updatePageIndex } = pagination;
     const { subjects } = storeToRefs(useCommonStore());
     const { updateLoadingStatus } = useModalStore();
 
-    axios
-      .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/2")
-      .then((response) => {
-        getDoanhThuSachColumn(response.data.columns);
-      });
-
-    const getBookData = () => {
+    const getOrdersData = () => {
       updateLoadingStatus(true);
-      axios
-        .post("https://apiadminbook.eduso.vn/api/book_store/get_data")
-        .then((response) => {
-          // let currentBookId = response.data.Data[0].iD;
-          let data = response.data;
-          getBooks(data.Data);
-          updatePageIndex(data.Page.pageIndex);
+      const url = BASE_URL + GET_ORDERS;
+      axios.get(url).then((response) => {
+        let data = response.data;
+        if (data.Code == 200) {
+          getOrders(data.Data);
+          updatePageIndex(data.Pages.PageIndex + 1);
           getPagination(
-            data.Page.totalRecord % data.Page.pageSize == 0
-              ? data.Page.totalRecord / data.Page.pageSize
-              : Math.round(data.Page.totalRecord / data.Page.pageSize) + 1
+            data.Pages.Total % data.Pages.PageSize == 0
+              ? data.Pages.Total / data.Pages.PageSize
+              : Math.floor(data.Pages.Total / data.Pages.PageSize) + 1
           );
-          updateLoadingStatus(false);
-        });
+        } else {
+          getOrders([]);
+          updatePageIndex(1);
+          getPagination(0);
+        }
+        // updatePageIndex(data.Page.pageIndex);
+        // getPagination(
+        //   data.Page.totalRecord % data.Page.pageSize == 0
+        //     ? data.Page.totalRecord / data.Page.pageSize
+        //     : Math.round(data.Page.totalRecord / data.Page.pageSize) + 1
+        // );
+        updateLoadingStatus(false);
+      });
     };
-    onMounted(getBookData);
+    onMounted(getOrdersData);
     return {
       title,
       downArrow,
