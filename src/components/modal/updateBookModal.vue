@@ -45,26 +45,89 @@
             </p>
             <div class="flex gap-x-4 items-center my-2 relative">
               <span
+                class="text-blue-lighter text-lg whitespace-nowrap font-bold justify-between"
+                >Tác giả :
+              </span>
+              <input
+                class="select flex-1"
+                name="Author"
+                v-model="bookDetail.Author"
+              />
+            </div>
+            <div
+              class="text-red-500"
+              v-for="error in bookDetail.Type != 1
+                ? v1$.Author.$errors
+                : v2$.Author.$errors"
+              :key="error.$uid"
+            >
+              {{ $t(error.$message) }}
+            </div>
+
+            <div
+              class="flex gap-x-4 items-center my-2 relative justify-between"
+            >
+              <span
                 class="text-blue-lighter text-lg whitespace-nowrap font-bold"
                 >NXB :
               </span>
               <input
-                class="select"
+                class="select flex-1"
                 name="Publisher"
                 v-model="bookDetail.Publisher"
               />
+            </div>
+            <div
+              class="text-red-500"
+              v-for="error in bookDetail.Type != 1
+                ? v1$.Publisher.$errors
+                : v2$.Publisher.$errors"
+              :key="error.$uid"
+            >
+              {{ $t(error.$message) }}
+            </div>
+            <div
+              class="flex gap-x-4 items-center my-2 relative justify-between"
+            >
               <span
-                class="text-red-500 -bottom-5 absolute left-0"
-                v-for="error in bookDetail.Type != 1
-                  ? v1$.Publisher.$errors
-                  : v2$.Publisher.$errors"
-                :key="error.$uid"
-              >
-                {{ $t(error.$message) }}
+                class="text-blue-lighter text-lg whitespace-nowrap font-bold"
+                >Quyết định XB :
               </span>
+              <input
+                class="select flex-1"
+                name="releaseID"
+                v-model="bookDetail.ReleaseID"
+              />
+            </div>
+            <div
+              class="text-red-500"
+              v-for="error in bookDetail.Type != 1
+                ? v1$.ReleaseID.$errors
+                : v2$.ReleaseID.$errors"
+              :key="error.$uid"
+            >
+              {{ $t(error.$message) }}
             </div>
             <div v-html="bookDetail.Description"></div>
           </div>
+        </div>
+        <!-- Location -->
+        <div class="mt-4">
+          <div
+            class="text-blue-lighter text-lg font-bold whitespace-nowrap mb-2"
+          >
+            Khu vực hiển thị :
+          </div>
+          <a-tree-select
+            v-model:value="regionsvalue"
+            style="width: 100%"
+            :tree-data="treeData"
+            tree-checkable
+            allow-clear
+            :show-checked-strategy="SHOW_PARENT"
+            placeholder="Please select"
+            tree-node-filter-prop="label"
+          />
         </div>
         <div class="flex gap-x-4">
           <div class="w-1/2 mt-6">
@@ -295,7 +358,14 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from "vue";
+import {
+  defineComponent,
+  ref,
+  reactive,
+  watch,
+  onMounted,
+  nextTick,
+} from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { useCommonStore } from "../../stores/commonStore";
@@ -312,6 +382,9 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, minValue, maxValue } from "@vuelidate/validators";
 import axios from "axios";
 import defaultBookCover from "../../assets/image/default-book-image.jpg";
+import { TreeSelect } from "ant-design-vue";
+import transmissionData from "@/uses/common";
+const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 export default defineComponent({
   name: "UpdateBookModal",
   components: {
@@ -322,7 +395,7 @@ export default defineComponent({
     const { openUpdateBookModal } = storeToRefs(modal);
     const { updateBookModalStatus, updateAddNewModalStatus } = modal;
     const bookStore = useBookStore();
-    const { updateBook } = bookStore;
+    const { updateBook, getRegionsBook } = bookStore;
     const { bookDetail } = storeToRefs(bookStore);
     const { subjects, programs } = storeToRefs(useCommonStore());
     let previewImage = ref(null);
@@ -357,6 +430,8 @@ export default defineComponent({
       price: "",
       discount: "",
     });
+    const treeData = ref([]);
+    const regionsvalue = ref<string[]>([]);
     const handleClearImage = () => {
       if (fileImageInput.value && fileImageInput.value.files.length > 0) {
         fileImageInput.value.value = null;
@@ -393,14 +468,26 @@ export default defineComponent({
       }
       const levelValidate = await v3$.value.$validate();
       // console.log(result, levelValidate, result && levelValidate);
-      console.log(result);
 
       if (result && levelValidate) {
+        const dataLength = regionsvalue.value.length;
+        const regions = [];
+        const centers = [];
+        for (let i = 0; i < dataLength; i++) {
+          const regionData = regionsvalue.value[i];
+          if (regionData.split("-").length > 1) {
+            centers.push(regionData.split("-")[1]);
+          } else {
+            regions.push(regionData);
+          }
+        }
         // updateLoadingStatus(true);
         const formData = new FormData(updateForm.value);
         formData.append("Level", bookInfo.level);
         formData.append("ProgramID", bookDetail.value.ProgramID);
         formData.append("SubjectID", bookInfo.subject);
+        transmissionData(formData, centers, "Centers");
+        transmissionData(formData, regions, "Regions");
         const url = BASE_URL + ADD_BOOKS;
         axios.put(url, formData).then((response) => {
           updateBook(response.data.Data);
@@ -423,7 +510,6 @@ export default defineComponent({
         error.bookcontent = "Chỉ hỗ trợ file tài liệu";
       }
     };
-
     const updateAutocompleteProgram = () => {
       console.log(studyProgram.value);
       console.log(listProgram);
@@ -445,6 +531,8 @@ export default defineComponent({
     const licenseRules = {
       Code: { required },
       Publisher: { required },
+      Author: { required },
+      ReleaseID: { required },
       Sales: { required, minValue: minValue(1), maxValue: maxValue(99) },
       Price: { required, minValue: minValue(1) },
       ProgramID: { required },
@@ -452,6 +540,8 @@ export default defineComponent({
     const noLicenseRules = {
       Code: { required },
       Publisher: { required },
+      Author: { required },
+      ReleaseID: { required },
       ProgramID: { required },
     };
     const subjectandLevel = {
@@ -463,7 +553,7 @@ export default defineComponent({
     const v3$ = useVuelidate(subjectandLevel, bookInfo);
     watch(
       () => bookDetail.value,
-      () => {
+      async () => {
         previewImage.value = bookDetail.value.Image
           ? `https://static.eduso.vn/${bookDetail.value.Image}`
           : null;
@@ -476,6 +566,30 @@ export default defineComponent({
         endDate.value = convertUTCToString(
           new Date(bookDetail.value.DateEndBuy)
         );
+        if (bookDetail.value.Regions.length > 0) {
+          const regionsLength = bookDetail.value.Regions.length;
+          for (let i = 0; i < regionsLength; i++) {
+            const region = bookDetail.value.Regions[i];
+            regionsvalue.value = [...regionsvalue.value, region];
+          }
+        }
+        if (bookDetail.value.Centers.length > 0) {
+          const centersLength = bookDetail.value.Centers.length;
+          const regionsData = await getRegionsBook();
+          const regionsDataLength = regionsData.length;
+          for (let i = 0; i < centersLength; i++) {
+            const center = bookDetail.value.Centers[i];
+            for (let j = 0; j < regionsDataLength; j++) {
+              const regionData = regionsData[j];
+
+              regionData.children.forEach((data) => {
+                if (data.value.includes(center)) {
+                  regionsvalue.value = [...regionsvalue.value, data.value];
+                }
+              });
+            }
+          }
+        }
       }
     );
     watch(
@@ -496,6 +610,10 @@ export default defineComponent({
         }
       }
     );
+    onMounted(async () => {
+      const data = await getRegionsBook();
+      treeData.value = data;
+    });
     return {
       openUpdateBookModal,
       updateBookModalStatus,
@@ -537,6 +655,9 @@ export default defineComponent({
       v2$,
       v3$,
       defaultBookCover,
+      treeData,
+      SHOW_PARENT,
+      regionsvalue,
     };
   },
 });

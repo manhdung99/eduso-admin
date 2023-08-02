@@ -1,5 +1,5 @@
 <template>
-  <table v-if="orders.length > 0" class="w-full">
+  <table v-if="bookOrders && bookOrders.length > 0" class="w-full">
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th class="w-1/8">Mã sách</th>
@@ -14,7 +14,7 @@
     <tbody>
       <tr
         class="text-charcoal border-b border-grey-lighter"
-        v-for="order in orders"
+        v-for="order in bookOrders"
         :key="order.ID"
       >
         <td class="text-center">{{ order.Code }}</td>
@@ -62,7 +62,7 @@
         <td class="overflow-hidden">
           <button
             @click="
-              setOrderDetail(order.ID);
+              setBookOrderDetail(order.ID);
               updateOrderManagementStatus(true);
             "
             class="show-detail-button"
@@ -79,7 +79,7 @@
 import { defineComponent } from "vue";
 import { storeToRefs } from "pinia";
 import { useModalStore } from "../../stores/modalStore";
-import { useOrderStore } from "../../stores/ordersStore";
+import { useOrderStore } from "../../stores/bookOrdersStore";
 import hideIcon from "../../assets/image/hide.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
@@ -97,8 +97,8 @@ export default defineComponent({
       updateRemoveModalStatus,
       updateOrderManagementStatus,
     } = modal;
-    const { orders } = storeToRefs(orderStore);
-    const { setOrderDetail } = orderStore;
+    const { bookOrders } = storeToRefs(orderStore);
+    const { setBookOrderDetail } = orderStore;
 
     const { convertTimestampToDate, convertPrice } = convertData();
 
@@ -106,14 +106,14 @@ export default defineComponent({
       hideIcon,
       removeIcon,
       editIcon,
-      orders,
+      bookOrders,
       defaultBookCover,
       updateBookModalStatus,
       updateRemoveModalStatus,
       updateOrderManagementStatus,
       convertTimestampToDate,
       convertPrice,
-      setOrderDetail,
+      setBookOrderDetail,
     };
   },
   components: {

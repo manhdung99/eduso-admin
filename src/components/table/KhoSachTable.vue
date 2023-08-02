@@ -1,5 +1,9 @@
 <template>
-  <table v-if="books.length > 0" class="w-full table mt-8" border="1">
+  <table
+    v-if="books.length > 0 && !isLoading"
+    class="w-full table mt-8"
+    border="1"
+  >
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th class="md:w-1/8 pl-1 text-center border border-gray-400">
@@ -84,7 +88,7 @@
     </tbody>
   </table>
   <div
-    v-else
+    v-if="books.length == 0 && !isLoading"
     class="text-red-600 text-xl font-semibold left-1/2 -translate-x-1/2 relative inline-block"
   >
     Không tìm thấy sách

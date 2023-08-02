@@ -48,6 +48,38 @@
           <span class="pl-5"> Quản lý tài khoản </span>
         </a-menu-item>
       </router-link>
+      <router-link to="/quanlydonhang">
+        <a-menu-item key="quanlydonhang">
+          <template #icon>
+            <div class="icon-setting !text-2xl w-9"></div>
+          </template>
+          <span class="pl-5"> Quản lý đơn hàng </span>
+        </a-menu-item>
+      </router-link>
+      <router-link to="/quanlynapEP">
+        <a-menu-item key="quanlynapEP">
+          <template #icon>
+            <div class="icon-setting !text-2xl w-9"></div>
+          </template>
+          <span class="pl-5"> Quản lý nạp EP </span>
+        </a-menu-item>
+      </router-link>
+      <router-link to="/quanlyEPnguoidung">
+        <a-menu-item key="quanlyEPnguoidung">
+          <template #icon>
+            <div class="icon-setting !text-2xl w-9"></div>
+          </template>
+          <span class="pl-5"> Quản lý EP người dùng </span>
+        </a-menu-item>
+      </router-link>
+      <router-link to="/quanlynguoidung">
+        <a-menu-item key="quanlynguoidung">
+          <template #icon>
+            <div class="icon-setting !text-2xl w-9"></div>
+          </template>
+          <span class="pl-5"> Quản lý người dùng </span>
+        </a-menu-item>
+      </router-link>
     </a-menu>
     <div class="log-out-btn">
       <div class="icon-log-out !text-2xl w-9"></div>

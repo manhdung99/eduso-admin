@@ -5,19 +5,9 @@
       <div class="w-full lg:w-2/3">
         <SearchBook />
       </div>
-      <div
-        class="w-100 pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0 justify-between md:justify-start"
-      >
-        <select class="input w-full pr-8 lg:pr-0 select">
-          <option>Lọc theo tỉnh / trường / lớp</option>
-        </select>
-        <span class="absolute right-2 top-1/2 -translate-y-1/2">
-          <img :src="downArrow" alt="icon" />
-        </span>
-      </div>
     </div>
     <div class="overflow-y-auto mb-4">
-      <UnitTable />
+      <UserEPTable />
     </div>
     <TablePagination />
   </div>
@@ -26,31 +16,26 @@
 import TopContentVue from "@/components/common/TopContent.vue";
 import SearchBook from "@/components/common/SearchBook.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
-import UnitTable from "@/components/table/DonviTable.vue";
+import UserEPTable from "@/components/table/UserEPTable.vue";
 import { useBookStore } from "../stores/booksStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import axios from "axios";
 import { usePaginationStore } from "@/stores/commonStore";
 export default {
-  name: "QuanLyKhoSach",
+  name: "QuanLyEPnguoidung",
   components: {
     TopContentVue,
     SearchBook,
-    UnitTable,
+    UserEPTable,
     TablePagination,
   },
   setup() {
-    const title = "Quản lý doanh thu theo đơn vị";
+    const title = "Quản lý EP người dùng";
     const action = "Export";
     const bookStore = useBookStore();
     const pagination = usePaginationStore();
-    const { getUnits, getDoanhThuDonViColumn } = bookStore;
+    const { getUnits } = bookStore;
     const { getPagination } = pagination;
-    axios
-      .get("https://5e942888c7393c0016de4e98.mockapi.io/listcolumns/3")
-      .then((response) => {
-        getDoanhThuDonViColumn(response.data.columns);
-      });
 
     // axios
     //   .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books")
@@ -60,31 +45,31 @@ export default {
     const listUnit = [
       {
         id: 1,
-        name: "Trường THPT A",
-        revenue: 10000000,
-        numberDownload: 1072,
-        startDate: 1641007254,
+        name: "Nguyễn Văn A",
+        email: "nguyenvana@gmail.com",
+        phone: "0965874578",
+        currentEP: 25000,
       },
       {
         id: 2,
-        name: "Trường THPT A",
-        revenue: 10000000,
-        numberDownload: 1072,
-        startDate: 1641007254,
+        name: "Nguyễn Văn B",
+        email: "nguyenvanb@gmail.com",
+        phone: "0965874578",
+        currentEP: 25000,
       },
       {
         id: 3,
-        name: "Trường THPT A",
-        revenue: 10000000,
-        numberDownload: 1072,
-        startDate: 1641007254,
+        name: "Nguyễn Văn C",
+        email: "nguyenvanc@gmail.com",
+        phone: "0965874578",
+        currentEP: 25000,
       },
       {
         id: 4,
-        name: "Trường THPT A",
-        revenue: 10000000,
-        numberDownload: 1072,
-        startDate: 1641007254,
+        name: "Nguyễn Văn D",
+        email: "nguyenvand@gmail.com",
+        phone: "0965874578",
+        currentEP: 25000,
       },
     ];
     getUnits(listUnit);

@@ -45,7 +45,7 @@
         </div>
       </div>
       <!-- Table  -->
-      <div v-if="orderDetail.length > 0" class="overflow-x-auto">
+      <div v-if="bookOrderDetail.length > 0" class="overflow-x-auto">
         <table class="w-full mt-8">
           <thead class="table-head-wrapper">
             <tr class="w-full text-lg text-charcoal font-medium">
@@ -58,7 +58,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="order in orderDetail"
+              v-for="order in bookOrderDetail"
               :key="order.id"
               class="border-b border-grey-lighter text-lg text-charcoal"
             >
@@ -86,7 +86,7 @@
 import { defineComponent, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useModalStore } from "@/stores/modalStore";
-import { useOrderStore } from "@/stores/ordersStore";
+import { useOrderStore } from "@/stores/bookOrdersStore";
 import { useCommonStore } from "../../stores/commonStore";
 import closeIcon from "../../assets/image/close.svg";
 import convertData from "@/uses/convertData";
@@ -97,7 +97,7 @@ export default defineComponent({
     const modal = useModalStore();
     const orderStore = useOrderStore();
     const { openOrderManagementModal } = storeToRefs(modal);
-    const { orderDetail } = storeToRefs(orderStore);
+    const { bookOrderDetail } = storeToRefs(orderStore);
     const { fromDate, toDate } = storeToRefs(useCommonStore());
     const { updateOrderManagementStatus } = modal;
     const orders = ref([]);
@@ -116,7 +116,7 @@ export default defineComponent({
       orders,
       convertPrice,
       dateFormater,
-      orderDetail,
+      bookOrderDetail,
     };
   },
 });

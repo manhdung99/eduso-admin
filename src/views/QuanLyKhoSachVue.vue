@@ -51,7 +51,7 @@
 <script lang="ts">
 import TopContentVue from "@/components/common/TopContent.vue";
 import SearchBook from "@/components/common/SearchBook.vue";
-import BookTableVue from "@/components/quanlykhosach/BookTable.vue";
+import BookTableVue from "@/components/table/KhoSachTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { useBookStore } from "../stores/booksStore";

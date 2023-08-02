@@ -1,6 +1,11 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { BASE_URL, GET_LIBRARY, GET_DETAIL_BOOK } from "../constants";
+import {
+  BASE_URL,
+  GET_LIBRARY,
+  GET_DETAIL_BOOK,
+  GET_REGIONS,
+} from "../constants";
 export const useBookStore = defineStore("booksStore", {
   state: () => ({
     books: [],
@@ -73,6 +78,24 @@ export const useBookStore = defineStore("booksStore", {
     removeLibraryBookAdded(id) {
       console.log(this.libraryBooks);
       this.libraryBooks = this.libraryBooks.filter((item) => item.BookID != id);
+    },
+    getRegionsBook() {
+      const url = BASE_URL + GET_REGIONS;
+      return axios
+        .get(url)
+        .then((response) => {
+          if (response.data.Code === 200) {
+            const data = response.data.Data;
+            return data;
+          } else {
+            return []; // Or handle error case accordingly
+          }
+        })
+        .catch((error) => {
+          // Handle any error that occurs during the request
+          console.error(error);
+          return []; // Or handle error case accordingly
+        });
     },
   },
 });

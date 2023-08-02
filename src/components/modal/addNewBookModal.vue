@@ -41,14 +41,38 @@
             <p class="text-blue-lighter text-xl font-bold">
               {{ bookDetail.Name }}
             </p>
-            <div class="flex gap-x-4 items-center my-2 relative">
+            <div
+              class="flex gap-x-4 items-center my-2 relative justify-between"
+            >
+              <span
+                class="text-blue-lighter text-lg font-bold whitespace-nowrap"
+                >Tác giả :
+              </span>
+              <input
+                v-model="bookInfo.author"
+                class="select flex-1"
+                name="Author"
+              />
+            </div>
+            <div
+              class="text-red-500"
+              v-for="error in classify != 1
+                ? v1$.author.$errors
+                : v2$.author.$errors"
+              :key="error.$uid"
+            >
+              {{ $t(error.$message) }}
+            </div>
+            <div
+              class="flex gap-x-4 items-center my-2 relative justify-between"
+            >
               <span
                 class="text-blue-lighter text-lg font-bold whitespace-nowrap"
                 >NXB :
               </span>
               <input
                 v-model="bookInfo.publisher"
-                class="select"
+                class="select flex-1"
                 name="Publisher"
               />
             </div>
@@ -62,10 +86,50 @@
               {{ $t(error.$message) }}
             </div>
             <div
+              class="flex gap-x-4 items-center my-2 relative justify-between"
+            >
+              <span
+                class="text-blue-lighter text-lg font-bold whitespace-nowrap"
+                >Quyết định XB :
+              </span>
+              <input
+                v-model="bookInfo.releaseID"
+                class="select flex-1"
+                name="releaseID"
+              />
+            </div>
+            <div
+              class="text-red-500"
+              v-for="error in classify != 1
+                ? v1$.releaseID.$errors
+                : v2$.releaseID.$errors"
+              :key="error.$uid"
+            >
+              {{ $t(error.$message) }}
+            </div>
+            <div
               v-if="bookDetail.Description != 'null'"
               v-html="bookDetail.Description"
             ></div>
           </div>
+        </div>
+        <!-- Location -->
+        <div class="mt-4">
+          <div
+            class="text-blue-lighter text-lg font-bold whitespace-nowrap mb-2"
+          >
+            Khu vực hiển thị :
+          </div>
+          <a-tree-select
+            v-model:value="regionsvalue"
+            style="width: 100%"
+            :tree-data="treeData"
+            tree-checkable
+            allow-clear
+            :show-checked-strategy="SHOW_PARENT"
+            placeholder="Please select"
+            tree-node-filter-prop="label"
+          />
         </div>
         <div class="flex gap-x-4">
           <div class="w-1/2 mt-6">
@@ -310,7 +374,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, reactive, watch } from "vue";
+import { defineComponent, ref, reactive, watch, onMounted } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { useCommonStore } from "../../stores/commonStore";
@@ -329,6 +393,10 @@ import {
 import { BASE_URL, ADD_BOOKS } from "../../constants";
 import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import axios from "axios";
+import { TreeSelect } from "ant-design-vue";
+import transmissionData from "@/uses/common";
+const SHOW_PARENT = TreeSelect.SHOW_PARENT;
+
 export default defineComponent({
   name: "addNewBookModal",
   components: {
@@ -339,7 +407,7 @@ export default defineComponent({
     const { openAddNewModal } = storeToRefs(modal);
     const { updateAddNewModalStatus, updateLibraryBookModal } = modal;
     const bookStore = useBookStore();
-    const { addBook, removeLibraryBookAdded } = bookStore;
+    const { addBook, removeLibraryBookAdded, getRegionsBook } = bookStore;
     const { bookDetail } = storeToRefs(bookStore);
     const { subjects, programs } = storeToRefs(useCommonStore());
     let previewImage = ref(null);
@@ -357,6 +425,7 @@ export default defineComponent({
     let programAutocompletes = ref([]);
     const subjectRef = ref(null);
     const classify = ref(0);
+    const regions = ref([]);
     let bookInfo = reactive({
       code: "",
       level: "",
@@ -367,6 +436,47 @@ export default defineComponent({
       ProgramID: "",
       startDate: "",
       endDate: "",
+      releaseID: "",
+      author: "",
+    });
+    //   {
+    //     label: "Node1",
+    //     value: "value1",
+    //     children: [
+    //       {
+    //         label: "Child Node1",
+    //         value: "value1-center1",
+    //       },
+    //       {
+    //         label: "Child Node2",
+    //         value: "value1-center2",
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     label: "Node2",
+    //     value: "0-1",
+    //     children: [
+    //       {
+    //         label: "Child Node3",
+    //         value: "0-1-12121",
+    //       },
+    //       {
+    //         label: "Child Node4",
+    //         value: "0-1-13131",
+    //       },
+    //       {
+    //         label: "Child Node5",
+    //         value: "0-1-14141",
+    //       },
+    //     ],
+    //   },
+    // ];
+    const regionsvalue = ref<string[]>([]);
+    const treeData = ref([]);
+
+    watch(regionsvalue, () => {
+      console.log(regionsvalue.value);
     });
     const EducationLevels = ref([]);
     const handleClearImage = () => {
@@ -389,10 +499,23 @@ export default defineComponent({
         result = await v1$.value.$validate();
       }
       if (result) {
+        const dataLength = regionsvalue.value.length;
+        const regions = [];
+        const centers = [];
+        for (let i = 0; i < dataLength; i++) {
+          const regionData = regionsvalue.value[i];
+          if (regionData.split("-").length > 1) {
+            centers.push(regionData.split("-")[1]);
+          } else {
+            regions.push(regionData);
+          }
+        }
         const formData = new FormData(updateForm.value);
         formData.append("Level", bookInfo.level);
         formData.append("ProgramID", bookInfo.ProgramID);
         formData.append("SubjectID", bookInfo.subject);
+        transmissionData(formData, centers, "Centers");
+        transmissionData(formData, regions, "Regions");
         const url = BASE_URL + ADD_BOOKS;
         axios.post(url, formData).then((response) => {
           if (response.data.Code == 200) {
@@ -419,17 +542,18 @@ export default defineComponent({
         programAutocompletes.value = [];
       }
     };
-
     const updateStudyProgram = (data) => {
       studyProgram.value = data.Name;
       programID.value = data.ID;
       programAutocompletes.value = [];
     };
     const licenseRules = {
-      code: { required }, // Matches state.firstName
-      level: { required }, // Matches state.lastName
+      code: { required },
+      level: { required },
       subject: { required },
       publisher: { required },
+      author: { required },
+      releaseID: { required },
       discount: { required, minValue: minValue(0), maxValue: maxValue(100) },
       bookPrice: { required, minValue: minValue(0) },
       ProgramID: { required },
@@ -437,10 +561,12 @@ export default defineComponent({
       endDate: { required },
     };
     const noLicenseRules = {
-      code: { required }, // Matches state.firstName
-      level: { required }, // Matches state.lastName
+      code: { required },
+      level: { required },
       subject: { required },
       publisher: { required },
+      author: { required },
+      releaseID: { required },
       ProgramID: { required },
     };
     const v1$ = useVuelidate(licenseRules, bookInfo);
@@ -481,11 +607,17 @@ export default defineComponent({
         bookInfo.level = "";
         bookInfo.ProgramID = "";
         bookInfo.publisher = "";
+        bookInfo.releaseID = "";
+        bookInfo.author = "";
         bookInfo.startDate = "";
         bookInfo.subject = null;
         classify.value = 0;
       }
     );
+    onMounted(async () => {
+      const data = await getRegionsBook();
+      treeData.value = data;
+    });
     return {
       openAddNewModal,
       updateAddNewModalStatus,
@@ -526,6 +658,10 @@ export default defineComponent({
       v2$,
       classify,
       defaultBookCover,
+      regionsvalue,
+      treeData,
+      SHOW_PARENT,
+      regions,
     };
   },
 });

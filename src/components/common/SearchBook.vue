@@ -67,9 +67,8 @@ export default defineComponent({
   setup() {
     const { fromDate, toDate } = storeToRefs(useCommonStore());
     const searchStore = useSearchStore();
-    const { searchText } = storeToRefs(searchStore);
+    const { searchText, openSearchArea } = storeToRefs(searchStore);
     const { updateSearchAreaStatus } = searchStore;
-    const { openSearchArea } = storeToRefs(searchStore);
     const { updateFromDate, updateToDate } = useCommonStore();
     const { dateFormater } = convertData();
     const startDate = dateFormater(fromDate.value);

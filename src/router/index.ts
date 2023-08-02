@@ -2,6 +2,10 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import QuanLyKhoSachVue from "../views/QuanLyKhoSachVue.vue";
 import QuanLyDoanhThuVue from "../views/QuanLyDoanhThuVue.vue";
 import QuanLyTaiKhoanVue from "../views/QuanLyTaiKhoanVue.vue";
+import QuanLyNapEP from "../views/QuanLyNapEP.vue";
+import QuanLyEPnguoidung from "../views/QuanLyEPnguoidung.vue";
+import QuanLyDonHang from "../views/QuanLyDonHang.vue";
+import QuanLyNguoiDung from "../views/QuanLyNguoiDung.vue";
 import QuanLyTheoDonViVue from "../views/QuanLyTheoDonViVue.vue";
 const routes: Array<RouteRecordRaw> = [
   {
@@ -39,6 +43,30 @@ const routes: Array<RouteRecordRaw> = [
     name: "QuanLyTaiKhoan",
     component: QuanLyTaiKhoanVue,
     meta: { title: "Quản lý tài khoản" },
+  },
+  {
+    path: "/quanlyEPnguoidung",
+    name: "quanlyEPnguoidung",
+    component: QuanLyEPnguoidung,
+    meta: { title: "Quản lý EP người dùng" },
+  },
+  {
+    path: "/quanlynapEP",
+    name: "QuanLyEP",
+    component: QuanLyNapEP,
+    meta: { title: "Quản lý nạp EP" },
+  },
+  {
+    path: "/quanlydonhang",
+    name: "QuanLyDonHang",
+    component: QuanLyDonHang,
+    meta: { title: "Quản lý đơn hàng" },
+  },
+  {
+    path: "/quanlynguoidung",
+    name: "QuanLyNguoiDung",
+    component: QuanLyNguoiDung,
+    meta: { title: "Quản lý người dùng" },
   },
 ];
 

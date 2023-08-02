@@ -1,0 +1,19 @@
+.ant-select-selection-item {
+    border: 1px solid #6558f5 !important;
+}
+
+.ant-select-selection-item-content {
+    color: #6558f5;
+    font-size: 13px;
+}
+
+.ant-select-selection-item-remove {
+    line-height: 18px !important;
+}
+
+.ant-select-clear {
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 16px !important;
+    transform: translateY(-50%);
+}

@@ -42,9 +42,9 @@
 <script lang="ts">
 import TopContentVue from "@/components/common/TopContent.vue";
 import SearchBook from "@/components/common/SearchBook.vue";
-import RevenueTableVue from "@/components/quanlydoanhthu/RevenueTable.vue";
+import RevenueTableVue from "@/components/table/DoanhThuTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
-import { useOrderStore } from "../stores/ordersStore";
+import { useOrderStore } from "../stores/bookOrdersStore";
 import { BASE_URL, GET_ORDERS } from "../constants";
 import { useModalStore } from "../stores/modalStore";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
@@ -66,7 +66,7 @@ export default defineComponent({
     const action = "Export";
     const orderStore = useOrderStore();
     const pagination = usePaginationStore();
-    const { getOrders } = orderStore;
+    const { getBookOrders } = orderStore;
     const { getPagination, updatePageIndex } = pagination;
     const { subjects } = storeToRefs(useCommonStore());
     const { updateLoadingStatus } = useModalStore();
@@ -77,7 +77,7 @@ export default defineComponent({
       axios.get(url).then((response) => {
         let data = response.data;
         if (data.Code == 200) {
-          getOrders(data.Data);
+          getBookOrders(data.Data);
           updatePageIndex(data.Pages.PageIndex + 1);
           getPagination(
             data.Pages.Total % data.Pages.PageSize == 0
@@ -85,7 +85,7 @@ export default defineComponent({
               : Math.floor(data.Pages.Total / data.Pages.PageSize) + 1
           );
         } else {
-          getOrders([]);
+          getBookOrders([]);
           updatePageIndex(1);
           getPagination(0);
         }
