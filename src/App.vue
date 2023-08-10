@@ -13,7 +13,11 @@
         v-if="openSidebar"
         class="absolute top-0 left-0 w-full h-full bg-modal-darker z-10"
       ></div>
-      <div @click="openSidebar = true" class="side-bar-icon">
+      <div
+        v-if="!hiddenSidebar"
+        @click="openSidebar = true"
+        class="side-bar-icon cursor-pointer"
+      >
         <img :src="sideBarIcon" alt="" />
       </div>
       <router-view />
@@ -25,21 +29,45 @@
 import SideBarVue from "./components/sidebar/SideBarVue.vue";
 import closeIcon from "../src/assets/image/close-solid.svg";
 import sideBarIcon from "../src/assets/image/side-bar.svg";
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, nextTick } from "vue";
 import { useCommonStore } from "./stores/commonStore";
-const openSidebar = ref(false);
+import { storeToRefs } from "pinia";
+import { useModalStore } from "./stores/modalStore";
+import { useUserStore } from "./stores/userStore";
 
 export default defineComponent({
   name: "App",
   components: { SideBarVue },
   setup() {
     const { getPrograms, getSubjects } = useCommonStore();
+    const { hiddenSidebar } = storeToRefs(useCommonStore());
+    const { openSidebar } = storeToRefs(useModalStore());
+    const { setAccessToken } = useUserStore();
     onMounted(getPrograms);
     onMounted(getSubjects);
+    onMounted(() => {
+      const isAuthenticated = localStorage.getItem("Access_Token");
+      setAccessToken(isAuthenticated);
+    });
+    onMounted(() => {
+      nextTick(() => {
+        const container = document.querySelector(".scroll-area") as HTMLElement;
+        if (container) {
+          container.addEventListener("scroll", function () {
+            container.classList.add("scrollbar-invisible");
+          });
+
+          container.addEventListener("mouseleave", function () {
+            container.classList.remove("scrollbar-invisible");
+          });
+        }
+      });
+    });
     return {
       closeIcon,
       openSidebar,
       sideBarIcon,
+      hiddenSidebar,
     };
   },
 });

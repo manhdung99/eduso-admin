@@ -383,7 +383,8 @@ import { required, minValue, maxValue } from "@vuelidate/validators";
 import axios from "axios";
 import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import { TreeSelect } from "ant-design-vue";
-import transmissionData from "@/uses/common";
+import { transmissionData } from "@/uses/common";
+import { useUserStore } from "@/stores/userStore";
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 export default defineComponent({
   name: "UpdateBookModal",
@@ -398,6 +399,7 @@ export default defineComponent({
     const { updateBook, getRegionsBook } = bookStore;
     const { bookDetail } = storeToRefs(bookStore);
     const { subjects, programs } = storeToRefs(useCommonStore());
+    const { Access_Token } = storeToRefs(useUserStore());
     let previewImage = ref(null);
     let metaData = ref(null);
     let bookContent = ref(null);
@@ -489,11 +491,17 @@ export default defineComponent({
         transmissionData(formData, centers, "Centers");
         transmissionData(formData, regions, "Regions");
         const url = BASE_URL + ADD_BOOKS;
-        axios.put(url, formData).then((response) => {
-          updateBook(response.data.Data);
-          // updateLoadingStatus(false);
-          //Call API to add data
-        });
+        axios
+          .put(url, formData, {
+            headers: {
+              Authorization: Access_Token.value,
+            },
+          })
+          .then((response) => {
+            updateBook(response.data.Data);
+            // updateLoadingStatus(false);
+            //Call API to add data
+          });
         updateBookModalStatus(false);
         updateAddNewModalStatus(false);
       }

@@ -6,6 +6,7 @@ import {
   GET_DETAIL_BOOK,
   GET_REGIONS,
 } from "../constants";
+import { useUserStore } from "./userStore";
 export const useBookStore = defineStore("booksStore", {
   state: () => ({
     books: [],
@@ -52,37 +53,75 @@ export const useBookStore = defineStore("booksStore", {
     },
     setBookDetail(id) {
       const url = BASE_URL + GET_DETAIL_BOOK + `?id=${id}`;
-      axios.get(url).then((response) => {
-        this.bookDetail = response.data.Data.Book;
-      });
+      const userStore = useUserStore();
+      const token = userStore.Access_Token;
+      axios
+        .get(url, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          this.bookDetail = response.data.Data.Book;
+        });
     },
     setBookFromLibrary(id) {
       const url = BASE_URL + GET_DETAIL_BOOK + `?id=${id}`;
-      axios.get(url).then((response) => {
-        console.log(response.data);
-        this.bookDetail = response.data.Data.Origin;
-      });
+      const userStore = useUserStore();
+      const token = userStore.Access_Token;
+      axios
+        .get(url, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.bookDetail = response.data.Data.Origin;
+        });
     },
     getLibraryBooks(page) {
       const url = BASE_URL + GET_LIBRARY + `?pageIndex=${page}`;
-      axios.get(url).then((response) => {
-        this.libraryBooks = [...this.libraryBooks, ...response.data.Data];
-      });
+      const userStore = useUserStore();
+      const token = userStore.Access_Token;
+      axios
+        .get(url, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          this.libraryBooks = [...this.libraryBooks, ...response.data.Data];
+        });
     },
     filterLibraryBook(text) {
+      const userStore = useUserStore();
+      const token = userStore.Access_Token;
       const url = BASE_URL + GET_LIBRARY + `?text=${text}`;
-      axios.get(url).then((response) => {
-        this.libraryBooks = response.data.Data;
-      });
+      axios
+        .get(url, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          this.libraryBooks = response.data.Data;
+        });
     },
     removeLibraryBookAdded(id) {
       console.log(this.libraryBooks);
       this.libraryBooks = this.libraryBooks.filter((item) => item.BookID != id);
     },
     getRegionsBook() {
+      const userStore = useUserStore();
+      const token = userStore.Access_Token;
       const url = BASE_URL + GET_REGIONS;
       return axios
-        .get(url)
+        .get(url, {
+          headers: {
+            Authorization: token,
+          },
+        })
         .then((response) => {
           if (response.data.Code === 200) {
             const data = response.data.Data;

@@ -40,6 +40,8 @@ import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";
 import { BASE_URL, PUBLIC_BOOK } from "../../constants";
+import { useUserStore } from "@/stores/userStore";
+
 export default defineComponent({
   name: "isSaleBookModal",
   setup() {
@@ -51,6 +53,7 @@ export default defineComponent({
     const { bookDetail } = storeToRefs(bookStore);
     const title = ref(null);
     const status = ref(null);
+    const { Access_Token } = storeToRefs(useUserStore());
 
     const updateIsSaleID = async () => {
       console.log(bookDetail.value.BookID, !bookDetail.value.IsPublish);
@@ -58,15 +61,21 @@ export default defineComponent({
       formData.append("id", bookDetail.value.ID);
       formData.append("status", !bookDetail.value.IsPublish);
       const url = BASE_URL + PUBLIC_BOOK;
-      await axios.put(url, formData).then((response) => {
-        if (response.status == 200) {
-          updateIsSaleBook(
-            bookDetail.value.BookID,
-            !bookDetail.value.IsPublish
-          );
-          updateIsSaleBookModal(false);
-        }
-      });
+      await axios
+        .put(url, formData, {
+          headers: {
+            Authorization: Access_Token.value,
+          },
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            updateIsSaleBook(
+              bookDetail.value.BookID,
+              !bookDetail.value.IsPublish
+            );
+            updateIsSaleBookModal(false);
+          }
+        });
     };
     return {
       warningIcon,

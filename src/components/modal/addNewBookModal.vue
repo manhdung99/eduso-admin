@@ -378,6 +378,7 @@ import { defineComponent, ref, reactive, watch, onMounted } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { useCommonStore } from "../../stores/commonStore";
+import { useUserStore } from "../../stores/userStore";
 import { storeToRefs } from "pinia";
 import closeIcon from "../../assets/image/close.svg";
 import uploadIcon from "../../assets/image/upload.svg";
@@ -394,7 +395,7 @@ import { BASE_URL, ADD_BOOKS } from "../../constants";
 import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import axios from "axios";
 import { TreeSelect } from "ant-design-vue";
-import transmissionData from "@/uses/common";
+import { transmissionData } from "@/uses/common";
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 
 export default defineComponent({
@@ -410,6 +411,7 @@ export default defineComponent({
     const { addBook, removeLibraryBookAdded, getRegionsBook } = bookStore;
     const { bookDetail } = storeToRefs(bookStore);
     const { subjects, programs } = storeToRefs(useCommonStore());
+    const { Access_Token } = storeToRefs(useUserStore());
     let previewImage = ref(null);
     let metaData = ref(null);
     let bookContent = ref(null);
@@ -517,16 +519,22 @@ export default defineComponent({
         transmissionData(formData, centers, "Centers");
         transmissionData(formData, regions, "Regions");
         const url = BASE_URL + ADD_BOOKS;
-        axios.post(url, formData).then((response) => {
-          if (response.data.Code == 200) {
-            addBook(response.data.Data);
-            removeLibraryBookAdded(response.data.Data.bookID);
-            updateAddNewModalStatus(false);
-            updateLibraryBookModal(false);
-          } else {
-            alert(response.data.Message);
-          }
-        });
+        axios
+          .post(url, formData, {
+            headers: {
+              Authorization: Access_Token.value,
+            },
+          })
+          .then((response) => {
+            if (response.data.Code == 200) {
+              addBook(response.data.Data);
+              removeLibraryBookAdded(response.data.Data.bookID);
+              updateAddNewModalStatus(false);
+              updateLibraryBookModal(false);
+            } else {
+              alert(response.data.Message);
+            }
+          });
       }
     };
 

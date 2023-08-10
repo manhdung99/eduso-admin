@@ -40,14 +40,6 @@
           <span class="pl-5"> Quản lý theo đơn vị </span>
         </a-menu-item>
       </router-link>
-      <router-link to="/quanlytaikhoan">
-        <a-menu-item key="quanlytaikhoan">
-          <template #icon>
-            <div class="icon-setting !text-2xl w-9"></div>
-          </template>
-          <span class="pl-5"> Quản lý tài khoản </span>
-        </a-menu-item>
-      </router-link>
       <router-link to="/quanlydonhang">
         <a-menu-item key="quanlydonhang">
           <template #icon>

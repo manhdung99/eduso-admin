@@ -5,6 +5,7 @@ export const useModalStore = defineStore("modalStore", {
     openAddNewModal: false,
     openAddNewUserModal: false,
     openUpdateBookModal: false,
+    openUpdateUserModal: false,
     openRemoveBookModal: false,
     openLibraryBookModal: false,
     openIsSaleBookModal: false,
@@ -15,6 +16,9 @@ export const useModalStore = defineStore("modalStore", {
     currentBookDetail: 1,
     currentUnitDetail: 1,
     isLoading: false,
+    openSidebar: false,
+    openRemoveUserModal: false,
+    openAccessUserModal: false,
   }),
   getters: {},
   actions: {
@@ -26,6 +30,9 @@ export const useModalStore = defineStore("modalStore", {
     },
     updateAddNewUserModalStatus(status: boolean) {
       this.openAddNewUserModal = status;
+    },
+    updateUserModalStatus(status: boolean) {
+      this.openUpdateUserModal = status;
     },
     updateBookModalStatus(status: boolean) {
       this.openUpdateBookModal = status;
@@ -51,6 +58,15 @@ export const useModalStore = defineStore("modalStore", {
     },
     updateLoadingStatus(status) {
       this.isLoading = status;
+    },
+    updateSidebarStatus(status) {
+      this.openSidebar = status;
+    },
+    updateRemoveUserModalStatus(status) {
+      this.openRemoveUserModal = status;
+    },
+    updateAccessUserModalStatus(status) {
+      this.openAccessUserModal = status;
     },
   },
 });

@@ -37,7 +37,7 @@
           <div class="absolute -top-5 font-bold">Loại người dùng</div>
           <div>
             <multiselect
-              v-model="usertype"
+              v-model="RoleID"
               searchable="searchable"
               :options="types"
               valueProp="ID"
@@ -82,47 +82,16 @@ export default {
   setup() {
     const userStore = useUserStore();
     const pagination = usePaginationStore();
-    const { getUser } = userStore;
+    const { getListUser } = userStore;
     const { getPagination } = pagination;
     const searchStore = useSearchStore();
     const { searchText, openSearchArea } = storeToRefs(searchStore);
     const { updateSearchAreaStatus } = searchStore;
     const { updateAddNewUserModalStatus } = useModalStore();
-    const usertype = ref("Quản trị viên");
+    const RoleID = ref("Quản trị viên");
     const types = ["Quản trị viên", "Người dùng"];
-
-    const listUsers = [
-      {
-        id: 1,
-        userEmail: "nguyenvana@gmail.com",
-        userName: "Nguyễn Văn A",
-        userType: "Quản trị viên",
-        IsPublish: false,
-      },
-      {
-        id: 2,
-        userEmail: "nguyenvanb@gmail.com",
-        userName: "Nguyễn Văn B",
-        userType: "Người dùng",
-        IsPublish: true,
-      },
-      {
-        id: 3,
-        userEmail: "nguyenvanc@gmail.com",
-        userName: "Nguyễn Văn C",
-        userType: "Người dùng",
-        IsPublish: false,
-      },
-      {
-        id: 4,
-        userEmail: "nguyenvand@gmail.com",
-        userName: "Nguyễn Văn D",
-        userType: "Người dùng",
-        IsPublish: false,
-      },
-    ];
     onMounted(() => {
-      getUser(listUsers);
+      getListUser();
       getPagination(1);
     });
     return {
@@ -131,7 +100,7 @@ export default {
       searchIcon,
       openSearchArea,
       updateSearchAreaStatus,
-      usertype,
+      RoleID,
       types,
       updateAddNewUserModalStatus,
     };

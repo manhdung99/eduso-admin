@@ -7,10 +7,12 @@ import QuanLyEPnguoidung from "../views/QuanLyEPnguoidung.vue";
 import QuanLyDonHang from "../views/QuanLyDonHang.vue";
 import QuanLyNguoiDung from "../views/QuanLyNguoiDung.vue";
 import QuanLyTheoDonViVue from "../views/QuanLyTheoDonViVue.vue";
+import LoginVue from "../views/LoginVue.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     // /search/screens -> /search?q=screens
     path: "/",
+    name: "",
     redirect: (to) => {
       // the function receives the target route as the argument
       // we return a redirect path/location here.
@@ -39,12 +41,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "Quản lý đơn vị" },
   },
   {
-    path: "/quanlytaikhoan",
-    name: "QuanLyTaiKhoan",
-    component: QuanLyTaiKhoanVue,
-    meta: { title: "Quản lý tài khoản" },
-  },
-  {
     path: "/quanlyEPnguoidung",
     name: "quanlyEPnguoidung",
     component: QuanLyEPnguoidung,
@@ -67,6 +63,12 @@ const routes: Array<RouteRecordRaw> = [
     name: "QuanLyNguoiDung",
     component: QuanLyNguoiDung,
     meta: { title: "Quản lý người dùng" },
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: LoginVue,
+    meta: { title: "Đăng nhập" },
   },
 ];
 

@@ -10,6 +10,7 @@
       <h2 class="mb-4">Bạn có chắc chắn muốn đăng xuất?</h2>
       <div class="flex justify-end">
         <button
+          @click="logOut"
           class="bg-red-500 text-white py-2 px-4 rounded mr-4 hover:opacity-90"
         >
           Đăng xuất
@@ -28,13 +29,25 @@
 import { defineComponent } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { storeToRefs } from "pinia";
+import router from "@/router";
 export default defineComponent({
   name: "LogoutModal",
   setup() {
     const modal = useModalStore();
-    const { updateLogoutModalStatus } = modal;
+    const { updateLogoutModalStatus, updateSidebarStatus } = modal;
     const { openLogoutModal } = storeToRefs(modal);
-    return { updateLogoutModalStatus, openLogoutModal };
+    const logOut = () => {
+      updateSidebarStatus(false);
+      updateLogoutModalStatus(false);
+      localStorage.removeItem("Access_Token");
+      router.push(`/login`);
+    };
+    return {
+      updateLogoutModalStatus,
+      openLogoutModal,
+      logOut,
+      updateSidebarStatus,
+    };
   },
 });
 </script>

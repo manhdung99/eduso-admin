@@ -65,6 +65,7 @@ import debounce from "lodash/debounce";
 import { storeToRefs } from "pinia";
 import { defineComponent, onMounted, ref, watch } from "vue";
 import { useModalStore } from "../stores/modalStore";
+import { useUserStore } from "@/stores/userStore";
 export default defineComponent({
   name: "QuanLyKhoSach",
   components: {
@@ -89,6 +90,7 @@ export default defineComponent({
     const { getPagination, updatePageIndex } = pagination;
     const { pageIndex } = storeToRefs(pagination);
     const { updateLoadingStatus } = useModalStore();
+    const { Access_Token } = storeToRefs(useUserStore());
     const program = ref("");
     const subject = ref("");
     const searchable = true;
@@ -117,24 +119,30 @@ export default defineComponent({
         `&programid=${program.value}` +
         `&pageindex=${pageIndex.value - 1}` +
         `&type=${type.value}`;
-      axios.get(url).then((response) => {
-        if (response.data.Code == 200) {
-          getBooks(response.data.Data);
-          updatePageIndex(response.data.Page.PageIndex + 1);
-          getPagination(
-            response.data.Page.Total % response.data.Page.PageSize == 0
-              ? response.data.Page.Total / response.data.Page.PageSize
-              : Math.floor(
-                  response.data.Page.Total / response.data.Page.PageSize
-                ) + 1
-          );
-        } else {
-          getBooks([]);
-          updatePageIndex(1);
-          getPagination(0);
-        }
-        updateLoadingStatus(false);
-      });
+      axios
+        .get(url, {
+          headers: {
+            Authorization: Access_Token.value,
+          },
+        })
+        .then((response) => {
+          if (response.data.Code == 200) {
+            getBooks(response.data.Data);
+            updatePageIndex(response.data.Page.PageIndex + 1);
+            getPagination(
+              response.data.Page.Total % response.data.Page.PageSize == 0
+                ? response.data.Page.Total / response.data.Page.PageSize
+                : Math.floor(
+                    response.data.Page.Total / response.data.Page.PageSize
+                  ) + 1
+            );
+          } else {
+            getBooks([]);
+            updatePageIndex(1);
+            getPagination(0);
+          }
+          updateLoadingStatus(false);
+        });
     };
     const filterBook = () => {
       updateLoadingStatus(true);
@@ -149,24 +157,30 @@ export default defineComponent({
         `&programid=${program.value}` +
         `&pageindex=${pageIndex.value - 1}` +
         `&type=${type.value}`;
-      axios.get(url).then((response) => {
-        if (response.data.Code == 200) {
-          getBooks(response.data.Data);
-          updatePageIndex(response.data.Page.PageIndex + 1);
-          getPagination(
-            response.data.Page.Total % response.data.Page.PageSize == 0
-              ? response.data.Page.Total / response.data.Page.PageSize
-              : Math.floor(
-                  response.data.Page.Total / response.data.Page.PageSize
-                ) + 1
-          );
-          updateLoadingStatus(false);
-        } else {
-          updateLoadingStatus(false);
-          getBooks([]);
-          getPagination(0);
-        }
-      });
+      axios
+        .get(url, {
+          headers: {
+            Authorization: Access_Token.value,
+          },
+        })
+        .then((response) => {
+          if (response.data.Code == 200) {
+            getBooks(response.data.Data);
+            updatePageIndex(response.data.Page.PageIndex + 1);
+            getPagination(
+              response.data.Page.Total % response.data.Page.PageSize == 0
+                ? response.data.Page.Total / response.data.Page.PageSize
+                : Math.floor(
+                    response.data.Page.Total / response.data.Page.PageSize
+                  ) + 1
+            );
+            updateLoadingStatus(false);
+          } else {
+            updateLoadingStatus(false);
+            getBooks([]);
+            getPagination(0);
+          }
+        });
     };
     const filterBookByText = debounce(() => {
       if (searchText.value.length > 0) {
@@ -184,7 +198,11 @@ export default defineComponent({
         updateSearchAreaStatus(true);
         const fetchBooks = async () => {
           try {
-            const response = await axios.get(url);
+            const response = await axios.get(url, {
+              headers: {
+                Authorization: Access_Token.value,
+              },
+            });
             if (response.data.Code == 200) {
               getSearchtBooks(response.data.Data);
             }

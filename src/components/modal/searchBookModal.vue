@@ -22,7 +22,11 @@
           <div class="mr-4">
             <img
               class="book-image"
-              :src="`https://static.eduso.vn/${book.Image}`"
+              :src="
+                book.Image
+                  ? `https://static.eduso.vn/${book.Image}`
+                  : defaultBookCover
+              "
               alt=""
             />
           </div>
@@ -31,7 +35,7 @@
               {{ book.Name }}
             </p>
             <div
-              v-html="book.Des"
+              v-html="book.Publisher"
               class="text-2xs italic text-charcoal-lighter"
             ></div>
           </div>
@@ -70,6 +74,7 @@ import { useModalStore } from "../../stores/modalStore";
 import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import clickOutSide from "@mahdikhashan/vue3-click-outside";
+import defaultBookCover from "../../assets/image/default-book-image.jpg";
 export default defineComponent({
   name: "SearchBookModal",
   directives: {
@@ -96,6 +101,7 @@ export default defineComponent({
       updateBookModalStatus,
       setBookDetail,
       updateSearchAreaStatus,
+      defaultBookCover,
     };
   },
 });

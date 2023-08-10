@@ -1,18 +1,21 @@
 <template>
   <div
     class="fixed top-0 right-0 left-0 bottom-0 bg-modal z-10"
-    v-if="openAddNewUserModal"
+    v-if="openUpdateUserModal"
   >
     <form
       ref="addUserForm"
       @submit.prevent="onSubmit"
       @keydown.enter="onSubmit"
     >
-      <div class="add-new-user-modal max-h-screen lg:max-h-175">
+      <div
+        v-if="userDetail"
+        class="add-new-user-modal max-h-screen lg:max-h-175"
+      >
         <div class="text-blue-400 text-center font-bold text-xl mb-4 relative">
-          Tạo người dùng mới
+          Chỉnh sửa người dùng
           <span
-            @click="updateAddNewUserModalStatus(false)"
+            @click="updateUserModalStatus(false)"
             class="absolute right-0 cursor-pointer"
             ><img :src="closeIcon" alt="icon"
           /></span>
@@ -20,23 +23,17 @@
         <div class="scroll-area max-h-126">
           <!-- info  -->
           <div class="pr-6">
-            <div class="justify-between w-full flex mb-2">
+            <div class="justify-between w-full flex mb-2 py-1">
               <span class="font-bold text-base">Email: </span>
               <div class="w-50">
-                <input
-                  v-model="email"
-                  name="Account.Email"
-                  class="input w-full"
-                  type="text"
-                />
-                <div
-                  class="text-red-500"
-                  v-for="error in v1$.email.$errors"
-                  :key="error.$uid"
-                >
-                  {{ $t(error.$message as string) }}
-                </div>
+                <span>{{ userDetail.Email }}</span>
               </div>
+              <input
+                type="text"
+                class="hidden"
+                :value="userDetail.Email"
+                name="Account.Email"
+              />
             </div>
 
             <div class="justify-between w-full flex mb-2">
@@ -128,6 +125,11 @@
                   value="true"
                   type="checkbox"
                   :data-name="`${permisstion.name}-${action.value}`"
+                  :checked="
+                    permissionsSelected.includes(
+                      `${permisstion.name.toLowerCase()}-${action.value.toLowerCase()}`
+                    )
+                  "
                 />
               </div>
             </div>
@@ -138,7 +140,7 @@
             class="bg-green text-white text-base rounded px-4 py-2 hover:opacity-90 font-medium"
             type="submit"
           >
-            Tạo người dùng
+            Lưu
           </button>
         </div>
       </div>
@@ -146,7 +148,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import { useModalStore } from "../../stores/modalStore";
 import { useUserStore } from "../../stores/userStore";
 import { storeToRefs } from "pinia";
@@ -168,21 +170,22 @@ import { transmissionData, transmissionPermisstionData } from "@/uses/common";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 export default defineComponent({
-  name: "addNewUserModal",
+  name: "updateUserModal",
   components: {
     Multiselect,
   },
   setup() {
     const modal = useModalStore();
-    const { openAddNewUserModal } = storeToRefs(modal);
-    const { updateAddNewUserModalStatus } = modal;
+    const { openUpdateUserModal } = storeToRefs(modal);
+    const { updateUserModalStatus } = modal;
     const { getPermissions, addUser } = useUserStore();
-    const { permisstions, Access_Token } = storeToRefs(useUserStore());
+    const { permisstions, Access_Token, userDetail } = storeToRefs(
+      useUserStore()
+    );
     const searchable = ref(true);
-    const permisstionsSelected = ref([]);
+    const permissionsSelected = ref([]);
     const ctrlName = ref([]);
     const usertype = ref("Quản trị viên");
-    const email = ref("");
     const name = ref("");
     const password = ref("");
     const types = [
@@ -196,25 +199,24 @@ export default defineComponent({
       },
     ];
     const addNewUserRule = {
-      email: { required },
       name: { required },
       password: { required },
     };
-    const v1$ = useVuelidate(addNewUserRule, { email, name, password });
+    const v1$ = useVuelidate(addNewUserRule, { name, password });
     const showDetailAdminBook = ref(false);
     const showDetailRevenueBook = ref(false);
     const showPassword = ref(false);
     const addUserForm = ref(null);
     const onCheckInput = (e: any) => {
       if (
-        !permisstionsSelected.value.includes(e.target.getAttribute("data-name"))
+        !permissionsSelected.value.includes(e.target.getAttribute("data-name"))
       ) {
-        permisstionsSelected.value = [
-          ...permisstionsSelected.value,
+        permissionsSelected.value = [
+          ...permissionsSelected.value,
           e.target.getAttribute("data-name"),
         ];
       } else {
-        permisstionsSelected.value = permisstionsSelected.value.filter(
+        permissionsSelected.value = permissionsSelected.value.filter(
           (act) => act != e.target.getAttribute("data-name")
         );
       }
@@ -225,9 +227,10 @@ export default defineComponent({
         await checkPermissionsBeforeSubmit;
         const formData = new FormData(addUserForm.value);
         formData.append("Account.RoleID", usertype.value);
+        formData.append("Account.ID", userDetail.value.ID);
         transmissionPermisstionData(
           formData,
-          permisstionsSelected.value,
+          permissionsSelected.value,
           "Permissions"
         );
         const url = BASE_URL + ADD_USER;
@@ -239,8 +242,7 @@ export default defineComponent({
           })
           .then((response) => {
             if (response.data.Code == 200) {
-              addUser(response.data.Data);
-              updateAddNewUserModalStatus(false);
+              updateUserModalStatus(false);
             } else {
               alert(response.data.Message);
             }
@@ -250,10 +252,10 @@ export default defineComponent({
     const checkPermissionsBeforeSubmit = () => {
       permisstions.value.forEach((permisstion) => {
         permisstion.Actions.forEach((action) => {
-          if (permisstionsSelected.value.includes(action.value)) {
+          if (permissionsSelected.value.includes(action.value)) {
             ctrlName.value = [...ctrlName.value, permisstion.name];
           }
-          if (!permisstionsSelected.value.includes(action.value)) {
+          if (!permissionsSelected.value.includes(action.value)) {
             ctrlName.value = ctrlName.value.filter(
               (ctrl) => ctrl != permisstion.name
             );
@@ -262,9 +264,18 @@ export default defineComponent({
       });
     };
     onMounted(getPermissions);
-
+    watch(
+      () => userDetail.value,
+      () => {
+        name.value = userDetail.value.Name;
+        password.value = userDetail.value.Password;
+        permissionsSelected.value = userDetail.value.Permissions.map(
+          (permission) => permission.CtrlName + "-" + permission.ActName
+        );
+      }
+    );
     return {
-      openAddNewUserModal,
+      openUpdateUserModal,
       closeIcon,
       uploadIcon,
       downloadIcon,
@@ -280,17 +291,17 @@ export default defineComponent({
       searchable,
       showDetailAdminBook,
       showDetailRevenueBook,
-      updateAddNewUserModalStatus,
+      updateUserModalStatus,
       permisstions,
       showPassword,
       addUserForm,
       onCheckInput,
-      permisstionsSelected,
+      permissionsSelected,
       ctrlName,
       v1$,
-      email,
       name,
       password,
+      userDetail,
     };
   },
 });
