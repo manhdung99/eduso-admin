@@ -20,22 +20,25 @@
     <tbody>
       <tr
         class="text-charcoal border-b border-grey-lighter"
-        v-for="unit in units"
-        :key="unit.id"
+        v-for="user in listEPUser"
+        :key="user.id"
       >
-        <td class="text-lg text-center">{{ unit.name }}</td>
+        <td class="text-lg text-center">{{ user.Name }}</td>
         <td class="text-lg text-center">
-          {{ unit.email }}
+          {{ user.Email }}
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ unit.phone }}</span>
+          <span class="text-lg">{{ user.Phone }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ unit.currentEP }}</span>
+          <span class="text-lg">{{ user.EP }}</span>
         </td>
         <td class="overflow-hidden">
           <button
-            @click="updateEPManagementStatus(true)"
+            @click="
+              getDetailUserTransitions(user.UserID);
+              updateEPManagementStatus(true);
+            "
             class="show-detail-button"
           >
             Xem
@@ -50,7 +53,7 @@
 import { defineComponent } from "vue";
 import { storeToRefs } from "pinia";
 import { useModalStore } from "../../stores/modalStore";
-import { useBookStore } from "../../stores/booksStore";
+import { useUserEPStore } from "../../stores/userEPStore";
 import hideIcon from "../../assets/image/hide.svg";
 import removeIcon from "../../assets/image/remove.svg";
 import editIcon from "../../assets/image/edit.svg";
@@ -62,26 +65,25 @@ export default defineComponent({
   // eslint-disable-next-line vue/no-setup-props-destructure
   setup() {
     const modal = useModalStore();
-    const bookStore = useBookStore();
     const {
       updateBookModalStatus,
       updateRemoveModalStatus,
       updateEPManagementStatus,
     } = modal;
-    const { units, doanhThuDonViColumns } = storeToRefs(bookStore);
+    const { listEPUser } = storeToRefs(useUserEPStore());
+    const { getDetailUserTransitions } = useUserEPStore();
     const { convertTimestampToDate, convertPrice } = convertData();
     return {
       hideIcon,
       removeIcon,
       editIcon,
-      units,
-      doanhThuDonViColumns,
-      // sortBooks,
+      listEPUser,
       updateBookModalStatus,
       updateRemoveModalStatus,
       convertTimestampToDate,
       updateEPManagementStatus,
       convertPrice,
+      getDetailUserTransitions,
     };
   },
   components: {

@@ -157,7 +157,6 @@ import attachIcon from "../../assets/image/attach.svg";
 import downIcon from "../../assets/image/user-icon-down.svg";
 import rightIcon from "../../assets/image/user-icon-right.svg";
 import Multiselect from "@vueform/multiselect";
-import { BASE_URL, ADD_USER } from "../../constants";
 import {
   checkPriceValidation,
   checkDiscountValidation,
@@ -230,7 +229,7 @@ export default defineComponent({
           permisstionsSelected.value,
           "Permissions"
         );
-        const url = BASE_URL + ADD_USER;
+        const url = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_ADD_USER;
         axios
           .post(url, formData, {
             headers: {

@@ -4,8 +4,8 @@
       <img src="../../assets/image/avatar.jpg" alt="avatar" />
     </div>
     <div class="border-l border-white pl-5">
-      <p class="text-white text-xl">Lê Thành Trung</p>
-      <p class="text-grey text-lg">Vị trí: NXB</p>
+      <p class="text-white text-xl">{{ accountName }}</p>
+      <p class="text-grey text-lg">Vị trí: {{ accountRole }}</p>
     </div>
   </div>
   <div class="text-lg">
@@ -16,7 +16,7 @@
       :mode="mode"
       :theme="theme"
     >
-      <router-link to="/">
+      <router-link v-if="accountAccess.includes('bookscontroller')" to="/">
         <a-menu-item key="quanlykhosach">
           <template #icon>
             <div class="icon-book !text-xl w-9 text-xml"></div>
@@ -24,7 +24,10 @@
           <span class="pl-5"> Quản lý kho sách </span>
         </a-menu-item>
       </router-link>
-      <router-link to="/quanlydoanhthu">
+      <router-link
+        v-if="accountAccess.includes('managecontroller')"
+        to="/quanlydoanhthu"
+      >
         <a-menu-item key="quanlydoanhthu">
           <template #icon>
             <div class="icon-chart !text-2xl w-9"></div>
@@ -32,7 +35,10 @@
           <span class="pl-5"> Quản lý doanh thu </span>
         </a-menu-item>
       </router-link>
-      <router-link to="/quanlytheodonvi">
+      <router-link
+        v-if="accountAccess.includes('managecontroller')"
+        to="/quanlytheodonvi"
+      >
         <a-menu-item key="quanlytheodonvi">
           <template #icon>
             <div class="icon-location !text-2xl w-9"></div>
@@ -40,7 +46,10 @@
           <span class="pl-5"> Quản lý theo đơn vị </span>
         </a-menu-item>
       </router-link>
-      <router-link to="/quanlydonhang">
+      <router-link
+        v-if="accountAccess.includes('managecontroller')"
+        to="/quanlydonhang"
+      >
         <a-menu-item key="quanlydonhang">
           <template #icon>
             <div class="icon-setting !text-2xl w-9"></div>
@@ -48,7 +57,10 @@
           <span class="pl-5"> Quản lý đơn hàng </span>
         </a-menu-item>
       </router-link>
-      <router-link to="/quanlynapEP">
+      <router-link
+        v-if="accountAccess.includes('epcontroller')"
+        to="/quanlynapEP"
+      >
         <a-menu-item key="quanlynapEP">
           <template #icon>
             <div class="icon-setting !text-2xl w-9"></div>
@@ -56,7 +68,10 @@
           <span class="pl-5"> Quản lý nạp EP </span>
         </a-menu-item>
       </router-link>
-      <router-link to="/quanlyEPnguoidung">
+      <router-link
+        v-if="accountAccess.includes('epcontroller')"
+        to="/quanlyEPnguoidung"
+      >
         <a-menu-item key="quanlyEPnguoidung">
           <template #icon>
             <div class="icon-setting !text-2xl w-9"></div>
@@ -64,7 +79,10 @@
           <span class="pl-5"> Quản lý EP người dùng </span>
         </a-menu-item>
       </router-link>
-      <router-link to="/quanlynguoidung">
+      <router-link
+        v-if="accountAccess.includes('accountcontroller')"
+        to="/quanlynguoidung"
+      >
         <a-menu-item key="quanlynguoidung">
           <template #icon>
             <div class="icon-setting !text-2xl w-9"></div>
@@ -94,6 +112,9 @@ import { defineComponent, reactive, toRefs } from "vue";
 import type { MenuMode, MenuTheme } from "ant-design-vue";
 import logoutModalVue from "../modal/logoutModal.vue";
 import { useModalStore } from "../../stores/modalStore";
+import { useUserStore } from "../../stores/userStore";
+import { useCommonStore } from "../../stores/commonStore";
+import { storeToRefs } from "pinia";
 
 export default defineComponent({
   name: "SideBar",
@@ -101,7 +122,6 @@ export default defineComponent({
     const state = reactive({
       mode: "inline" as MenuMode,
       theme: "light" as MenuTheme,
-      selectedKeys: ["quanlykhosach"],
       openKeys: ["sub1"],
     });
     const modal = useModalStore();
@@ -109,14 +129,22 @@ export default defineComponent({
     const handlePageReload = () => {
       let urlArray = window.location.href.split("/");
       let newArray = [urlArray[urlArray.length - 1]];
-      state.selectedKeys = newArray;
+      selectedKeys.value = newArray;
     };
+    const { selectedKeys } = storeToRefs(useCommonStore());
+    const { accountAccess, accountName, accountRole } = storeToRefs(
+      useUserStore()
+    );
     // Handle even load page
     window.addEventListener("load", handlePageReload);
 
     return {
       ...toRefs(state),
+      accountAccess,
       updateLogoutModalStatus,
+      accountName,
+      accountRole,
+      selectedKeys,
     };
   },
   components: {

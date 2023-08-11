@@ -1,5 +1,8 @@
 <template>
-  <table class="w-full unit-management-table">
+  <table
+    v-if="orders && orders.length > 0"
+    class="w-full unit-management-table"
+  >
     <thead class="table-head-wrapper">
       <tr class="w-full">
         <th class="text-lg text-charcoal font-medium text-center">

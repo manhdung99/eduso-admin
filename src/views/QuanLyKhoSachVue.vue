@@ -55,7 +55,6 @@ import BookTableVue from "@/components/table/KhoSachTable.vue";
 import TablePagination from "@/components/common/TablePagination.vue";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { useBookStore } from "../stores/booksStore";
-import { BASE_URL, GET_BOOKS } from "../constants";
 import convertData from "../uses/convertData";
 import { usePaginationStore, useCommonStore } from "../stores/commonStore";
 import { useSearchStore } from "../stores/searchStore";
@@ -109,8 +108,8 @@ export default defineComponent({
     const getBookData = () => {
       updateLoadingStatus(true);
       const url =
-        BASE_URL +
-        GET_BOOKS +
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_GET_BOOKS +
         "?start=" +
         convertTimestampToDate(fromDate.value) +
         "&end=" +
@@ -147,8 +146,8 @@ export default defineComponent({
     const filterBook = () => {
       updateLoadingStatus(true);
       const url =
-        BASE_URL +
-        GET_BOOKS +
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_GET_BOOKS +
         "?start=" +
         convertTimestampToDate(fromDate.value) +
         "&end=" +
@@ -185,8 +184,8 @@ export default defineComponent({
     const filterBookByText = debounce(() => {
       if (searchText.value.length > 0) {
         const url =
-          BASE_URL +
-          GET_BOOKS +
+          process.env.VUE_APP_BASE_URL +
+          process.env.VUE_APP_GET_BOOKS +
           "?start=" +
           convertTimestampToDate(fromDate.value) +
           "&end=" +

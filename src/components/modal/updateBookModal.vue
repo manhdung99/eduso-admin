@@ -375,7 +375,6 @@ import uploadIcon from "../../assets/image/upload.svg";
 import downloadIcon from "../../assets/image/download.svg";
 import attachIcon from "../../assets/image/attach.svg";
 import { checkPriceValidation } from "../../uses/validation";
-import { BASE_URL, ADD_BOOKS } from "../../constants";
 import convertData from "../../uses/convertData";
 import Multiselect from "@vueform/multiselect";
 import { useVuelidate } from "@vuelidate/core";
@@ -490,7 +489,8 @@ export default defineComponent({
         formData.append("SubjectID", bookInfo.subject);
         transmissionData(formData, centers, "Centers");
         transmissionData(formData, regions, "Regions");
-        const url = BASE_URL + ADD_BOOKS;
+        const url =
+          process.env.VUE_APP_BASE_URL + process.env.VUE_APP_ADD_BOOKS;
         axios
           .put(url, formData, {
             headers: {

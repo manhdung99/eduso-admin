@@ -391,7 +391,6 @@ import {
   checkPriceValidation,
   checkDiscountValidation,
 } from "../../uses/validation";
-import { BASE_URL, ADD_BOOKS } from "../../constants";
 import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import axios from "axios";
 import { TreeSelect } from "ant-design-vue";
@@ -518,7 +517,8 @@ export default defineComponent({
         formData.append("SubjectID", bookInfo.subject);
         transmissionData(formData, centers, "Centers");
         transmissionData(formData, regions, "Regions");
-        const url = BASE_URL + ADD_BOOKS;
+        const url =
+          process.env.VUE_APP_BASE_URL + process.env.VUE_APP_ADD_BOOKS;
         axios
           .post(url, formData, {
             headers: {

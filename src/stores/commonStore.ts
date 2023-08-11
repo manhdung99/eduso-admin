@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import { BASE_URL, GET_SUBJECT, GET_PROGRAM } from "../constants";
 export const usePaginationStore = defineStore("paginationStore", {
   state: () => ({
     paginations: [],
@@ -25,6 +24,7 @@ export const useCommonStore = defineStore("commonStore", {
     programs: [],
     subjects: [],
     hiddenSidebar: false,
+    selectedKeys: ["quanlykhosach"],
     fromDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     toDate: new Date(
       new Date().getFullYear(),
@@ -35,13 +35,15 @@ export const useCommonStore = defineStore("commonStore", {
   getters: {},
   actions: {
     getPrograms() {
-      const url = BASE_URL + GET_PROGRAM;
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_GET_PROGRAM;
       axios.get(url).then((response) => {
         this.programs = response.data.Data;
       });
     },
     getSubjects() {
-      const url = BASE_URL + GET_SUBJECT;
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_GET_SUBJECT;
       axios.get(url).then((response) => {
         this.subjects = response.data.Data;
       });
@@ -51,6 +53,9 @@ export const useCommonStore = defineStore("commonStore", {
     },
     updateToDate(data) {
       this.toDate = data;
+    },
+    updateSelectKey(key) {
+      this.selectedKeys = key;
     },
   },
 });

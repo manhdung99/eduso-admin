@@ -48,10 +48,11 @@
 
 <script lang="ts">
 import axios from "axios";
-import { BASE_URL, LOGIN } from "../constants";
 import { defineComponent, ref } from "vue";
 import router from "@/router";
 import { useUserStore } from "@/stores/userStore";
+import { useCommonStore } from "@/stores/commonStore";
+import { storeToRefs } from "pinia";
 export default defineComponent({
   name: "LoginVue",
   // eslint-disable-next-line vue/no-setup-props-destructure
@@ -59,16 +60,19 @@ export default defineComponent({
     const username = ref("");
     const password = ref("");
     const loginForm = ref(null);
-    const { setAccessToken } = useUserStore();
+    const { setAccessToken, getUserPermission } = useUserStore();
+    const { updateSelectKey } = useCommonStore();
     const onSubmit = async () => {
       const formData = new FormData(loginForm.value);
-      const url = BASE_URL + LOGIN;
+      const url = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_LOGIN;
       axios.post(url, formData).then((response) => {
         if (response.data.Code == 200) {
           const token = response.data.Data.Access_Token;
           setAccessToken(token);
           localStorage.setItem("Access_Token", token);
           router.push(`/`);
+          updateSelectKey(["quanlykhosach"]);
+          getUserPermission();
         } else {
           alert(response.data.Message);
         }

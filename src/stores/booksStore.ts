@@ -1,11 +1,5 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import {
-  BASE_URL,
-  GET_LIBRARY,
-  GET_DETAIL_BOOK,
-  GET_REGIONS,
-} from "../constants";
 import { useUserStore } from "./userStore";
 export const useBookStore = defineStore("booksStore", {
   state: () => ({
@@ -52,7 +46,10 @@ export const useBookStore = defineStore("booksStore", {
       this.books[index].IsPublish = status;
     },
     setBookDetail(id) {
-      const url = BASE_URL + GET_DETAIL_BOOK + `?id=${id}`;
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_GET_DETAIL_BOOK +
+        `?id=${id}`;
       const userStore = useUserStore();
       const token = userStore.Access_Token;
       axios
@@ -66,7 +63,10 @@ export const useBookStore = defineStore("booksStore", {
         });
     },
     setBookFromLibrary(id) {
-      const url = BASE_URL + GET_DETAIL_BOOK + `?id=${id}`;
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_GET_DETAIL_BOOK +
+        `?id=${id}`;
       const userStore = useUserStore();
       const token = userStore.Access_Token;
       axios
@@ -81,7 +81,10 @@ export const useBookStore = defineStore("booksStore", {
         });
     },
     getLibraryBooks(page) {
-      const url = BASE_URL + GET_LIBRARY + `?pageIndex=${page}`;
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_GET_LIBRARY +
+        `?pageIndex=${page}`;
       const userStore = useUserStore();
       const token = userStore.Access_Token;
       axios
@@ -97,7 +100,10 @@ export const useBookStore = defineStore("booksStore", {
     filterLibraryBook(text) {
       const userStore = useUserStore();
       const token = userStore.Access_Token;
-      const url = BASE_URL + GET_LIBRARY + `?text=${text}`;
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_GET_LIBRARY +
+        `?text=${text}`;
       axios
         .get(url, {
           headers: {
@@ -115,7 +121,8 @@ export const useBookStore = defineStore("booksStore", {
     getRegionsBook() {
       const userStore = useUserStore();
       const token = userStore.Access_Token;
-      const url = BASE_URL + GET_REGIONS;
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_GET_REGIONS;
       return axios
         .get(url, {
           headers: {

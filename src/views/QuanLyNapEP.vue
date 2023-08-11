@@ -20,7 +20,8 @@ import TransitionEPTable from "@/components/table/TransitionEPTable.vue";
 import { useEPStore } from "../stores/EPStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import { usePaginationStore } from "@/stores/commonStore";
-export default {
+import { onMounted, defineComponent } from "vue";
+export default defineComponent({
   name: "QuanLyNapEP",
   components: {
     TopContentVue,
@@ -35,44 +36,16 @@ export default {
     const pagination = usePaginationStore();
     const { getTransitions } = EPStore;
     const { getPagination } = pagination;
+    onMounted(() => {
+      getTransitions();
+      getPagination(1);
+    });
 
-    const listTransaction = [
-      {
-        id: 1,
-        email: "nguyenvana@gmail.com",
-        timeTransaction: 1672563598191,
-        typeTransaction: "Thẻ ATM",
-        currentEP: 25000,
-      },
-      {
-        id: 2,
-        email: "nguyenvana@gmail.com",
-        timeTransaction: 1672563598191,
-        typeTransaction: "Thẻ ATM",
-        currentEP: 25000,
-      },
-      {
-        id: 3,
-        email: "nguyenvana@gmail.com",
-        timeTransaction: 1672563598191,
-        typeTransaction: "Thẻ ATM",
-        currentEP: 25000,
-      },
-      {
-        id: 4,
-        email: "nguyenvana@gmail.com",
-        timeTransaction: 1672563598191,
-        typeTransaction: "Thẻ ATM",
-        currentEP: 25000,
-      },
-    ];
-    getTransitions(listTransaction);
-    getPagination(1);
     return {
       title,
       downArrow,
       action,
     };
   },
-};
+});
 </script>

@@ -42,12 +42,13 @@ export default defineComponent({
     const { getPrograms, getSubjects } = useCommonStore();
     const { hiddenSidebar } = storeToRefs(useCommonStore());
     const { openSidebar } = storeToRefs(useModalStore());
-    const { setAccessToken } = useUserStore();
+    const { setAccessToken, getUserPermission } = useUserStore();
     onMounted(getPrograms);
     onMounted(getSubjects);
     onMounted(() => {
       const isAuthenticated = localStorage.getItem("Access_Token");
       setAccessToken(isAuthenticated);
+      getUserPermission();
     });
     onMounted(() => {
       nextTick(() => {
@@ -85,6 +86,7 @@ export default defineComponent({
   top: 0;
   bottom: 0;
   padding-right: 8px;
+  width: 300px;
 }
 .side-bar-wrapper.show {
   left: 0;

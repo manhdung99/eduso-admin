@@ -1,12 +1,4 @@
 import { defineStore } from "pinia";
-import {
-  BASE_URL,
-  GET_PERMISSIONS,
-  GET_USER_LIST,
-  GET_DETAIL_USER,
-  DELETE_USER,
-  UPDATE_USER_STATUS,
-} from "../constants";
 
 import axios from "axios";
 export const useUserStore = defineStore("usersStore", {
@@ -15,13 +7,17 @@ export const useUserStore = defineStore("usersStore", {
     permisstions: [],
     Access_Token: "",
     userDetail: null,
+    accountAccess: [],
+    accountName: "",
+    accountRole: "",
   }),
   actions: {
     setAccessToken(token) {
       this.Access_Token = token;
     },
     getListUser() {
-      const url = BASE_URL + GET_USER_LIST;
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_GET_USER_LIST;
 
       axios
         .get(url, {
@@ -34,7 +30,8 @@ export const useUserStore = defineStore("usersStore", {
         });
     },
     getPermissions() {
-      const url = BASE_URL + GET_PERMISSIONS;
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_GET_PERMISSIONS;
       axios
         .get(url, {
           headers: {
@@ -53,7 +50,10 @@ export const useUserStore = defineStore("usersStore", {
       this.users = [user, ...this.users];
     },
     setUserDetail(id) {
-      const url = BASE_URL + GET_DETAIL_USER + `${id}`;
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_GET_DETAIL_USER +
+        `${id}`;
       axios
         .get(url, {
           headers: {
@@ -65,7 +65,10 @@ export const useUserStore = defineStore("usersStore", {
         });
     },
     deleteUser(id) {
-      const url = BASE_URL + DELETE_USER + `${id}`;
+      const url =
+        process.env.VUE_APP_BASE_URL +
+        process.env.VUE_APP_DELETE_USER +
+        `${id}`;
       axios
         .delete(url, {
           headers: {
@@ -79,7 +82,8 @@ export const useUserStore = defineStore("usersStore", {
         });
     },
     accessUser(id) {
-      const url = BASE_URL + UPDATE_USER_STATUS;
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_UPDATE_USER_STATUS;
       const formData = new FormData();
       formData.append("id", id);
       axios
@@ -94,6 +98,33 @@ export const useUserStore = defineStore("usersStore", {
             console.log(index);
 
             this.users[index].IsActive = response.data.Data.IsActive;
+          }
+        });
+    },
+    getUserPermission() {
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_GET_USER_PERMISSION;
+      axios
+        .get(url, {
+          headers: {
+            Authorization: this.Access_Token,
+          },
+        })
+        .then((response) => {
+          const permissions = response.data.Data.listPermission
+            ? response.data.Data.listPermission
+            : [];
+          this.accountName = response.data.Data.name;
+          this.accountRole = response.data.Data.role;
+          if (permissions.length > 0) {
+            permissions.forEach((permission) => {
+              if (!this.accountAccess.includes(permission.CtrlName)) {
+                this.accountAccess = [
+                  ...this.accountAccess,
+                  permission.CtrlName,
+                ];
+              }
+            });
           }
         });
     },

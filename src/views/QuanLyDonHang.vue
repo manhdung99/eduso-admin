@@ -21,7 +21,7 @@ import { useOrderStore } from "../stores/orderStore";
 import downArrow from "../../src/assets/image/down-arrow.svg";
 import axios from "axios";
 import { usePaginationStore } from "@/stores/commonStore";
-import { onMounted } from "vue";
+import { nextTick, onMounted } from "vue";
 export default {
   name: "QuanLyDonHang",
   components: {
@@ -37,13 +37,7 @@ export default {
     const pagination = usePaginationStore();
     const { getOrders } = orderStore;
     const { getPagination } = pagination;
-
-    // axios
-    //   .get("https://642e3a278ca0fe3352cb2e35.mockapi.io/books")
-    //   .then((response) => {
-    //     getBooks(response.data);
-    //   });
-    const listOrders = [
+    const listOrder = [
       {
         id: 1,
         detail: "Đơn hàng 1",
@@ -81,10 +75,9 @@ export default {
         userEmail: "nguyenvanb@gmail.com",
       },
     ];
-    onMounted(() => {
-      getOrders(listOrders);
-      getPagination(1);
-    });
+    getOrders(listOrder);
+    getPagination(1);
+
     return {
       title,
       downArrow,

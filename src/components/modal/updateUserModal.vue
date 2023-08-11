@@ -124,7 +124,7 @@
                   class="cursor-pointer"
                   value="true"
                   type="checkbox"
-                  :data-name="`${permisstion.name}-${action.value}`"
+                  :data-name="`${permisstion.name.toLowerCase()}-${action.value.toLowerCase()}`"
                   :checked="
                     permissionsSelected.includes(
                       `${permisstion.name.toLowerCase()}-${action.value.toLowerCase()}`
@@ -159,14 +159,13 @@ import attachIcon from "../../assets/image/attach.svg";
 import downIcon from "../../assets/image/user-icon-down.svg";
 import rightIcon from "../../assets/image/user-icon-right.svg";
 import Multiselect from "@vueform/multiselect";
-import { BASE_URL, ADD_USER } from "../../constants";
 import {
   checkPriceValidation,
   checkDiscountValidation,
 } from "../../uses/validation";
 import defaultBookCover from "../../assets/image/default-book-image.jpg";
 import axios from "axios";
-import { transmissionData, transmissionPermisstionData } from "@/uses/common";
+import { transmissionPermisstionData } from "@/uses/common";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 export default defineComponent({
@@ -208,6 +207,9 @@ export default defineComponent({
     const showPassword = ref(false);
     const addUserForm = ref(null);
     const onCheckInput = (e: any) => {
+      console.log(e.target.getAttribute("data-name"));
+      console.log(permissionsSelected.value);
+
       if (
         !permissionsSelected.value.includes(e.target.getAttribute("data-name"))
       ) {
@@ -216,9 +218,12 @@ export default defineComponent({
           e.target.getAttribute("data-name"),
         ];
       } else {
+        console.log("here");
+
         permissionsSelected.value = permissionsSelected.value.filter(
           (act) => act != e.target.getAttribute("data-name")
         );
+        console.log(permissionsSelected.value);
       }
     };
     const onSubmit = async () => {
@@ -233,7 +238,7 @@ export default defineComponent({
           permissionsSelected.value,
           "Permissions"
         );
-        const url = BASE_URL + ADD_USER;
+        const url = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_ADD_USER;
         axios
           .post(url, formData, {
             headers: {

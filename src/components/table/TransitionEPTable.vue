@@ -21,20 +21,20 @@
         v-for="transition in transitions"
         :key="transition.id"
       >
-        <td class="text-lg text-center">{{ transition.id }}</td>
+        <td class="text-lg text-center">{{ transition.OrderID }}</td>
         <td class="text-lg text-center">
-          {{ transition.email }}
+          {{ transition.Email }}
         </td>
         <td class="text-center">
           <span class="text-lg">{{
-            convertTimestampToDate(transition.timeTransaction)
+            convertTimestampToDate(transition.CreateDate)
           }}</span>
         </td>
         <td class="text-center">
           <span class="text-lg">{{ transition.typeTransaction }}</span>
         </td>
         <td class="text-center">
-          <span class="text-lg">{{ transition.currentEP }}</span>
+          <span class="text-lg">{{ transition.Amount }}</span>
         </td>
       </tr>
     </tbody>

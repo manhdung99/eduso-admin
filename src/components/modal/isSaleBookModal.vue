@@ -39,7 +39,6 @@ import { useBookStore } from "../../stores/booksStore";
 import { storeToRefs } from "pinia";
 import warningIcon from "../../assets/image/warning.svg";
 import axios from "axios";
-import { BASE_URL, PUBLIC_BOOK } from "../../constants";
 import { useUserStore } from "@/stores/userStore";
 
 export default defineComponent({
@@ -60,7 +59,8 @@ export default defineComponent({
       const formData = new FormData();
       formData.append("id", bookDetail.value.ID);
       formData.append("status", !bookDetail.value.IsPublish);
-      const url = BASE_URL + PUBLIC_BOOK;
+      const url =
+        process.env.VUE_APP_BASE_URL + process.env.VUE_APP_PUBLIC_BOOK;
       await axios
         .put(url, formData, {
           headers: {

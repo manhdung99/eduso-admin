@@ -16,8 +16,8 @@
         v-for="user in users"
         :key="user.id"
       >
-        <td class="text-lg text-center">{{ user.Email }}</td>
-        <td class="text-lg text-center">
+        <td class="text-lg text-left pl-20">{{ user.Email }}</td>
+        <td class="text-lg text-left pl-20">
           {{ user.Name }}
         </td>
         <td class="text-center">
@@ -103,3 +103,8 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+table tbody td {
+  height: unset;
+}
+</style>

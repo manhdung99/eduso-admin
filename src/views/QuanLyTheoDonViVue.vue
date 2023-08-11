@@ -6,7 +6,7 @@
         <SearchBook />
       </div>
       <div
-        class="w-100 pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0 justify-between md:justify-start"
+        class="w-100 pl-0 lg:pl-8 2xl:pl-12 flex gap-x-4 mb-6 lg:mb-0 justify-between md:justify-start relative"
       >
         <select class="input w-full pr-8 lg:pr-0 select">
           <option>Lọc theo tỉnh / trường / lớp</option>
